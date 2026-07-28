@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/khione.gd" id="1_kh"]
+[ext_resource type="Script" path="res://scripts/camera/camera_rig.gd" id="2_cam"]
+
+[sub_resource type="CapsuleShape3D" id="col_shape"]
+radius = 0.3
+height = 0.9
+
+[sub_resource type="CapsuleMesh" id="torso_mesh"]
+radius = 0.28
+height = 0.9
+
+[sub_resource type="SphereMesh" id="head_mesh"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="SphereMesh" id="tail_mesh"]
+radius = 0.09
+height = 0.18
+
+[sub_resource type="StandardMaterial3D" id="fur_mat"]
+albedo_color = Color(0.96, 0.95, 0.9, 1)
+roughness = 1.0
+
+[node name="Khione" type="CharacterBody3D" groups=["player"]]
+script = ExtResource("1_kh")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("col_shape")
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="Torso" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.4, 0)
+mesh = SubResource("torso_mesh")
+material_override = SubResource("fur_mat")
+
+[node name="Head" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0.42)
+mesh = SubResource("head_mesh")
+material_override = SubResource("fur_mat")
+
+[node name="Tail" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.45)
+mesh = SubResource("tail_mesh")
+material_override = SubResource("fur_mat")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+script = ExtResource("2_cam")
+
+[node name="SpringArm" type="SpringArm3D" parent="CameraRig"]
+spring_length = 4.5
+
+[node name="Camera" type="Camera3D" parent="CameraRig/SpringArm"]
+current = true

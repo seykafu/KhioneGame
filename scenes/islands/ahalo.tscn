@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/islands/ahalo.gd" id="1_ah"]
+[ext_resource type="Script" path="res://scripts/interaction/message_bottle.gd" id="2_bot"]
+
+[sub_resource type="SphereShape3D" id="bottle_zone"]
+radius = 1.5
+
+[sub_resource type="CylinderMesh" id="bottle_mesh"]
+top_radius = 0.08
+bottom_radius = 0.12
+height = 0.45
+
+[sub_resource type="StandardMaterial3D" id="bottle_mat"]
+transparency = 1
+albedo_color = Color(0.55, 0.8, 0.75, 0.85)
+roughness = 0.2
+
+[node name="Ahalo" type="Node3D"]
+script = ExtResource("1_ah")
+
+[node name="MessageBottle" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 36)
+script = ExtResource("2_bot")
+
+[node name="Zone" type="CollisionShape3D" parent="MessageBottle"]
+shape = SubResource("bottle_zone")
+
+[node name="Glass" type="MeshInstance3D" parent="MessageBottle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.12, 0)
+mesh = SubResource("bottle_mesh")
+material_override = SubResource("bottle_mat")

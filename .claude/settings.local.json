@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__9d55801a-02eb-4f64-8329-6dcb9fee1f64__get_file_metadata",
+      "mcp__9d55801a-02eb-4f64-8329-6dcb9fee1f64__read_file_content",
+      "Bash(git -C /Users/kasey/Kiyo rev-parse --show-toplevel)",
+      "Bash(git -C /Users/kasey/Kiyo remote -v)",
+      "Bash(git ls-remote *)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'first commit *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(brew --version)",
+      "Bash(sw_vers)",
+      "Bash(git commit -m 'Godot 4 project scaffold: Ahalo island vertical slice foundation *)",
+      "Bash(git push *)"
+    ]
+  }
+}

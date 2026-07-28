@@ -1,0 +1,37 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/islands/ahalo.tscn" id="2_ahalo"]
+[ext_resource type="PackedScene" path="res://scenes/player/khione.tscn" id="3_khione"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.3, 0.55, 0.85, 1)
+sky_horizon_color = Color(0.76, 0.86, 0.95, 1)
+ground_bottom_color = Color(0.2, 0.3, 0.4, 1)
+ground_horizon_color = Color(0.76, 0.86, 0.95, 1)
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+shadow_enabled = true
+
+[node name="Ahalo" parent="." instance=ExtResource("2_ahalo")]
+
+[node name="Khione" parent="." instance=ExtResource("3_khione")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 30)
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
