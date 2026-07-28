@@ -34,9 +34,18 @@ func _build_island() -> void:
 	_add_mesh(_cylinder(5.5, 6.5, 1.0), Vector3(0, 2.8, 0), ROCK)
 
 func _build_water() -> void:
+	# Subdivided plane + shader: gentle waves, fresnel colour shift.
 	var plane := PlaneMesh.new()
 	plane.size = Vector2(600, 600)
-	_add_mesh(plane, Vector3(0, WATER_SURFACE_Y, 0), WATER, false)
+	plane.subdivide_width = 120
+	plane.subdivide_depth = 120
+	var mi := MeshInstance3D.new()
+	mi.mesh = plane
+	var sm := ShaderMaterial.new()
+	sm.shader = load("res://shaders/water.gdshader")
+	mi.material_override = sm
+	mi.position = Vector3(0, WATER_SURFACE_Y, 0)
+	add_child(mi)
 
 	# Invisible volume that tells the player she is in water.
 	var area := Area3D.new()

@@ -68,6 +68,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		var target := _closest_interactable()
 		if target:
 			target.interact(self)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			_click_interact()
 	for kind: String in VOCALS:
 		if event.is_action_pressed(kind):
 			if GameState.knows_vocal(kind):
@@ -96,6 +99,25 @@ func unregister_interactable(i: Interactable) -> void:
 func get_prompt_text() -> String:
 	var target := _closest_interactable()
 	return "[E]  " + target.prompt if target else ""
+
+func _click_interact() -> void:
+	# Ray from the camera through the screen centre; falls back to the nearest
+	# interactable so a click always behaves at least as well as pressing E.
+	var cam: Camera3D = rig.get_node("SpringArm/Camera")
+	var from := cam.global_position
+	var to := from - cam.global_transform.basis.z * 9.0
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = true
+	query.collide_with_bodies = false
+	query.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit and hit["collider"] is Interactable:
+		if global_position.distance_to(hit["collider"].global_position) <= 4.0:
+			hit["collider"].interact(self)
+			return
+	var target := _closest_interactable()
+	if target:
+		target.interact(self)
 
 func _closest_interactable() -> Interactable:
 	var best: Interactable = null

@@ -15,7 +15,15 @@
       "Bash(brew --version)",
       "Bash(sw_vers)",
       "Bash(git commit -m 'Godot 4 project scaffold: Ahalo island vertical slice foundation *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(brew install *)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --version)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path /Users/kasey/Kiyo)",
+      "Bash(grep -v \"^$\")",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 120)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --path /Users/kasey/Kiyo)",
+      "Bash(pkill -f \"Godot --path /Users/kasey/Kiyo\")",
+      "Bash(git commit -m 'Click-to-interact + first graphics polish pass *)"
     ]
   }
 }
