@@ -174,6 +174,8 @@ func _place_pickups() -> void:
 	_add_pickup(Vector3(0, 3.35, 0), "sun_shell", "Sun Shell", GOLD)
 	_add_pickup(Vector3(10, 0.4, 20), "coconut", "Coconut", COCONUT)
 	_add_pickup(Vector3(-18, 0.4, -8), "coconut", "Coconut", COCONUT)
+	_add_pickup(Vector3(-14, 0.4, 15), "coconut", "Coconut", COCONUT)
+	_add_pickup(Vector3(21, 0.4, -7), "coconut", "Coconut", COCONUT)
 
 func _on_water_body_entered(body: Node3D) -> void:
 	if body.is_in_group("player"):

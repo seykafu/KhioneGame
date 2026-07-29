@@ -8,6 +8,7 @@ const NAMES := {
 	"coconut": "Coconut",
 	"rusty_locket": "Rusty Locket",
 	"stranded_fish": "Stranded Fish",
+	"old_oar": "Old Oar",
 }
 
 var max_slots: int = 5

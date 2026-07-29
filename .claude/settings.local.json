@@ -51,7 +51,11 @@
       "Bash(echo \"exit: $?\")",
       "Bash(git commit -m 'Three Hollow Stones puzzle \\(Echo Cove\\) + first audio pass *)",
       "Bash(echo \"test exit: $?\")",
-      "Bash(git commit -m 'Audio identity: bespoke SFX set + music foundation with Suno-ready hooks *)"
+      "Bash(git commit -m 'Audio identity: bespoke SFX set + music foundation with Suno-ready hooks *)",
+      "Bash(pkill -f \"Godot\")",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_seesaw.tscn)",
+      "Bash(echo \"seesaw test exit: $?\")",
+      "Bash(git commit -m 'Driftwood Seesaw puzzle \\(Beat 2\\) + music tracks *)"
     ]
   }
 }

@@ -16,6 +16,9 @@ const SOUNDS := {
 	"stone_slide": "res://assets/audio/stone_slide.wav",
 	"gull": "res://assets/audio/gull.wav",
 	"ocean_loop": "res://assets/audio/ocean_loop.wav",
+	"coconut_thunk": "res://assets/audio/coconut_thunk.wav",
+	"wood_creak": "res://assets/audio/wood_creak.wav",
+	"gate_open": "res://assets/audio/gate_open.wav",
 }
 const POOL_SIZE := 10
 
