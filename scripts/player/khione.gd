@@ -24,9 +24,34 @@ var _water_zones := 0
 var _water_surface := 0.0
 var _nearby: Array = []
 var _spawn := Vector3.ZERO
+var anim: AnimationPlayer = null
+var _anim_map := {}
 
 func _ready() -> void:
 	_spawn = global_position
+	_setup_animations()
+
+func _setup_animations() -> void:
+	# The imported GLB prefixes animation names ("AnimalArmature|...|Walk"),
+	# so map by suffix and force looping on the locomotion clips.
+	anim = body_visual.find_child("AnimationPlayer", true, false)
+	if anim == null:
+		return
+	for n in anim.get_animation_list():
+		for key in ["Idle_Eating", "Jump_Start", "Jump_Loop", "Idle", "Walk", "Run", "Headbutt", "Death"]:
+			if n.ends_with(key) and not _anim_map.has(key):
+				_anim_map[key] = n
+		if n.ends_with("Idle") or n.ends_with("Walk") or n.ends_with("Run") or n.ends_with("Jump_Loop"):
+			anim.get_animation(n).loop_mode = Animation.LOOP_LINEAR
+	_play_anim("Idle")
+
+func _play_anim(key: String, blend := 0.25, speed := 1.0) -> void:
+	if anim == null or not _anim_map.has(key):
+		return
+	var anim_name: String = _anim_map[key]
+	if anim.current_animation == anim_name:
+		return
+	anim.play(anim_name, blend, speed)
 
 func _physics_process(delta: float) -> void:
 	var input_vec := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
@@ -59,9 +84,27 @@ func _physics_process(delta: float) -> void:
 		var target_yaw := atan2(dir.x, dir.z)
 		body_visual.rotation.y = lerp_angle(body_visual.rotation.y, target_yaw, TURN_SPEED * delta)
 
+	_update_anim(swimming, dir.length_squared() > 0.01)
+
 	if global_position.y < -25.0:
 		global_position = _spawn
 		velocity = Vector3.ZERO
+
+func _update_anim(swimming: bool, moving: bool) -> void:
+	if swimming:
+		_play_anim("Walk", 0.3, 0.7)
+	elif not is_on_floor():
+		if velocity.y > 1.0:
+			_play_anim("Jump_Start", 0.1)
+		else:
+			_play_anim("Jump_Loop", 0.2)
+	elif moving:
+		if Input.is_action_pressed("run"):
+			_play_anim("Run")
+		else:
+			_play_anim("Walk")
+	else:
+		_play_anim("Idle", 0.4)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):

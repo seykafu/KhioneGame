@@ -3,8 +3,13 @@ extends Node
 
 signal changed
 
+const NAMES := {"sun_shell": "Sun Shell", "coconut": "Coconut"}
+
 var max_slots: int = 5
 var items: Array[String] = []
+
+func display_name(id: String) -> String:
+	return NAMES.get(id, id.capitalize())
 
 func add_item(id: String) -> bool:
 	if items.size() >= max_slots:

@@ -23,7 +23,26 @@
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 120)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --path /Users/kasey/Kiyo)",
       "Bash(pkill -f \"Godot --path /Users/kasey/Kiyo\")",
-      "Bash(git commit -m 'Click-to-interact + first graphics polish pass *)"
+      "Bash(git commit -m 'Click-to-interact + first graphics polish pass *)",
+      "WebFetch(domain:kenney.nl)",
+      "WebSearch",
+      "WebFetch(domain:poly.pizza)",
+      "Bash(curl -sL \"https://poly.pizza/m/qKICY6xla2\")",
+      "Bash(grep -oiE '\\(storage|download|cdn\\)[^\"]{0,120}')",
+      "Bash(mkdir -p /private/tmp/claude-501/-Users-kasey-Kiyo/85647435-3c34-48fc-a3e2-ad954bf95321/scratchpad/assets)",
+      "Bash(curl -sL -o cat.glb \"https://static.poly.pizza/67f5e3fe-37ee-4c86-95c8-d269d8c9f8ba.glb\")",
+      "Bash(curl -sL -o kenney_nature-kit.zip \"https://kenney.nl/media/pages/assets/nature-kit/37ac38a37b-1677698939/kenney_nature-kit.zip\")",
+      "Bash(wait)",
+      "Bash(unzip -q -o kenney_nature-kit.zip -d nature-kit)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 150)",
+      "Bash(screencapture -x __TRACKED_VAR__/game_shot.png)",
+      "Bash(osascript -e 'tell application \"System Events\" to set frontmost of \\(first process whose name contains \"Godot\"\\) to true')",
+      "Bash(screencapture -x __TRACKED_VAR__/game_shot2.png)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --script tools/measure_assets.gd)",
+      "Bash(screencapture -x __TRACKED_VAR__/game_shot3.png)",
+      "Bash(git commit -m 'Real art pass: Quaternius cat + Kenney nature kit, riddle chain design *)"
     ]
   }
 }

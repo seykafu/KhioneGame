@@ -1,66 +1,24 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/khione.gd" id="1_kh"]
 [ext_resource type="Script" path="res://scripts/camera/camera_rig.gd" id="2_cam"]
+[ext_resource type="PackedScene" path="res://assets/characters/khione_cat.glb" id="3_cat"]
 
 [sub_resource type="CapsuleShape3D" id="col_shape"]
-radius = 0.3
-height = 0.9
-
-[sub_resource type="CapsuleMesh" id="torso_mesh"]
-radius = 0.28
-height = 0.9
-
-[sub_resource type="SphereMesh" id="head_mesh"]
-radius = 0.2
-height = 0.4
-
-[sub_resource type="SphereMesh" id="tail_mesh"]
-radius = 0.09
-height = 0.18
-
-[sub_resource type="CylinderMesh" id="ear_mesh"]
-top_radius = 0.0
-bottom_radius = 0.06
-height = 0.16
-
-[sub_resource type="StandardMaterial3D" id="fur_mat"]
-albedo_color = Color(0.96, 0.95, 0.9, 1)
-roughness = 1.0
+radius = 0.25
+height = 0.7
 
 [node name="Khione" type="CharacterBody3D" groups=["player"]]
 script = ExtResource("1_kh")
 
 [node name="Collision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 shape = SubResource("col_shape")
 
 [node name="Body" type="Node3D" parent="."]
 
-[node name="Torso" type="MeshInstance3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.4, 0)
-mesh = SubResource("torso_mesh")
-material_override = SubResource("fur_mat")
-
-[node name="Head" type="MeshInstance3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0.42)
-mesh = SubResource("head_mesh")
-material_override = SubResource("fur_mat")
-
-[node name="EarL" type="MeshInstance3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.82, 0.42)
-mesh = SubResource("ear_mesh")
-material_override = SubResource("fur_mat")
-
-[node name="EarR" type="MeshInstance3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.82, 0.42)
-mesh = SubResource("ear_mesh")
-material_override = SubResource("fur_mat")
-
-[node name="Tail" type="MeshInstance3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.45)
-mesh = SubResource("tail_mesh")
-material_override = SubResource("fur_mat")
+[node name="CatModel" parent="Body" instance=ExtResource("3_cat")]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 0, 0)
 
 [node name="CameraRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)

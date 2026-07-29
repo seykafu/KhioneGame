@@ -5,14 +5,39 @@ extends Node3D
 
 const SAND := Color(0.93, 0.85, 0.63)
 const GRASS := Color(0.42, 0.7, 0.34)
-const TRUNK := Color(0.45, 0.32, 0.2)
-const LEAF := Color(0.24, 0.55, 0.28)
 const ROCK := Color(0.55, 0.55, 0.58)
-const WATER := Color(0.12, 0.42, 0.65, 0.75)
 const GOLD := Color(0.95, 0.78, 0.25)
 const COCONUT := Color(0.4, 0.28, 0.16)
 
 const WATER_SURFACE_Y := -0.4
+
+const PALM_PATHS := [
+	"res://assets/nature/tree_palm.glb",
+	"res://assets/nature/tree_palmBend.glb",
+	"res://assets/nature/tree_palmDetailedShort.glb",
+	"res://assets/nature/tree_palmDetailedTall.glb",
+	"res://assets/nature/tree_palmShort.glb",
+	"res://assets/nature/tree_palmTall.glb",
+]
+const BIG_ROCK_PATHS := [
+	"res://assets/nature/rock_largeA.glb",
+	"res://assets/nature/rock_largeB.glb",
+	"res://assets/nature/rock_largeC.glb",
+	"res://assets/nature/rock_tallA.glb",
+	"res://assets/nature/rock_tallB.glb",
+]
+const SMALL_ROCK_PATHS := [
+	"res://assets/nature/rock_smallA.glb",
+	"res://assets/nature/rock_smallB.glb",
+	"res://assets/nature/rock_smallC.glb",
+]
+const FLORA_PATHS := [
+	"res://assets/nature/grass.glb",
+	"res://assets/nature/grass_large.glb",
+	"res://assets/nature/flower_redA.glb",
+	"res://assets/nature/flower_yellowA.glb",
+	"res://assets/nature/flower_purpleA.glb",
+]
 
 var _materials := {}
 
@@ -21,6 +46,7 @@ func _ready() -> void:
 	_build_water()
 	_scatter_trees()
 	_scatter_rocks()
+	_scatter_flora()
 	_place_pickups()
 
 func _build_island() -> void:
@@ -62,40 +88,86 @@ func _build_water() -> void:
 func _scatter_trees() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 20260728
+	var palms: Array = []
+	for p: String in PALM_PATHS:
+		palms.append(load(p))
 	for i in 26:
 		var r := rng.randf_range(15.0, 27.0)
 		var a := rng.randf_range(0.0, TAU)
-		var x := cos(a) * r
-		var z := sin(a) * r
-		var h := rng.randf_range(2.2, 3.4)
-		_add_mesh(_cylinder(0.16, 0.22, h), Vector3(x, 0.3 + h * 0.5, z), TRUNK)
-		# Canopies are solid so Khione can hop from tree to tree.
-		var canopy := SphereMesh.new()
-		var cr := rng.randf_range(1.0, 1.5)
-		canopy.radius = cr
-		canopy.height = cr * 1.6
-		_add_mesh(canopy, Vector3(x, 0.3 + h + cr * 0.4, z), LEAF)
+		var pos := Vector3(cos(a) * r, 0.3, sin(a) * r)
+		var s := rng.randf_range(2.8, 4.0)
+		_add_scene(palms[rng.randi_range(0, palms.size() - 1)], pos,
+				rng.randf_range(0.0, TAU), s)
+		# Trunk collider sized to the palm; climbable canopies return with real level design.
+		var sb := StaticBody3D.new()
+		var cs := CollisionShape3D.new()
+		var cyl := CylinderShape3D.new()
+		cyl.radius = 0.12 * s
+		cyl.height = 1.1 * s
+		cs.shape = cyl
+		cs.position = Vector3(0, 0.55 * s, 0)
+		sb.add_child(cs)
+		sb.position = pos
+		add_child(sb)
 
 func _scatter_rocks() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 4242
+	var big: Array = []
+	for p: String in BIG_ROCK_PATHS:
+		big.append(load(p))
+	var small: Array = []
+	for p: String in SMALL_ROCK_PATHS:
+		small.append(load(p))
 	# Beach rocks.
-	for i in 12:
+	for i in 14:
 		var r := rng.randf_range(31.0, 39.0)
 		var a := rng.randf_range(0.0, TAU)
-		var rr := rng.randf_range(0.4, 1.0)
-		var rock := SphereMesh.new()
-		rock.radius = rr
-		rock.height = rr * 1.2
-		_add_mesh(rock, Vector3(cos(a) * r, 0.15, sin(a) * r), ROCK)
+		var pool: Array = big if rng.randf() < 0.35 else small
+		_add_scene(pool[rng.randi_range(0, pool.size() - 1)],
+				Vector3(cos(a) * r, 0.0, sin(a) * r),
+				rng.randf_range(0.0, TAU), rng.randf_range(1.5, 2.5), true)
 	# Sea rocks poking above the surface — swim out and climb on.
 	for i in 5:
 		var r := rng.randf_range(43.0, 50.0)
 		var a := rng.randf_range(0.0, TAU)
-		var rock := SphereMesh.new()
-		rock.radius = 1.3
-		rock.height = 2.2
-		_add_mesh(rock, Vector3(cos(a) * r, -0.5, sin(a) * r), ROCK)
+		_add_scene(big[rng.randi_range(0, big.size() - 1)],
+				Vector3(cos(a) * r, -0.8, sin(a) * r),
+				rng.randf_range(0.0, TAU), rng.randf_range(3.0, 4.0), true)
+
+func _scatter_flora() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 777
+	var flora: Array = []
+	for p: String in FLORA_PATHS:
+		flora.append(load(p))
+	for i in 80:
+		var r := rng.randf_range(13.5, 28.5)
+		var a := rng.randf_range(0.0, TAU)
+		_add_scene(flora[rng.randi_range(0, flora.size() - 1)],
+				Vector3(cos(a) * r, 0.3, sin(a) * r),
+				rng.randf_range(0.0, TAU), rng.randf_range(2.0, 3.0))
+
+func _add_scene(scene: PackedScene, pos: Vector3, yrot: float, s: float, collide := false) -> Node3D:
+	var n: Node3D = scene.instantiate()
+	n.position = pos
+	n.rotation.y = yrot
+	n.scale = Vector3(s, s, s)
+	add_child(n)
+	if collide:
+		var mi := _first_mesh_instance(n)
+		if mi:
+			mi.create_trimesh_collision()
+	return n
+
+func _first_mesh_instance(n: Node) -> MeshInstance3D:
+	if n is MeshInstance3D:
+		return n
+	for c in n.get_children():
+		var r := _first_mesh_instance(c)
+		if r:
+			return r
+	return null
 
 func _place_pickups() -> void:
 	# A reward atop the hill and coconuts under the palms, to exercise the inventory.

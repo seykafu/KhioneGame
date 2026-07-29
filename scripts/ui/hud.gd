@@ -55,7 +55,7 @@ func _build_slots() -> void:
 func _refresh_slots() -> void:
 	for i in _slots.size():
 		var lbl: Label = _slots[i].get_node("ItemLabel")
-		lbl.text = Inventory.items[i] if i < Inventory.items.size() else ""
+		lbl.text = Inventory.display_name(Inventory.items[i]) if i < Inventory.items.size() else ""
 
 func _on_vocal(kind: String) -> void:
 	vocal_label.text = VOCAL_TEXT.get(kind, "")
