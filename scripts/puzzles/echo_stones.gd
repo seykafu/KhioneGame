@@ -218,6 +218,7 @@ func open_carving() -> void:
 	_carving_panel.visible = true
 	_opened_frame = Engine.get_process_frames()
 	get_tree().paused = true
+	Sfx.play("stone_slide", 1.0, 0.05, -6.0)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -228,6 +229,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel"):
 		_carving_panel.visible = false
 		get_tree().paused = false
+		Sfx.play("stone_slide", 1.35, 0.05, -12.0)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		get_viewport().set_input_as_handled()
 

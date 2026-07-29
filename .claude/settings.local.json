@@ -49,7 +49,9 @@
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --script tools/test_echo_stones.gd)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_echo_stones.tscn)",
       "Bash(echo \"exit: $?\")",
-      "Bash(git commit -m 'Three Hollow Stones puzzle \\(Echo Cove\\) + first audio pass *)"
+      "Bash(git commit -m 'Three Hollow Stones puzzle \\(Echo Cove\\) + first audio pass *)",
+      "Bash(echo \"test exit: $?\")",
+      "Bash(git commit -m 'Audio identity: bespoke SFX set + music foundation with Suno-ready hooks *)"
     ]
   }
 }

@@ -28,6 +28,9 @@ var _spawn := Vector3.ZERO
 var anim: AnimationPlayer = null
 var _anim_map := {}
 var _meow_sfx: AudioStreamPlayer3D
+var _step_accum := 0.0
+var _was_on_floor := true
+var _was_swimming := false
 
 func _ready() -> void:
 	_spawn = global_position
@@ -85,6 +88,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= GRAVITY * delta
 		if controls_enabled and is_on_floor() and Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
+			Sfx.play("jump_whoosh", 1.0, 0.08, -10.0)
 
 	move_and_slide()
 
@@ -93,10 +97,36 @@ func _physics_process(delta: float) -> void:
 		body_visual.rotation.y = lerp_angle(body_visual.rotation.y, target_yaw, TURN_SPEED * delta)
 
 	_update_anim(swimming, dir.length_squared() > 0.01)
+	_update_sfx(delta, swimming, dir.length_squared() > 0.01)
 
 	if global_position.y < -25.0:
 		global_position = _spawn
 		velocity = Vector3.ZERO
+
+func _update_sfx(delta: float, swimming: bool, moving: bool) -> void:
+	if swimming and not _was_swimming:
+		Sfx.play("splash", 1.0, 0.08, -4.0)
+	elif _was_swimming and not swimming:
+		Sfx.play("splash", 1.3, 0.08, -12.0)
+	if not _was_on_floor and is_on_floor() and not swimming:
+		Sfx.play("land", 1.0, 0.1, -10.0)
+	if swimming and moving:
+		_step_accum += delta
+		if _step_accum >= 0.62:
+			_step_accum = 0.0
+			Sfx.play("swim_stroke", 1.0, 0.1, -8.0)
+	elif is_on_floor() and moving:
+		_step_accum += delta
+		var interval := 0.22 if Input.is_action_pressed("run") else 0.34
+		if _step_accum >= interval:
+			_step_accum = 0.0
+			# Grass plateau sits above y=0.2; everything lower is beach sand.
+			var snd := "paw_grass" if global_position.y > 0.2 else "paw_sand"
+			Sfx.play(snd, 1.0, 0.12, -14.0)
+	else:
+		_step_accum = 0.25
+	_was_swimming = swimming
+	_was_on_floor = is_on_floor()
 
 func _update_anim(swimming: bool, moving: bool) -> void:
 	if swimming:

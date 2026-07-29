@@ -73,11 +73,13 @@ func _show_letter() -> void:
 	letter_panel.visible = true
 	get_tree().paused = true
 	prompt.text = ""
+	Sfx.play("paper_open", 1.0, 0.05, -6.0)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if letter_panel.visible and (event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel")):
 		letter_panel.visible = false
 		get_tree().paused = false
+		Sfx.play("paper_close", 1.0, 0.05, -8.0)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		get_viewport().set_input_as_handled()

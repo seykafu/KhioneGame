@@ -44,6 +44,7 @@ func _run() -> void:
 	player.controls_enabled = false
 	player.rig.set_process_unhandled_input(false)
 	get_node("../HUD").visible = false
+	Music.play("intro", 1.0)
 
 	cam = Camera3D.new()
 	add_child(cam)
@@ -112,6 +113,7 @@ func _finish() -> void:
 	hud.visible = true
 	hud.flash_message("Reach the bottle on the south beach…", 6.0)
 	GameState.set_flag("intro_done")
+	Music.play("ahalo", 3.0)
 
 # --- shots ---
 
