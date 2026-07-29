@@ -25,6 +25,7 @@ GameState="*res://scripts/systems/game_state.gd"
 Inventory="*res://scripts/systems/inventory.gd"
 Sfx="*res://scripts/systems/sfx.gd"
 Music="*res://scripts/systems/music.gd"
+Settings="*res://scripts/systems/settings.gd"
 
 [display]
 

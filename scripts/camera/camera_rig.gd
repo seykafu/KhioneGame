@@ -30,8 +30,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if get_tree().paused:
 		return
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotation.y -= event.relative.x * mouse_sensitivity
-		_pitch = clampf(_pitch - event.relative.y * mouse_sensitivity, min_pitch, max_pitch)
+		var sens := mouse_sensitivity * Settings.mouse_sensitivity
+		rotation.y -= event.relative.x * sens
+		_pitch = clampf(_pitch - event.relative.y * sens, min_pitch, max_pitch)
 		arm.rotation.x = _pitch
 	elif event.is_action_pressed("ui_cancel"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

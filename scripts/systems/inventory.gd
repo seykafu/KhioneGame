@@ -40,3 +40,8 @@ func has_item(id: String) -> bool:
 func upgrade_slots(new_max: int) -> void:
 	max_slots = new_max
 	changed.emit()
+
+func reset() -> void:
+	items.clear()
+	max_slots = 5
+	changed.emit()

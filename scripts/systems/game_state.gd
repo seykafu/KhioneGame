@@ -22,3 +22,7 @@ func set_flag(flag: String, value: bool = true) -> void:
 
 func get_flag(flag: String) -> bool:
 	return flags.get(flag, false)
+
+func reset() -> void:
+	flags.clear()
+	known_vocals = ["meow"]
