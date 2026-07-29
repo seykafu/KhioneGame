@@ -31,6 +31,10 @@ var _meow_sfx: AudioStreamPlayer3D
 var _step_accum := 0.0
 var _was_on_floor := true
 var _was_swimming := false
+var _idle_time := 0.0
+var _prev_yaw := 0.0
+var _step_side := 1.0
+var _sand_particles: CPUParticles3D
 
 func _ready() -> void:
 	_spawn = global_position
@@ -38,6 +42,27 @@ func _ready() -> void:
 	_meow_sfx = AudioStreamPlayer3D.new()
 	_meow_sfx.stream = load("res://assets/audio/meow.wav")
 	add_child(_meow_sfx)
+	_build_sand_particles()
+
+func _build_sand_particles() -> void:
+	_sand_particles = CPUParticles3D.new()
+	_sand_particles.amount = 14
+	_sand_particles.lifetime = 0.5
+	_sand_particles.emitting = false
+	var grain := SphereMesh.new()
+	grain.radius = 0.03
+	grain.height = 0.06
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.88, 0.8, 0.6)
+	grain.material = m
+	_sand_particles.mesh = grain
+	_sand_particles.direction = Vector3(0, 1, 0)
+	_sand_particles.spread = 40.0
+	_sand_particles.initial_velocity_min = 0.5
+	_sand_particles.initial_velocity_max = 1.3
+	_sand_particles.gravity = Vector3(0, -7, 0)
+	_sand_particles.position = Vector3(0, 0.05, 0)
+	add_child(_sand_particles)
 
 func _setup_animations() -> void:
 	# The imported GLB prefixes animation names ("AnimalArmature|...|Walk"),
@@ -89,15 +114,27 @@ func _physics_process(delta: float) -> void:
 		if controls_enabled and is_on_floor() and Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
 			Sfx.play("jump_whoosh", 1.0, 0.08, -10.0)
+			_stretch_jump()
 
 	move_and_slide()
 
-	if dir.length_squared() > 0.01:
+	var moving := dir.length_squared() > 0.01
+	if moving:
 		var target_yaw := atan2(dir.x, dir.z)
 		body_visual.rotation.y = lerp_angle(body_visual.rotation.y, target_yaw, TURN_SPEED * delta)
 
-	_update_anim(swimming, dir.length_squared() > 0.01)
-	_update_sfx(delta, swimming, dir.length_squared() > 0.01)
+	# Lean into turns like a real cat.
+	var yaw_delta := wrapf(body_visual.rotation.y - _prev_yaw, -PI, PI)
+	_prev_yaw = body_visual.rotation.y
+	var target_roll := clampf(-yaw_delta * 6.0, -0.25, 0.25)
+	body_visual.rotation.z = lerpf(body_visual.rotation.z, target_roll, 8.0 * delta)
+
+	_idle_time = 0.0 if (moving or swimming or not is_on_floor()) else _idle_time + delta
+	_sand_particles.emitting = not swimming and is_on_floor() and moving \
+			and Input.is_action_pressed("run") and global_position.y <= 0.2
+
+	_update_anim(swimming, moving)
+	_update_sfx(delta, swimming, moving)
 
 	if global_position.y < -25.0:
 		global_position = _spawn
@@ -110,19 +147,23 @@ func _update_sfx(delta: float, swimming: bool, moving: bool) -> void:
 		Sfx.play("splash", 1.3, 0.08, -12.0)
 	if not _was_on_floor and is_on_floor() and not swimming:
 		Sfx.play("land", 1.0, 0.1, -10.0)
+		_squash_land()
 	if swimming and moving:
 		_step_accum += delta
 		if _step_accum >= 0.62:
 			_step_accum = 0.0
 			Sfx.play("swim_stroke", 1.0, 0.1, -8.0)
+			_spawn_splash_ring()
 	elif is_on_floor() and moving:
 		_step_accum += delta
 		var interval := 0.22 if Input.is_action_pressed("run") else 0.34
 		if _step_accum >= interval:
 			_step_accum = 0.0
 			# Grass plateau sits above y=0.2; everything lower is beach sand.
-			var snd := "paw_grass" if global_position.y > 0.2 else "paw_sand"
-			Sfx.play(snd, 1.0, 0.12, -14.0)
+			var on_grass := global_position.y > 0.2
+			Sfx.play("paw_grass" if on_grass else "paw_sand", 1.0, 0.12, -14.0)
+			if not on_grass:
+				_spawn_pawprint()
 	else:
 		_step_accum = 0.25
 	_was_swimming = swimming
@@ -141,6 +182,8 @@ func _update_anim(swimming: bool, moving: bool) -> void:
 			_play_anim("Run")
 		else:
 			_play_anim("Walk")
+	elif _idle_time > 7.0:
+		_play_anim("Idle_Eating", 0.6)  # grooming/nibbling when left alone
 	else:
 		_play_anim("Idle", 0.4)
 
@@ -159,6 +202,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if GameState.knows_vocal(kind):
 				if kind == "meow":
 					_meow_sfx.play()
+					_whisker_sense()
 				vocalized.emit(kind)
 				GameState.vocal_used.emit(kind)
 			else:
@@ -184,6 +228,100 @@ func unregister_interactable(i: Interactable) -> void:
 func get_prompt_text() -> String:
 	var target := _closest_interactable()
 	return "[E]  " + target.prompt if target else ""
+
+# --- charm: squash & stretch, pawprints, splash rings ---
+
+func _stretch_jump() -> void:
+	var t := create_tween()
+	t.tween_property(body_visual, "scale", Vector3(0.94, 1.14, 0.94), 0.1)
+	t.tween_property(body_visual, "scale", Vector3.ONE, 0.18)
+
+func _squash_land() -> void:
+	var t := create_tween()
+	t.tween_property(body_visual, "scale", Vector3(1.12, 0.85, 1.12), 0.08)
+	t.tween_property(body_visual, "scale", Vector3.ONE, 0.2)
+
+func _spawn_pawprint() -> void:
+	var paw := MeshInstance3D.new()
+	var quad := PlaneMesh.new()
+	quad.size = Vector2(0.09, 0.13)
+	paw.mesh = quad
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.74, 0.64, 0.46)
+	m.roughness = 1.0
+	paw.material_override = m
+	_step_side *= -1.0
+	get_tree().current_scene.add_child(paw)
+	var side: Vector3 = body_visual.global_transform.basis.x * 0.09 * _step_side
+	paw.global_position = global_position + side + Vector3(0, 0.02, 0)
+	paw.rotation.y = body_visual.global_rotation.y
+	var t := paw.create_tween()
+	t.tween_interval(6.0)
+	t.tween_property(paw, "transparency", 1.0, 3.0)
+	t.tween_callback(paw.queue_free)
+
+func _spawn_splash_ring() -> void:
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.42
+	torus.outer_radius = 0.5
+	ring.mesh = torus
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.9, 0.97, 1.0, 0.7)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring.material_override = m
+	get_tree().current_scene.add_child(ring)
+	ring.global_position = Vector3(global_position.x, _water_surface + 0.02, global_position.z)
+	ring.scale = Vector3(0.5, 0.3, 0.5)
+	var t := ring.create_tween().set_parallel(true)
+	t.tween_property(ring, "scale", Vector3(2.2, 0.3, 2.2), 1.0)
+	t.tween_property(ring, "transparency", 1.0, 1.0)
+	t.chain().tween_callback(ring.queue_free)
+
+# --- Whisker Sense: a meow ripples outward and the world answers ---
+
+func _whisker_sense() -> void:
+	Sfx.play("whisker_shimmer", 1.0, 0.05, -12.0)
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.9
+	torus.outer_radius = 1.0
+	ring.mesh = torus
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.65, 0.9, 1.0, 0.45)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring.material_override = m
+	get_tree().current_scene.add_child(ring)
+	ring.global_position = global_position + Vector3(0, 0.15, 0)
+	ring.scale = Vector3(0.4, 0.25, 0.4)
+	var t := ring.create_tween().set_parallel(true)
+	t.tween_property(ring, "scale", Vector3(11.0, 0.25, 11.0), 0.9) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	t.tween_property(ring, "transparency", 1.0, 0.9)
+	t.chain().tween_callback(ring.queue_free)
+	for node in get_tree().get_nodes_in_group("interactable"):
+		if node is Node3D and global_position.distance_to(node.global_position) <= 12.0:
+			_spawn_glint(node.global_position)
+
+func _spawn_glint(pos: Vector3) -> void:
+	var g := MeshInstance3D.new()
+	var s := SphereMesh.new()
+	s.radius = 0.09
+	s.height = 0.18
+	g.mesh = s
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(1.0, 0.9, 0.5, 0.9)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	g.material_override = m
+	get_tree().current_scene.add_child(g)
+	g.global_position = pos + Vector3(0, 0.5, 0)
+	var t := g.create_tween().set_parallel(true)
+	t.tween_property(g, "position:y", g.position.y + 0.5, 1.1)
+	t.tween_property(g, "transparency", 1.0, 1.1)
+	t.chain().tween_callback(g.queue_free)
 
 func _click_interact() -> void:
 	# Ray from the camera through the screen centre; falls back to the nearest

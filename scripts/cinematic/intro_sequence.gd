@@ -1,13 +1,17 @@
 extends Node
-## Opening cinematic: establishing orbit of Ahalo, narrated premise, dolly to
-## Khione, reveal of the message bottle, then hand control to the player
-## facing the south beach. Skippable with Space / E / Esc.
+## Title screen + opening cinematic.
+## Boots into a title state: slow aerial orbit of Ahalo under the game title,
+## intro music playing. Enter/Space/E begins the narrated cinematic
+## (establishing orbit, Khione on the beach, bottle reveal, startle), which
+## hands control to the player facing the south beach. Cinematic is skippable.
 
 const NARRATION_A1 := "Once upon a time, on a small and lonely island called Ahalo, there lived a small white Persian cat named Khione."
 const NARRATION_A2 := "She knew no one, and no one knew her. She hunted fish, ate berries, and drank from the river that crossed the island."
 const NARRATION_B1 := "She cured her boredom by chasing snails along the beach, and by leaping from branch to branch like a monkey."
 const NARRATION_C1 := "But one morning, the tide brought something that had never come before…"
 const NARRATION_D1 := "A bottle — with a letter inside."
+
+enum State { TITLE, CINEMATIC, DONE }
 
 var cam: Camera3D
 var player: CharacterBody3D
@@ -18,7 +22,12 @@ var subtitle: Label
 var skip_hint: Label
 var bar_top: ColorRect
 var bar_bottom: ColorRect
+var title_label: Label
+var title_sub: Label
+var title_prompt: Label
 
+var _state := State.TITLE
+var _title_angle := 3.75
 var _tween: Tween
 var _skipped := false
 var _finished := false
@@ -31,28 +40,53 @@ func _ready() -> void:
 	if player == null or bottle == null:
 		_finish()
 		return
-	_run()
-
-func _unhandled_input(event: InputEvent) -> void:
-	if _finished:
-		return
-	if event.is_action_pressed("interact") or event.is_action_pressed("jump") \
-			or event.is_action_pressed("ui_cancel"):
-		_skipped = true
-
-func _run() -> void:
 	player.controls_enabled = false
 	player.rig.set_process_unhandled_input(false)
 	get_node("../HUD").visible = false
-	Music.play("intro", 1.0)
-
 	cam = Camera3D.new()
 	add_child(cam)
 	cam.current = true
+	Music.play("intro", 1.5)
+	_fade_screen(0.0, 1.6)
 
-	_orbit_step(0.0)
-	_fade_screen(0.0, 1.8)
+func _process(delta: float) -> void:
+	if _state == State.TITLE and cam:
+		_title_angle += delta * 0.06
+		cam.global_position = Vector3(cos(_title_angle) * 62.0, 21.0, sin(_title_angle) * 62.0)
+		cam.look_at(Vector3(0, 3, 0))
 
+func _unhandled_input(event: InputEvent) -> void:
+	if _state == State.TITLE:
+		var clicked: bool = event is InputEventMouseButton and event.is_pressed()
+		if clicked or event.is_action_pressed("interact") or event.is_action_pressed("jump") \
+				or event.is_action_pressed("ui_accept"):
+			_start_cinematic()
+	elif _state == State.CINEMATIC:
+		if event.is_action_pressed("interact") or event.is_action_pressed("jump") \
+				or event.is_action_pressed("ui_cancel"):
+			_skipped = true
+
+func _start_cinematic() -> void:
+	if _state != State.TITLE:
+		return
+	_state = State.CINEMATIC
+	Sfx.play("pickup_chime", 0.8, 0.0, -12.0)
+	var t := create_tween().set_parallel(true)
+	for lbl: Label in [title_label, title_sub, title_prompt]:
+		t.tween_property(lbl, "modulate:a", 0.0, 0.7)
+	skip_hint.visible = true
+	_run()
+
+## Used by headless tests to blast through title + cinematic instantly.
+func debug_fast_start() -> void:
+	_skipped = true
+	if _state == State.TITLE:
+		_state = State.CINEMATIC
+		for lbl: Label in [title_label, title_sub, title_prompt]:
+			lbl.modulate.a = 0.0
+		_run()
+
+func _run() -> void:
 	# Shot A — slow orbit around the island.
 	_shot_orbit(9.6)
 	_narrate(NARRATION_A1)
@@ -98,6 +132,7 @@ func _finish() -> void:
 	if _finished:
 		return
 	_finished = true
+	_state = State.DONE
 	_kill_tween()
 	ui_layer.visible = false
 	if is_instance_valid(player):
@@ -178,6 +213,7 @@ func _build_ui() -> void:
 
 	skip_hint = Label.new()
 	skip_hint.text = "Space — skip"
+	skip_hint.visible = false
 	skip_hint.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	skip_hint.offset_left = -220.0
 	skip_hint.offset_top = 30.0
@@ -188,6 +224,33 @@ func _build_ui() -> void:
 	skip_hint.add_theme_font_size_override("font_size", 16)
 	skip_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui_layer.add_child(skip_hint)
+
+	title_label = _title_text("K H I O N E", 96, -170, -40)
+	title_label.add_theme_constant_override("outline_size", 18)
+	title_sub = _title_text("a little cat.  ten islands.  one letter.", 24, -30, 20)
+	title_sub.modulate.a = 0.85
+	title_prompt = _title_text("— press Enter —", 19, 150, 190)
+	var blink := create_tween().set_loops()
+	blink.tween_property(title_prompt, "modulate:a", 0.35, 0.9)
+	blink.tween_property(title_prompt, "modulate:a", 1.0, 0.9)
+
+func _title_text(text: String, size: int, top: float, bottom: float) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.anchor_left = 0.0
+	lbl.anchor_right = 1.0
+	lbl.anchor_top = 0.5
+	lbl.anchor_bottom = 0.5
+	lbl.offset_top = top
+	lbl.offset_bottom = bottom
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.add_theme_font_size_override("font_size", size)
+	lbl.add_theme_color_override("font_color", Color(0.97, 0.94, 0.85))
+	lbl.add_theme_color_override("font_outline_color", Color(0.16, 0.11, 0.07))
+	lbl.add_theme_constant_override("outline_size", 10)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_layer.add_child(lbl)
+	return lbl
 
 func _make_bar(preset: int) -> ColorRect:
 	var bar := ColorRect.new()

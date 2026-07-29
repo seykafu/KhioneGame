@@ -13,7 +13,7 @@ func _run() -> void:
 	get_tree().root.add_child(main)
 	for i in 5:
 		await get_tree().process_frame
-	main.get_node("IntroSequence")._skipped = true
+	main.get_node("IntroSequence").debug_fast_start()
 	for i in 20:
 		await get_tree().process_frame
 

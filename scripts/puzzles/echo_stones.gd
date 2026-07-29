@@ -55,7 +55,7 @@ class SpiralArt:
 			var ang := t * 3.0 * TAU
 			var r := (6.0 + 62.0 * t) * s
 			pts.append(c + Vector2(cos(ang), sin(ang)) * r)
-		draw_polyline(pts, Color(0.92, 0.88, 0.78), 3.5, true)
+		draw_polyline(pts, Color(0.42, 0.32, 0.2), 3.5, true)
 
 func _ready() -> void:
 	# ALWAYS so the carving panel can un-pause itself; gameplay reactions
@@ -189,6 +189,8 @@ func _build_ui() -> void:
 	_ui_layer.layer = 6
 	add_child(_ui_layer)
 	_carving_panel = PanelContainer.new()
+	_carving_panel.add_theme_stylebox_override("panel",
+			preload("res://scripts/ui/hud.gd").parchment_style())
 	_carving_panel.visible = false
 	_carving_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_carving_panel.offset_left = -350.0

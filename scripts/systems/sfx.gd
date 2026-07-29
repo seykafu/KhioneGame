@@ -19,6 +19,7 @@ const SOUNDS := {
 	"coconut_thunk": "res://assets/audio/coconut_thunk.wav",
 	"wood_creak": "res://assets/audio/wood_creak.wav",
 	"gate_open": "res://assets/audio/gate_open.wav",
+	"whisker_shimmer": "res://assets/audio/whisker_shimmer.wav",
 }
 const POOL_SIZE := 10
 

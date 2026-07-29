@@ -6,6 +6,7 @@ extends Area3D
 @export var prompt: String = "Interact"
 
 func _ready() -> void:
+	add_to_group("interactable")  # Whisker Sense pings everything in this group
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 

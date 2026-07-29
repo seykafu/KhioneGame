@@ -41,6 +41,8 @@ const FLORA_PATHS := [
 
 var _materials := {}
 
+var _visited_locations := {}
+
 func _ready() -> void:
 	_build_island()
 	_build_water()
@@ -48,6 +50,10 @@ func _ready() -> void:
 	_scatter_rocks()
 	_scatter_flora()
 	_place_pickups()
+	_add_location_trigger(Vector3(0, 0, 33), 8.0, "South Beach")
+	_add_location_trigger(Vector3(33, 0, -4), 9.0, "Echo Cove")
+	_add_location_trigger(Vector3(-14.5, 0, 4.4), 8.0, "The Hillside Den")
+	_add_location_trigger(Vector3(0, 3.3, 0), 7.0, "The Old Summit")
 
 func _build_island() -> void:
 	# Sandy base: flat top at y=0, gentle beach slope down into the water.
@@ -176,6 +182,27 @@ func _place_pickups() -> void:
 	_add_pickup(Vector3(-18, 0.4, -8), "coconut", "Coconut", COCONUT)
 	_add_pickup(Vector3(-14, 0.4, 15), "coconut", "Coconut", COCONUT)
 	_add_pickup(Vector3(21, 0.4, -7), "coconut", "Coconut", COCONUT)
+
+func _add_location_trigger(pos: Vector3, radius: float, title: String) -> void:
+	var area := Area3D.new()
+	var cs := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = radius
+	cs.shape = sph
+	area.add_child(cs)
+	area.position = pos
+	area.set_meta("title", title)
+	area.body_entered.connect(_on_location_entered.bind(area))
+	add_child(area)
+
+func _on_location_entered(body: Node3D, area: Area3D) -> void:
+	if not body.is_in_group("player") or not GameState.get_flag("intro_done"):
+		return
+	var title: String = area.get_meta("title")
+	if _visited_locations.has(title):
+		return
+	_visited_locations[title] = true
+	get_node("../HUD").show_location(title)
 
 func _on_water_body_entered(body: Node3D) -> void:
 	if body.is_in_group("player"):

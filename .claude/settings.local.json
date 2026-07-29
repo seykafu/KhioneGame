@@ -55,7 +55,14 @@
       "Bash(pkill -f \"Godot\")",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_seesaw.tscn)",
       "Bash(echo \"seesaw test exit: $?\")",
-      "Bash(git commit -m 'Driftwood Seesaw puzzle \\(Beat 2\\) + music tracks *)"
+      "Bash(git commit -m 'Driftwood Seesaw puzzle \\(Beat 2\\) + music tracks *)",
+      "Bash(git config *)",
+      "Bash(echo \"echo: $?\")",
+      "Bash(echo \"seesaw: $?\")",
+      "Bash(pkill -f \"test_echo\\\\|test_seesaw\\\\|Godot --headless\")",
+      "Bash(echo \"echo exit: $?\")",
+      "Bash(echo \"seesaw exit: $?\")",
+      "Bash(git commit -m 'Identity pass: charm, Whisker Sense, storybook UI + title screen *)"
     ]
   }
 }

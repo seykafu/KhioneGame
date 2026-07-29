@@ -7,8 +7,17 @@ extends Node3D
 @export var max_pitch := 0.5
 
 @onready var arm: SpringArm3D = $SpringArm
+@onready var cam: Camera3D = $SpringArm/Camera
 
 var _pitch := -0.4
+
+func _process(delta: float) -> void:
+	# Subtle FOV kick at full sprint.
+	var parent := get_parent()
+	if parent is CharacterBody3D:
+		var speed: float = Vector2(parent.velocity.x, parent.velocity.z).length()
+		var target := 80.0 if speed > 5.5 else 75.0
+		cam.fov = lerpf(cam.fov, target, 5.0 * delta)
 
 func _ready() -> void:
 	arm.rotation.x = _pitch
