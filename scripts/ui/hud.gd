@@ -57,6 +57,10 @@ func _refresh_slots() -> void:
 		var lbl: Label = _slots[i].get_node("ItemLabel")
 		lbl.text = Inventory.display_name(Inventory.items[i]) if i < Inventory.items.size() else ""
 
+func flash_message(text: String, dur := 3.0) -> void:
+	vocal_label.text = text
+	_vocal_timer = dur
+
 func _on_vocal(kind: String) -> void:
 	vocal_label.text = VOCAL_TEXT.get(kind, "")
 	_vocal_timer = 1.2

@@ -42,7 +42,10 @@
       "Bash(screencapture -x __TRACKED_VAR__/game_shot2.png)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --script tools/measure_assets.gd)",
       "Bash(screencapture -x __TRACKED_VAR__/game_shot3.png)",
-      "Bash(git commit -m 'Real art pass: Quaternius cat + Kenney nature kit, riddle chain design *)"
+      "Bash(git commit -m 'Real art pass: Quaternius cat + Kenney nature kit, riddle chain design *)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 2200)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 300)",
+      "Bash(git commit -m 'Opening cinematic: narrated intro sequence *)"
     ]
   }
 }

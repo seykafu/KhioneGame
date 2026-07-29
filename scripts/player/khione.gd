@@ -20,6 +20,7 @@ const VOCALS := ["meow", "hiss", "growl"]
 @onready var rig: Node3D = $CameraRig
 @onready var body_visual: Node3D = $Body
 
+var controls_enabled := true
 var _water_zones := 0
 var _water_surface := 0.0
 var _nearby: Array = []
@@ -41,7 +42,8 @@ func _setup_animations() -> void:
 		for key in ["Idle_Eating", "Jump_Start", "Jump_Loop", "Idle", "Walk", "Run", "Headbutt", "Death"]:
 			if n.ends_with(key) and not _anim_map.has(key):
 				_anim_map[key] = n
-		if n.ends_with("Idle") or n.ends_with("Walk") or n.ends_with("Run") or n.ends_with("Jump_Loop"):
+		if n.ends_with("Idle") or n.ends_with("Walk") or n.ends_with("Run") \
+				or n.ends_with("Jump_Loop") or n.ends_with("Idle_Eating"):
 			anim.get_animation(n).loop_mode = Animation.LOOP_LINEAR
 	_play_anim("Idle")
 
@@ -54,7 +56,9 @@ func _play_anim(key: String, blend := 0.25, speed := 1.0) -> void:
 	anim.play(anim_name, blend, speed)
 
 func _physics_process(delta: float) -> void:
-	var input_vec := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var input_vec := Vector2.ZERO
+	if controls_enabled:
+		input_vec = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := Vector3(input_vec.x, 0.0, input_vec.y).rotated(Vector3.UP, rig.rotation.y)
 	var swimming := is_swimming()
 
@@ -71,11 +75,11 @@ func _physics_process(delta: float) -> void:
 		# so she can climb out onto low shores and rocks.
 		var target_y := _water_surface - SWIM_DEPTH
 		velocity.y = clampf((target_y - global_position.y) * 4.0, -3.0, 3.0)
-		if Input.is_action_just_pressed("jump"):
+		if controls_enabled and Input.is_action_just_pressed("jump"):
 			velocity.y = SWIM_KICK
 	else:
 		velocity.y -= GRAVITY * delta
-		if is_on_floor() and Input.is_action_just_pressed("jump"):
+		if controls_enabled and is_on_floor() and Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
 
 	move_and_slide()
@@ -107,6 +111,8 @@ func _update_anim(swimming: bool, moving: bool) -> void:
 		_play_anim("Idle", 0.4)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not controls_enabled:
+		return
 	if event.is_action_pressed("interact"):
 		var target := _closest_interactable()
 		if target:

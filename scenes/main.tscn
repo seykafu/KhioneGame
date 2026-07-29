@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/cinematic/intro_sequence.gd" id="5_intro"]
 [ext_resource type="PackedScene" path="res://scenes/islands/ahalo.tscn" id="2_ahalo"]
 [ext_resource type="PackedScene" path="res://scenes/player/khione.tscn" id="3_khione"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
@@ -46,3 +47,6 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 30)
 
 [node name="HUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="IntroSequence" type="Node" parent="."]
+script = ExtResource("5_intro")
