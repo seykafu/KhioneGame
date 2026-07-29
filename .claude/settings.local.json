@@ -62,7 +62,10 @@
       "Bash(pkill -f \"test_echo\\\\|test_seesaw\\\\|Godot --headless\")",
       "Bash(echo \"echo exit: $?\")",
       "Bash(echo \"seesaw exit: $?\")",
-      "Bash(git commit -m 'Identity pass: charm, Whisker Sense, storybook UI + title screen *)"
+      "Bash(git commit -m 'Identity pass: charm, Whisker Sense, storybook UI + title screen *)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_sundial.tscn)",
+      "Bash(echo \"sundial: $?\")",
+      "Bash(git commit -m 'Sundial Reef puzzle \\(Beat 3\\) *)"
     ]
   }
 }
