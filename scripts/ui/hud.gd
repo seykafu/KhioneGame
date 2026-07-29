@@ -87,6 +87,18 @@ class ItemIcon:
 				draw_line(c + Vector2(-10, 12), c + Vector2(6, -7), wood, 3.4, true)
 				draw_colored_polygon(_ellipse(c + Vector2(9, -11), 6.5, 4.0, -0.85), wood)
 				draw_arc(c + Vector2(9, -11), 5.0, 0.0, TAU, 16, dark, 1.2, true)
+			"palm_frond":
+				var dry := Color(0.66, 0.61, 0.32)
+				var rib := Color(0.48, 0.44, 0.2)
+				draw_colored_polygon(_ellipse(c, 13.5, 4.5, -0.6), dry)
+				draw_line(c + Vector2(-11, 8), c + Vector2(11, -8), rib, 1.6, true)
+				draw_line(c + Vector2(11, -8), c + Vector2(15, -12), rib, 2.2, true)
+			"vine_rope":
+				var vine := Color(0.4, 0.5, 0.28)
+				var dark_vine := Color(0.28, 0.36, 0.18)
+				draw_arc(c, 10.5, 0.3, TAU + 0.1, 28, vine, 3.0, true)
+				draw_arc(c, 7.0, -0.6, TAU - 0.9, 24, vine, 3.0, true)
+				draw_arc(c, 3.8, 0.9, TAU + 0.4, 18, dark_vine, 2.6, true)
 			_:
 				draw_circle(c, 10.0, Color(0.6, 0.55, 0.45))
 				draw_arc(c, 10.0, 0.0, TAU, 24, Color(0.4, 0.35, 0.28), 2.0, true)
@@ -210,7 +222,16 @@ func _on_vocal_unknown(kind: String) -> void:
 	vocal_label.text = VOCAL_UNKNOWN_TEXT.get(kind, "")
 	_vocal_timer = 1.6
 
+var _letter_base := ""
+
 func _show_letter() -> void:
+	var letter_text: RichTextLabel = letter_panel.get_node("Margin/VBox/LetterText")
+	if _letter_base.is_empty():
+		_letter_base = letter_text.text
+	var extra := ""
+	if GameState.get_flag("letter_fragment_1"):
+		extra = "\n\n— a recovered scrap, tucked in the raft's knots:\n“… one final …”"
+	letter_text.text = _letter_base + extra
 	letter_panel.visible = true
 	get_tree().paused = true
 	prompt.text = ""

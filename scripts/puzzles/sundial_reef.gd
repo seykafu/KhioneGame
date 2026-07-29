@@ -43,9 +43,9 @@ class RaftExamine:
 
 	func interact(_player: Node) -> void:
 		GameState.set_flag("raft_frame_examined")
-		var hud := get_node_or_null("/root/Main/HUD")
-		if hud:
-			hud.flash_message("A raft frame… it wants an oar, a sail, and rope to bind it.", 4.0)
+		var rig := get_tree().get_first_node_in_group("raft_rigging")
+		if rig:
+			rig.raft_interact(get_parent())
 
 func _ready() -> void:
 	_build_sundial()
@@ -294,6 +294,7 @@ func _build_raft(pos: Vector3) -> Node3D:
 		mi.position = Vector3(x, 0.13, 0)
 		raft.add_child(mi)
 	var examine := RaftExamine.new()
+	examine.name = "Examine"
 	var cs := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
 	sph.radius = 2.4

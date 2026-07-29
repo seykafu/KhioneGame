@@ -20,6 +20,7 @@ const SOUNDS := {
 	"wood_creak": "res://assets/audio/wood_creak.wav",
 	"gate_open": "res://assets/audio/gate_open.wav",
 	"whisker_shimmer": "res://assets/audio/whisker_shimmer.wav",
+	"crab_snip": "res://assets/audio/crab_snip.wav",
 }
 const POOL_SIZE := 10
 

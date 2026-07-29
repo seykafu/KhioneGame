@@ -65,7 +65,9 @@
       "Bash(git commit -m 'Identity pass: charm, Whisker Sense, storybook UI + title screen *)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_sundial.tscn)",
       "Bash(echo \"sundial: $?\")",
-      "Bash(git commit -m 'Sundial Reef puzzle \\(Beat 3\\) *)"
+      "Bash(git commit -m 'Sundial Reef puzzle \\(Beat 3\\) *)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_raft.tscn)",
+      "Bash(echo \"raft test: $?\")"
     ]
   }
 }
