@@ -45,7 +45,11 @@
       "Bash(git commit -m 'Real art pass: Quaternius cat + Kenney nature kit, riddle chain design *)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 2200)",
       "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --quit-after 300)",
-      "Bash(git commit -m 'Opening cinematic: narrated intro sequence *)"
+      "Bash(git commit -m 'Opening cinematic: narrated intro sequence *)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo --script tools/test_echo_stones.gd)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --path /Users/kasey/Kiyo res://tools/test_echo_stones.tscn)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git commit -m 'Three Hollow Stones puzzle \\(Echo Cove\\) + first audio pass *)"
     ]
   }
 }

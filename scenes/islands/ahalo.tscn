@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/islands/ahalo.gd" id="1_ah"]
 [ext_resource type="Script" path="res://scripts/interaction/message_bottle.gd" id="2_bot"]
+[ext_resource type="Script" path="res://scripts/puzzles/echo_stones.gd" id="3_echo"]
 
 [sub_resource type="SphereShape3D" id="bottle_zone"]
 radius = 1.5
@@ -21,6 +22,10 @@ emission_energy_multiplier = 0.7
 
 [node name="Ahalo" type="Node3D"]
 script = ExtResource("1_ah")
+
+[node name="EchoStones" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, -4)
+script = ExtResource("3_echo")
 
 [node name="MessageBottle" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 36)

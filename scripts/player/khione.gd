@@ -27,10 +27,14 @@ var _nearby: Array = []
 var _spawn := Vector3.ZERO
 var anim: AnimationPlayer = null
 var _anim_map := {}
+var _meow_sfx: AudioStreamPlayer3D
 
 func _ready() -> void:
 	_spawn = global_position
 	_setup_animations()
+	_meow_sfx = AudioStreamPlayer3D.new()
+	_meow_sfx.stream = load("res://assets/audio/meow.wav")
+	add_child(_meow_sfx)
 
 func _setup_animations() -> void:
 	# The imported GLB prefixes animation names ("AnimalArmature|...|Walk"),
@@ -123,6 +127,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	for kind: String in VOCALS:
 		if event.is_action_pressed(kind):
 			if GameState.knows_vocal(kind):
+				if kind == "meow":
+					_meow_sfx.play()
 				vocalized.emit(kind)
 				GameState.vocal_used.emit(kind)
 			else:

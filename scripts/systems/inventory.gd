@@ -3,7 +3,12 @@ extends Node
 
 signal changed
 
-const NAMES := {"sun_shell": "Sun Shell", "coconut": "Coconut"}
+const NAMES := {
+	"sun_shell": "Sun Shell",
+	"coconut": "Coconut",
+	"rusty_locket": "Rusty Locket",
+	"stranded_fish": "Stranded Fish",
+}
 
 var max_slots: int = 5
 var items: Array[String] = []
