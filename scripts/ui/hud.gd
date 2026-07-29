@@ -20,6 +20,7 @@ var player: Node = null
 var _vocal_timer := 0.0
 var _slots: Array[Panel] = []
 var _paw_marks: Array[Control] = []
+var _icons: Array[Control] = []
 var _location_label: Label
 var _location_tween: Tween
 
@@ -33,6 +34,69 @@ class PawMark:
 		draw_circle(ctr + Vector2(0, 6), 9.0, c)
 		for off: Vector2 in [Vector2(-12, -5), Vector2(-4.5, -10), Vector2(4.5, -10), Vector2(12, -5)]:
 			draw_circle(ctr + off, 4.2, c)
+
+class ItemIcon:
+	extends Control
+	## Hand-drawn vector icon for each inventory item, in the storybook palette.
+
+	var item_id := ""
+
+	func _draw() -> void:
+		var c := size / 2.0
+		match item_id:
+			"coconut":
+				var brown := Color(0.42, 0.3, 0.17)
+				var dark := Color(0.28, 0.19, 0.1)
+				draw_circle(c, 13.0, brown)
+				draw_arc(c, 13.0, 0.0, TAU, 32, dark, 2.0, true)
+				draw_circle(c + Vector2(-4, -4), 1.9, dark)
+				draw_circle(c + Vector2(4, -4), 1.9, dark)
+				draw_circle(c + Vector2(0, 2), 1.9, dark)
+			"sun_shell":
+				var gold := Color(0.93, 0.76, 0.28)
+				var rust := Color(0.72, 0.52, 0.16)
+				var hinge := c + Vector2(0, 11)
+				var fan := PackedVector2Array([hinge])
+				for i in 13:
+					var ang := deg_to_rad(lerpf(205.0, 335.0, i / 12.0))
+					fan.append(hinge + Vector2(cos(ang), sin(ang)) * 19.0)
+				draw_colored_polygon(fan, gold)
+				for i in 5:
+					var ang := deg_to_rad(lerpf(215.0, 325.0, i / 4.0))
+					draw_line(hinge, hinge + Vector2(cos(ang), sin(ang)) * 18.0, rust, 1.6, true)
+			"rusty_locket":
+				var bronze := Color(0.55, 0.44, 0.28)
+				var dark := Color(0.35, 0.27, 0.16)
+				draw_arc(c + Vector2(0, -8), 5.5, PI, TAU, 16, dark, 2.0, true)
+				draw_circle(c + Vector2(0, 3), 9.5, bronze)
+				draw_arc(c + Vector2(0, 3), 9.5, 0.0, TAU, 32, dark, 2.0, true)
+				draw_circle(c + Vector2(0, 5.5), 2.4, dark)
+				for off: Vector2 in [Vector2(-3.2, 0.5), Vector2(0, -0.8), Vector2(3.2, 0.5)]:
+					draw_circle(c + Vector2(0, 5.5) + off + Vector2(0, -3.2), 1.2, dark)
+			"stranded_fish":
+				var silver := Color(0.62, 0.72, 0.8)
+				var deep := Color(0.4, 0.5, 0.6)
+				draw_colored_polygon(_ellipse(c + Vector2(-2, 0), 11.0, 5.5), silver)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(8, 0), c + Vector2(15, -6), c + Vector2(15, 6)]), silver)
+				draw_circle(c + Vector2(-8, -1.5), 1.5, deep)
+				draw_arc(c + Vector2(-2, 0), 6.0, -0.6, 0.6, 8, deep, 1.4, true)
+			"old_oar":
+				var wood := Color(0.62, 0.53, 0.42)
+				var dark := Color(0.42, 0.34, 0.26)
+				draw_line(c + Vector2(-10, 12), c + Vector2(6, -7), wood, 3.4, true)
+				draw_colored_polygon(_ellipse(c + Vector2(9, -11), 6.5, 4.0, -0.85), wood)
+				draw_arc(c + Vector2(9, -11), 5.0, 0.0, TAU, 16, dark, 1.2, true)
+			_:
+				draw_circle(c, 10.0, Color(0.6, 0.55, 0.45))
+				draw_arc(c, 10.0, 0.0, TAU, 24, Color(0.4, 0.35, 0.28), 2.0, true)
+
+	func _ellipse(center: Vector2, a: float, b: float, rot := 0.0) -> PackedVector2Array:
+		var pts := PackedVector2Array()
+		for i in 24:
+			var t := TAU * i / 24.0
+			pts.append(center + Vector2(cos(t) * a, sin(t) * b).rotated(rot))
+		return pts
 
 static func parchment_style(alpha := 1.0) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
@@ -114,24 +178,25 @@ func _build_slots() -> void:
 		paw.set_anchors_preset(Control.PRESET_FULL_RECT)
 		slot.add_child(paw)
 		_paw_marks.append(paw)
-		var lbl := Label.new()
-		lbl.name = "ItemLabel"
-		lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
-		lbl.clip_text = true
-		lbl.add_theme_font_size_override("font_size", 11)
-		lbl.add_theme_color_override("font_color", INK)
-		slot.add_child(lbl)
+		var icon := ItemIcon.new()
+		icon.name = "ItemIcon"
+		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+		icon.visible = false
+		slot.add_child(icon)
+		_icons.append(icon)
 		inventory_bar.add_child(slot)
 		_slots.append(slot)
 
 func _refresh_slots() -> void:
 	for i in _slots.size():
-		var lbl: Label = _slots[i].get_node("ItemLabel")
-		lbl.text = Inventory.display_name(Inventory.items[i]) if i < Inventory.items.size() else ""
-		_paw_marks[i].visible = i >= Inventory.items.size()
+		var filled := i < Inventory.items.size()
+		var icon: ItemIcon = _icons[i]
+		icon.visible = filled
+		if filled:
+			icon.item_id = Inventory.items[i]
+			icon.queue_redraw()
+		_slots[i].tooltip_text = Inventory.display_name(Inventory.items[i]) if filled else ""
+		_paw_marks[i].visible = not filled
 
 func flash_message(text: String, dur := 3.0) -> void:
 	vocal_label.text = text
