@@ -20,6 +20,11 @@ func _run() -> void:
 	if not scene_path.is_empty():
 		var s: Node = load(scene_path).instantiate()
 		get_tree().root.add_child(s)
+	if OS.get_environment("KH_FAST") == "1":
+		await get_tree().process_frame
+		var intro := get_tree().root.find_child("IntroSequence", true, false)
+		if intro:
+			intro.debug_fast_start()
 	await get_tree().create_timer(wait_s).timeout
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(out)

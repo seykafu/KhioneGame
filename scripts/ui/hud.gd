@@ -23,6 +23,10 @@ var _paw_marks: Array[Control] = []
 var _icons: Array[Control] = []
 var _location_label: Label
 var _location_tween: Tween
+var _objective_panel: PanelContainer
+var _objective_label: Label
+var _last_objective := ""
+var _letter_hint_shown := false
 
 class PawMark:
 	extends Control
@@ -129,9 +133,12 @@ func _ready() -> void:
 	vocal_label.text = ""
 	_apply_storybook_theme()
 	_build_location_label()
+	_build_objective()
 	_build_slots()
 	GameState.letter_opened.connect(_show_letter)
+	GameState.flag_changed.connect(_on_flag_changed)
 	Inventory.changed.connect(_refresh_slots)
+	Inventory.changed.connect(_update_objective)
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player")
 	if player:
@@ -169,6 +176,69 @@ func _build_location_label() -> void:
 	_location_label.add_theme_constant_override("outline_size", 10)
 	_location_label.modulate.a = 0.0
 	add_child(_location_label)
+
+func _build_objective() -> void:
+	_objective_panel = PanelContainer.new()
+	_objective_panel.add_theme_stylebox_override("panel", parchment_style(0.82))
+	_objective_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_objective_panel.offset_left = 20.0
+	_objective_panel.offset_top = 20.0
+	_objective_panel.visible = false
+	var margin := MarginContainer.new()
+	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
+		margin.add_theme_constant_override(side, 12)
+	_objective_panel.add_child(margin)
+	_objective_label = Label.new()
+	_objective_label.custom_minimum_size = Vector2(330, 0)
+	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_objective_label.add_theme_font_size_override("font_size", 16)
+	_objective_label.add_theme_color_override("font_color", INK)
+	margin.add_child(_objective_label)
+	add_child(_objective_panel)
+	_update_objective()
+
+func _on_flag_changed(_flag: String, _value: bool) -> void:
+	_update_objective()
+
+func _update_objective() -> void:
+	var text := _current_objective_text()
+	if text == _last_objective:
+		return
+	var had_previous := not _last_objective.is_empty()
+	_last_objective = text
+	if text.is_empty():
+		_objective_panel.visible = false
+		return
+	_objective_label.text = text
+	_objective_panel.visible = true
+	_objective_panel.modulate.a = 0.0
+	var t := create_tween()
+	t.tween_property(_objective_panel, "modulate:a", 1.0, 0.6)
+	if had_previous and GameState.get_flag("intro_done"):
+		Sfx.play("pickup_chime", 1.3, 0.0, -16.0)
+
+## The current riddle, as an in-world nudge — points where to look, never
+## spoils the answer. Priority-ordered over the island's beats.
+func _current_objective_text() -> String:
+	if not GameState.get_flag("intro_done") or GameState.get_flag("set_sail_started") \
+			or GameState.get_flag("island1_complete"):
+		return ""
+	if not GameState.get_flag("letter_read"):
+		return "Reach the bottle on the south beach."
+	if not GameState.get_flag("echo_stones_solved"):
+		return "The letter is torn… but the island is humming. Three hollow stones wait by the eastern cove — and a carving remembers their song.  (M — meow)"
+	if not GameState.get_flag("seesaw_gate_open"):
+		return "Something sleeps behind the vine gate on the west hillside. Old wood tips under heavy things — and the palms drop them."
+	if not GameState.get_flag("sundial_shell_placed"):
+		return "Atop the old summit, a dial waits for its golden heart."
+	if not GameState.get_flag("raft_released"):
+		return "The shell's shadow points far across the water. Climb where it leads — and speak."
+	if not GameState.get_flag("raft_frame_beached"):
+		return "Loose timbers drift toward the south beach…"
+	var rig := get_tree().get_first_node_in_group("raft_rigging")
+	if rig and not rig._complete():
+		return "Bind the raft — it still wants %s. The den keeps an oar, the tallest palm a dry frond… and the crab trades for a price." % rig._missing_text()
+	return "The raft is ready. The sea is waiting."
 
 ## Fades in a "~ Echo Cove ~" style card when entering a named place.
 func show_location(title: String) -> void:
@@ -245,3 +315,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		Sfx.play("paper_close", 1.0, 0.05, -8.0)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		get_viewport().set_input_as_handled()
+		if not _letter_hint_shown:
+			_letter_hint_shown = true
+			flash_message("A torn letter… and somewhere east, a low hum on the wind.", 4.5)
+			_update_objective()
