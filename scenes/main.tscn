@@ -40,7 +40,9 @@ environment = SubResource("env")
 [node name="Sun" type="DirectionalLight3D" parent="."]
 light_color = Color(1, 0.96, 0.88, 1)
 light_energy = 1.2
+light_angular_distance = 1.2
 shadow_enabled = true
+directional_shadow_max_distance = 120.0
 
 [node name="Ahalo" parent="." instance=ExtResource("2_ahalo")]
 

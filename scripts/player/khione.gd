@@ -77,7 +77,23 @@ func _setup_animations() -> void:
 		if n.ends_with("Idle") or n.ends_with("Walk") or n.ends_with("Run") \
 				or n.ends_with("Jump_Loop") or n.ends_with("Idle_Eating"):
 			anim.get_animation(n).loop_mode = Animation.LOOP_LINEAR
+	_flatten_snout()
 	_play_anim("Idle")
+
+func _flatten_snout() -> void:
+	# Persian flat face: strip any Head scale tracks from the imported
+	# animations, then squash the head bone along the muzzle axis.
+	for n in anim.get_animation_list():
+		var a := anim.get_animation(n)
+		for ti in range(a.get_track_count() - 1, -1, -1):
+			if a.track_get_type(ti) == Animation.TYPE_SCALE_3D \
+					and String(a.track_get_path(ti)).ends_with("Head"):
+				a.remove_track(ti)
+	var skel: Skeleton3D = body_visual.find_child("Skeleton3D", true, false)
+	if skel:
+		var head := skel.find_bone("Head")
+		if head != -1:
+			skel.set_bone_pose_scale(head, Vector3(1.05, 1.04, 0.72))
 
 func _play_anim(key: String, blend := 0.25, speed := 1.0) -> void:
 	if anim == null or not _anim_map.has(key):
