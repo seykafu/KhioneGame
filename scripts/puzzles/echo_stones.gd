@@ -208,7 +208,7 @@ func _build_ui() -> void:
 	art.custom_minimum_size = Vector2(660, 340)
 	vbox.add_child(art)
 	var hint := Label.new()
-	hint.text = "— E —"
+	hint.text = "E closes"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_font_size_override("font_size", 15)
 	hint.modulate = Color(1, 1, 1, 0.6)
@@ -245,7 +245,7 @@ func _on_hint_area(body: Node3D) -> void:
 	if _hinted or _solved or not body.is_in_group("player"):
 		return
 	_hinted = true
-	_hud().flash_message("The stones are humming…  (M — meow)", 4.0)
+	_hud().flash_message("The stones are humming…  (press M to meow)", 4.0)
 
 func _on_vocal(kind: String) -> void:
 	if kind != "meow" or _solved or get_tree().paused:

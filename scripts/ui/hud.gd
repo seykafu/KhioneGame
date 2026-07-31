@@ -21,6 +21,7 @@ var _vocal_timer := 0.0
 var _slots: Array[Panel] = []
 var _paw_marks: Array[Control] = []
 var _icons: Array[Control] = []
+var _slot_counts: Array[Label] = []
 var _location_label: Label
 var _location_tween: Tween
 var _objective_panel: PanelContainer
@@ -226,18 +227,18 @@ func _current_objective_text() -> String:
 	if not GameState.get_flag("letter_read"):
 		return "Reach the bottle on the south beach."
 	if not GameState.get_flag("echo_stones_solved"):
-		return "The letter is torn… but the island is humming. Three hollow stones wait by the eastern cove — and a carving remembers their song.  (M — meow)"
+		return "The letter is torn, but the island is humming. Three hollow stones wait by the eastern cove, and a carving remembers their song. (press M to meow)"
 	if not GameState.get_flag("seesaw_gate_open"):
-		return "Something sleeps behind the vine gate on the west hillside. Old wood tips under heavy things — and the palms drop them."
+		return "Something sleeps behind the vine gate on the west hillside. Old wood tips under heavy things, and the palms drop them."
 	if not GameState.get_flag("sundial_shell_placed"):
 		return "Atop the old summit, a dial waits for its golden heart."
 	if not GameState.get_flag("raft_released"):
-		return "The shell's shadow points far across the water. Climb where it leads — and speak."
+		return "The shell's shadow points far across the water. Climb where it leads, and speak."
 	if not GameState.get_flag("raft_frame_beached"):
 		return "Loose timbers drift toward the south beach…"
 	var rig := get_tree().get_first_node_in_group("raft_rigging")
 	if rig and not rig._complete():
-		return "Bind the raft — it still wants %s. The den keeps an oar, the tallest palm a dry frond… and the crab trades for a price." % rig._missing_text()
+		return "Bind the raft. It still wants %s. The den keeps an oar, the tallest palm a dry frond, and the crab trades for a price." % rig._missing_text()
 	return "The raft is ready. The sea is waiting."
 
 ## Fades in a "~ Echo Cove ~" style card when entering a named place.
@@ -266,18 +267,34 @@ func _build_slots() -> void:
 		icon.visible = false
 		slot.add_child(icon)
 		_icons.append(icon)
+		var count_lbl := Label.new()
+		count_lbl.name = "CountLabel"
+		count_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
+		count_lbl.offset_right = -3.0
+		count_lbl.offset_bottom = -1.0
+		count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		count_lbl.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		count_lbl.add_theme_font_size_override("font_size", 12)
+		count_lbl.add_theme_color_override("font_color", INK)
+		slot.add_child(count_lbl)
+		_slot_counts.append(count_lbl)
 		inventory_bar.add_child(slot)
 		_slots.append(slot)
 
 func _refresh_slots() -> void:
 	for i in _slots.size():
-		var filled := i < Inventory.items.size()
+		var filled := i < Inventory.stacks.size()
 		var icon: ItemIcon = _icons[i]
 		icon.visible = filled
 		if filled:
-			icon.item_id = Inventory.items[i]
+			var stack: Dictionary = Inventory.stacks[i]
+			icon.item_id = stack.id
 			icon.queue_redraw()
-		_slots[i].tooltip_text = Inventory.display_name(Inventory.items[i]) if filled else ""
+			_slot_counts[i].text = ("×%d" % stack.count) if stack.count > 1 else ""
+			_slots[i].tooltip_text = Inventory.display_name(stack.id)
+		else:
+			_slot_counts[i].text = ""
+			_slots[i].tooltip_text = ""
 		_paw_marks[i].visible = not filled
 
 func flash_message(text: String, dur := 3.0) -> void:
@@ -300,7 +317,7 @@ func _show_letter() -> void:
 		_letter_base = letter_text.text
 	var extra := ""
 	if GameState.get_flag("letter_fragment_1"):
-		extra = "\n\n— a recovered scrap, tucked in the raft's knots:\n“… one final …”"
+		extra = "\n\nA recovered scrap, tucked in the raft's knots:\n“… one final …”"
 	letter_text.text = _letter_base + extra
 	letter_panel.visible = true
 	get_tree().paused = true
@@ -317,5 +334,5 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		if not _letter_hint_shown:
 			_letter_hint_shown = true
-			flash_message("A torn letter… and somewhere east, a low hum on the wind.", 4.5)
+			flash_message("A torn letter. And somewhere east, a low hum on the wind.", 4.5)
 			_update_objective()

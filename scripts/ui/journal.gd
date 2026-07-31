@@ -13,13 +13,13 @@ const RIDDLES := [
 	{"flag": "letter_read", "title": "The Bottle",
 		"text": "Reach the bottle on the south beach."},
 	{"flag": "echo_stones_solved", "title": "The Three Hollow Stones",
-		"text": "Three hollow stones hum by the eastern cove — a carving remembers their song."},
+		"text": "Three hollow stones hum by the eastern cove, and a carving remembers their song."},
 	{"flag": "seesaw_gate_open", "title": "The Vine Gate",
 		"text": "Something sleeps behind the vine gate on the west hillside. Old wood tips under heavy things."},
 	{"flag": "sundial_shell_placed", "title": "The Golden Heart",
 		"text": "Atop the old summit, a dial waits for its golden heart."},
 	{"flag": "raft_released", "title": "The Shadow's Rock",
-		"text": "The shell's shadow points far across the water. Climb where it leads — and speak."},
+		"text": "The shell's shadow points far across the water. Climb where it leads, and speak."},
 	{"flag": "raft_frame_beached", "title": "The Drifting Timbers",
 		"text": "Loose timbers drift toward the south beach…"},
 	{"flag": "raft_rigged", "title": "Rig the Raft",
@@ -31,11 +31,11 @@ const RIDDLES := [
 const CONTROLS := [
 	["W A S D  /  arrows", "Walk"],
 	["Shift", "Run"],
-	["Space", "Jump — paddle up in water"],
+	["Space", "Jump, or paddle up in water"],
 	["Mouse", "Look around"],
 	["E  /  left click", "Interact, pick up, place"],
-	["M", "Meow — Whisker Sense; some things listen"],
-	["H  /  G", "Hiss / growl — not learned yet…"],
+	["M", "Meow. Some things on the island listen"],
+	["H  /  G", "Hiss and growl (not learned yet)"],
 	["Tab  /  I", "Open or close this journal"],
 	["Esc", "Pause and settings"],
 ]
@@ -125,7 +125,7 @@ func _build() -> void:
 	_select_tab(0)
 
 	var hint := Label.new()
-	hint.text = "Tab — close"
+	hint.text = "Tab closes the journal"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_font_size_override("font_size", 13)
 	hint.add_theme_color_override("font_color", FADED)
@@ -202,15 +202,16 @@ func _build_controls_page() -> Control:
 func _refresh_satchel() -> void:
 	for c in _satchel_list.get_children():
 		c.queue_free()
-	_satchel_header.text = "Carrying %d of %d" % [Inventory.items.size(), Inventory.max_slots]
-	if Inventory.items.is_empty():
+	_satchel_header.text = "Slots used: %d of %d" % [Inventory.stacks.size(), Inventory.max_slots]
+	if Inventory.stacks.is_empty():
 		var empty := Label.new()
 		empty.text = "Empty paws… but the island is generous. Look around."
 		empty.add_theme_font_size_override("font_size", 16)
 		empty.add_theme_color_override("font_color", FADED)
 		_satchel_list.add_child(empty)
 		return
-	for id: String in Inventory.items:
+	for stack: Dictionary in Inventory.stacks:
+		var id: String = stack.id
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 14)
 		var slot := Panel.new()
@@ -224,7 +225,8 @@ func _refresh_satchel() -> void:
 		var text_box := VBoxContainer.new()
 		text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var name_lbl := Label.new()
-		name_lbl.text = Inventory.display_name(id)
+		name_lbl.text = Inventory.display_name(id) \
+				+ (("   ×%d" % stack.count) if stack.count > 1 else "")
 		name_lbl.add_theme_font_size_override("font_size", 17)
 		name_lbl.add_theme_color_override("font_color", INK)
 		text_box.add_child(name_lbl)

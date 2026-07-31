@@ -164,12 +164,12 @@ func _set_sail() -> void:
 	await drift.finished
 
 	# The shot the whole island was building toward.
-	_narrate("Behind her, the beach held its breath —")
+	_narrate("Behind her, the beach held its breath.")
 	cam.global_position = Vector3(4.0, 2.4, 26.5)
 	cam.look_at(Vector3(3.2, 0.0, 32.0))
 	_spawn_big_pawprints()
 	await _sleep(2.2)
-	_narrate("— around prints that were not hers, pressed soft into the sand.")
+	_narrate("And in the sand, pressed soft, were prints that were not hers.")
 	await _sleep(4.4)
 
 	_show_fragment()
@@ -191,7 +191,7 @@ func _set_sail() -> void:
 	GameState.set_flag("island1_complete")
 	await _sleep(1.5)
 	_ui.queue_free()
-	_flash("Ahalo will remember you.   (Island 2 — coming soon)", 6.0)
+	_flash("Ahalo will remember you.   (Island 2 coming soon)", 6.0)
 
 func _spawn_big_pawprints() -> void:
 	# Twice Khione's size. Players trained on her own prints will notice.
@@ -228,7 +228,7 @@ func _show_fragment() -> void:
 	vbox.add_theme_constant_override("separation", 14)
 	margin.add_child(vbox)
 	var caption := Label.new()
-	caption.text = "Tucked in the raft's knots — a scrap of familiar handwriting:"
+	caption.text = "Tucked in the raft's knots, a scrap of familiar handwriting:"
 	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	caption.add_theme_font_size_override("font_size", 18)
 	caption.add_theme_color_override("font_color", Color(0.4, 0.3, 0.18))

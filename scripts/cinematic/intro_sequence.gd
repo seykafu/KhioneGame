@@ -9,7 +9,7 @@ const NARRATION_A1 := "Once upon a time, on a small and lonely island called Aha
 const NARRATION_A2 := "She knew no one, and no one knew her. She hunted fish, ate berries, and drank from the river that crossed the island."
 const NARRATION_B1 := "She cured her boredom by chasing snails along the beach, and by leaping from branch to branch like a monkey."
 const NARRATION_C1 := "But one morning, the tide brought something that had never come before…"
-const NARRATION_D1 := "A bottle — with a letter inside."
+const NARRATION_D1 := "A bottle, with a letter inside."
 
 enum State { TITLE, CINEMATIC, DONE }
 
@@ -212,7 +212,7 @@ func _build_ui() -> void:
 	ui_layer.add_child(subtitle)
 
 	skip_hint = Label.new()
-	skip_hint.text = "Space — skip"
+	skip_hint.text = "Space to skip"
 	skip_hint.visible = false
 	skip_hint.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	skip_hint.offset_left = -220.0
@@ -229,7 +229,7 @@ func _build_ui() -> void:
 	title_label.add_theme_constant_override("outline_size", 18)
 	title_sub = _title_text("a little cat.  ten islands.  one letter.", 24, -30, 20)
 	title_sub.modulate.a = 0.85
-	title_prompt = _title_text("— press Enter —", 19, 150, 190)
+	title_prompt = _title_text("press Enter", 19, 150, 190)
 	var blink := create_tween().set_loops()
 	blink.tween_property(title_prompt, "modulate:a", 0.35, 0.9)
 	blink.tween_property(title_prompt, "modulate:a", 1.0, 0.9)

@@ -257,7 +257,7 @@ func _scatter(info: Dictionary) -> void:
 func _release_raft() -> void:
 	_raft_released = true
 	GameState.set_flag("raft_released")
-	_flash("The gulls burst skyward — something shakes loose from the reef below…", 4.0)
+	_flash("The gulls burst skyward. Something shakes loose from the reef below…", 4.0)
 	Sfx.play("splash", 0.8, 0.1, -6.0)
 	Sfx.play("wood_creak", 0.8, 0.1, -8.0)
 	_raft = _build_raft(TARGET_ROCK + Vector3(-3.0, 0.58, 3.0))

@@ -112,7 +112,7 @@ func crab_interact() -> void:
 		return
 	if not Inventory.has_item("stranded_fish"):
 		Sfx.play("crab_snip", 1.0, 0.1, -8.0)
-		_flash("The crab snaps its claws — and eyes Khione's empty paws. It looks hungry.", 3.5)
+		_flash("The crab snaps its claws and eyes Khione's empty paws. It looks hungry.", 3.5)
 		return
 	Inventory.remove_item("stranded_fish")
 	_snipped = true
@@ -133,7 +133,7 @@ func crab_interact() -> void:
 		t.chain().tween_callback(v.queue_free)
 	_vines = []
 	_spawn_rope()
-	_flash("Snip, snip — a fair trade. The crab cuts you a length of vine.", 4.0)
+	_flash("Snip, snip. A fair trade. The crab cuts you a length of vine.", 4.0)
 
 func _spawn_rope() -> void:
 	var a := Area3D.new()

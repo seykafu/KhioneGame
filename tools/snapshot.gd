@@ -27,7 +27,7 @@ func _run() -> void:
 			intro.debug_fast_start()
 	if OS.get_environment("KH_JOURNAL") != "":
 		await get_tree().create_timer(1.0).timeout
-		for id: String in ["rusty_locket", "coconut", "old_oar"]:
+		for id: String in ["rusty_locket", "coconut", "coconut", "coconut", "old_oar"]:
 			Inventory.add_item(id)
 		GameState.set_flag("letter_read")
 		GameState.set_flag("echo_stones_solved")
