@@ -63,7 +63,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_start_cinematic()
 	elif _state == State.CINEMATIC:
 		if event.is_action_pressed("interact") or event.is_action_pressed("jump") \
-				or event.is_action_pressed("ui_cancel"):
+				or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_accept"):
 			_skipped = true
 
 func _start_cinematic() -> void:

@@ -4,6 +4,8 @@ func _ready() -> void:
 	$Sun.rotation_degrees = Vector3(-50, 30, 0)
 	Sfx.play_ambient("ocean_loop", -16.0)
 	_schedule_gull()
+	# Ask the OS for keyboard focus; launches from scripts can open unfocused.
+	get_window().grab_focus.call_deferred()
 
 func _schedule_gull() -> void:
 	get_tree().create_timer(randf_range(14.0, 34.0)).timeout.connect(_on_gull_timer)
