@@ -106,7 +106,7 @@ func _build() -> void:
 	_button(vbox, "Quit Game", func() -> void: get_tree().quit())
 
 	var hint := Label.new()
-	hint.text = "WASD move · Shift run · Space jump · E interact · M meow"
+	hint.text = "WASD move · Shift run · Space jump · E interact · M meow · Tab journal"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_font_size_override("font_size", 13)
 	hint.add_theme_color_override("font_color", Color(0.5, 0.4, 0.28))

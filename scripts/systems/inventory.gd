@@ -16,8 +16,21 @@ const NAMES := {
 var max_slots: int = 5
 var items: Array[String] = []
 
+const DESCRIPTIONS := {
+	"sun_shell": "A golden scallop, warm to the touch — shaped like it was made for something.",
+	"coconut": "Heavy, hairy, and full of promise. Old wood would tip under a few of these.",
+	"rusty_locket": "Sea-worn bronze from the tide pool. The engraving inside is a pawprint — far too big for a cat.",
+	"stranded_fish": "Left behind when the pool drained. Somebody out there looks hungry.",
+	"old_oar": "Smooth with years of use. Whose paws wore it smooth?",
+	"palm_frond": "A great dry frond — practically a sail already.",
+	"vine_rope": "Fresh-cut vine, crab-approved. Strong enough to bind timbers.",
+}
+
 func display_name(id: String) -> String:
 	return NAMES.get(id, id.capitalize())
+
+func description(id: String) -> String:
+	return DESCRIPTIONS.get(id, "Something the island offered up.")
 
 func add_item(id: String) -> bool:
 	if items.size() >= max_slots:

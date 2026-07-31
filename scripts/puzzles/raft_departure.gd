@@ -56,6 +56,7 @@ func raft_interact(raft: Node3D) -> void:
 		Sfx.play("wood_creak", 1.05, 0.1, -8.0)
 		Sfx.play("pickup_chime", 0.9, 0.0, -8.0)
 		if _complete():
+			GameState.set_flag("raft_rigged")
 			_flash("The raft is ready. The sea is waiting.", 4.0)
 		else:
 			_flash("Lashed on. Still missing: %s." % _missing_text(), 3.5)

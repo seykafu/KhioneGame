@@ -25,6 +25,16 @@ func _run() -> void:
 		var intro := get_tree().root.find_child("IntroSequence", true, false)
 		if intro:
 			intro.debug_fast_start()
+	if OS.get_environment("KH_JOURNAL") != "":
+		await get_tree().create_timer(1.0).timeout
+		for id: String in ["rusty_locket", "coconut", "old_oar"]:
+			Inventory.add_item(id)
+		GameState.set_flag("letter_read")
+		GameState.set_flag("echo_stones_solved")
+		var j := get_tree().root.find_child("Journal", true, false)
+		if j:
+			j._show()
+			j._select_tab(int(OS.get_environment("KH_JOURNAL")))
 	await get_tree().create_timer(wait_s).timeout
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(out)
