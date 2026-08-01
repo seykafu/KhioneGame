@@ -156,7 +156,7 @@ func _scatter_trees() -> void:
 			var flat_r := Vector2(pos.x, pos.z).length()
 			if flat_r > 28.0 or flat_r < 14.5:
 				continue
-			var s := rng.randf_range(2.8, 4.0)
+			var s := rng.randf_range(2.6, 3.4)
 			var t := _add_scene(palms[rng.randi_range(0, palms.size() - 1)], pos,
 					rng.randf_range(0.0, TAU), s)
 			t.rotation.x = rng.randf_range(-0.06, 0.06)

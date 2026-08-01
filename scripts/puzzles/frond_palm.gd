@@ -4,16 +4,17 @@ extends Node3D
 ## ground. A stepping rock and a bent palm's crown form a jump route; leaping
 ## into the frond knocks it loose, and it drops as the raft's sail.
 
-const DRY := Color(0.66, 0.61, 0.32)
+const DRY := Color(0.85, 0.74, 0.4)
 
 var _frond: Node3D
 var _knocked := false
 var _materials := {}
 
 func _ready() -> void:
-	var rock: Node3D = load("res://assets/nature/rock_smallC.glb").instantiate()
-	rock.position = Vector3(-4.6, 0, 1.8)
-	rock.scale = Vector3.ONE * 2.2
+	# A real boulder, tall enough to matter and to hop from.
+	var rock: Node3D = load("res://assets/nature/rock_tallA.glb").instantiate()
+	rock.position = Vector3(-4.2, 0, 1.5)
+	rock.scale = Vector3.ONE * 1.15
 	add_child(rock)
 	_fmi(rock).create_trimesh_collision()
 
@@ -22,46 +23,54 @@ func _ready() -> void:
 	bent.scale = Vector3.ONE * 3.4
 	bent.rotation.y = 0.4
 	add_child(bent)
-	# Invisible ledges along the bend so the climb is reliable.
+	# Ledges along the bend, each capped with a visible branch stump.
 	_ledge(Vector3(-3.2, 1.05, 0.9), Vector3(1.2, 0.15, 1.2))
 	_ledge(Vector3(-2.2, 2.25, 0.4), Vector3(1.4, 0.15, 1.4))
 
+	# The tallest palm on the island, by a margin no one can miss.
 	var tall: Node3D = load("res://assets/nature/tree_palmDetailedTall.glb").instantiate()
-	tall.scale = Vector3.ONE * 3.6
+	tall.scale = Vector3.ONE * 4.9
 	add_child(tall)
 	var trunk := StaticBody3D.new()
 	var tcs := CollisionShape3D.new()
 	var cyl := CylinderShape3D.new()
-	cyl.radius = 0.35
-	cyl.height = 4.0
+	cyl.radius = 0.4
+	cyl.height = 5.4
 	tcs.shape = cyl
-	tcs.position = Vector3(0, 2.0, 0)
+	tcs.position = Vector3(0, 2.7, 0)
 	trunk.add_child(tcs)
 	add_child(trunk)
 
-	# The dry frond, fanned out high on the tall palm.
+	# The dry frond: big, bright, and unmistakably not part of the canopy.
 	_frond = Node3D.new()
 	_frond.position = Vector3(0.3, 3.35, 0.3)
-	for i in 3:
+	var glow := StandardMaterial3D.new()
+	glow.albedo_color = DRY
+	glow.roughness = 1.0
+	glow.emission_enabled = true
+	glow.emission = DRY
+	glow.emission_energy_multiplier = 0.25
+	for i in 4:
 		var blade := MeshInstance3D.new()
 		var box := BoxMesh.new()
-		box.size = Vector3(0.95, 0.04, 0.22)
+		box.size = Vector3(1.35, 0.05, 0.3)
 		blade.mesh = box
-		blade.material_override = _mat(DRY)
-		blade.position = Vector3(0.35, 0, 0)
-		blade.rotation.y = -0.5 + i * 0.5
-		blade.rotation.z = -0.3
+		blade.material_override = glow
+		blade.position = Vector3(0.5, 0, 0)
+		blade.rotation.y = -0.65 + i * 0.42
+		blade.rotation.z = -0.28
 		_frond.add_child(blade)
 	add_child(_frond)
 
 	var area := Area3D.new()
 	var cs := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
-	sph.radius = 0.95
+	sph.radius = 1.2
 	cs.shape = sph
 	area.add_child(cs)
 	area.position = _frond.position
 	area.body_entered.connect(_on_touch)
+	area.add_to_group("interactable")  # Whisker Sense glints the frond
 	add_child(area)
 
 func _on_touch(body: Node3D) -> void:
@@ -115,6 +124,14 @@ func _ledge(pos: Vector3, size: Vector3) -> void:
 	body.add_child(cs)
 	body.position = pos
 	add_child(body)
+	# Visible branch stump so the perch reads from the ground.
+	var cap := MeshInstance3D.new()
+	var cap_box := BoxMesh.new()
+	cap_box.size = Vector3(size.x * 0.8, 0.12, size.z * 0.8)
+	cap.mesh = cap_box
+	cap.material_override = _mat(Color(0.5, 0.38, 0.24))
+	cap.position = pos
+	add_child(cap)
 
 func _mat(color: Color) -> StandardMaterial3D:
 	if not _materials.has(color):

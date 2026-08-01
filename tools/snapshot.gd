@@ -35,6 +35,16 @@ func _run() -> void:
 		if j:
 			j._show()
 			j._select_tab(int(OS.get_environment("KH_JOURNAL")))
+	var cam_spec := OS.get_environment("KH_CAM")  # "px,py,pz|tx,ty,tz"
+	if not cam_spec.is_empty():
+		var parts := cam_spec.split("|")
+		var p := parts[0].split_floats(",")
+		var t := parts[1].split_floats(",")
+		var cam := Camera3D.new()
+		get_tree().root.add_child(cam)
+		cam.global_position = Vector3(p[0], p[1], p[2])
+		cam.look_at(Vector3(t[0], t[1], t[2]))
+		cam.current = true
 	await get_tree().create_timer(wait_s).timeout
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(out)
