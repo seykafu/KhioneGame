@@ -48,6 +48,10 @@ func _ready() -> void:
 	wishes.set_script(load("res://scripts/puzzles/fountain_wishes.gd"))
 	wishes.name = "FountainWishes"
 	add_child(wishes)
+	var quartet := Node3D.new()
+	quartet.set_script(load("res://scripts/puzzles/mannequin_shop.gd"))
+	quartet.name = "MannequinShop"
+	add_child(quartet)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
 	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
 	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")
@@ -279,9 +283,10 @@ func _build_fountain() -> void:
 	(upper.material_override as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 
 func _build_shops() -> void:
-	# Ground-floor shops, east wall: recessed interiors behind glass fronts.
+	# Ground-floor shops, east wall (the z=8 slot belongs to the mannequin
+	# shop, built by its own puzzle script).
 	var shop_colors := [Color(0.75, 0.4, 0.35), Color(0.4, 0.55, 0.7), Color(0.65, 0.55, 0.3)]
-	for i in 3:
+	for i in 2:
 		var z := -8.0 + i * 8.0
 		_add_box(Vector3(3.0, 3.6, 5.0), Vector3(18.5, 2.15, z), CONCRETE.lightened(0.1))
 		var front := _add_box(Vector3(0.1, 2.6, 4.2), Vector3(15.9, 1.75, z), GLASS, true)

@@ -30,6 +30,8 @@ const RIDDLES := [
 		"text": "Every stair runs against her. The stuck clock above the fountain still commands the mall, and the directory remembers when things happen."},
 	{"flag": "fountain_wish_made", "title": "The Fountain of Small Wishes", "island": 2,
 		"text": "Coins wait on the ledge, marked two ways. The mosaic under the water remembers three of them, in order."},
+	{"flag": "mannequins_posed", "title": "The Mannequin Quartet", "island": 2,
+		"text": "Four dancers behind brass-locked glass. The poster remembers their pose, but glass remembers things backwards."},
 ]
 
 const CONTROLS := [

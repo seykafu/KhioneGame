@@ -98,6 +98,12 @@ class ItemIcon:
 				draw_line(c + Vector2(-2, -3), c + Vector2(12, -3), brass, 3.0, true)
 				draw_line(c + Vector2(8, -3), c + Vector2(8, 3), brass, 2.6, true)
 				draw_line(c + Vector2(12, -3), c + Vector2(12, 4.5), brass, 2.6, true)
+			"skylight_crank":
+				var steel := Color(0.55, 0.55, 0.62)
+				draw_line(c + Vector2(-11, 6), c + Vector2(2, 6), steel, 3.4, true)
+				draw_line(c + Vector2(2, 6), c + Vector2(2, -6), steel, 3.4, true)
+				draw_line(c + Vector2(2, -6), c + Vector2(11, -6), steel, 3.4, true)
+				draw_circle(c + Vector2(11, -6), 3.4, Color(0.75, 0.35, 0.3))
 			"palm_frond":
 				var dry := Color(0.66, 0.61, 0.32)
 				var rib := Color(0.48, 0.44, 0.2)
@@ -238,7 +244,11 @@ func _current_objective_text() -> String:
 			return "Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall's habits."
 		if not GameState.get_flag("fountain_wish_made"):
 			return "The fountain keeps old wishes. A mosaic under the water remembers three coins. Pay it in kind, in order."
-		return "A brass key, freed from the fountain. Somewhere, a lock has been waiting… (more riddles soon)"
+		if not GameState.get_flag("mannequin_shop_open"):
+			return "The fountain's brass key is warm in her satchel. A dark shop past the east escalator has been locked for years."
+		if not GameState.get_flag("mannequins_posed"):
+			return "Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass."
+		return "The drummer surrendered a crank handle. Above the atrium, shutters have waited a long time… (main riddle soon)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):

@@ -30,6 +30,7 @@ const NAMES := {
 	"palm_frond": "Dry Frond",
 	"vine_rope": "Vine Rope",
 	"brass_key": "Brass Key",
+	"skylight_crank": "Skylight Crank",
 }
 
 const DESCRIPTIONS := {
@@ -41,6 +42,7 @@ const DESCRIPTIONS := {
 	"palm_frond": "A great dry frond. Practically a sail already.",
 	"vine_rope": "Fresh-cut vine, crab-approved. Strong enough to bind timbers.",
 	"brass_key": "Small, brass, and important somewhere. The fountain kept it safe for years.",
+	"skylight_crank": "A well-oiled crank handle, warm from a drummer's grip. Something above wants turning.",
 }
 
 var max_slots: int = 5
