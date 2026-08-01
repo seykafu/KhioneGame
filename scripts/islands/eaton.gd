@@ -120,8 +120,22 @@ func _build_mall() -> void:
 	_glass_wall(Vector3(-(4.0 + seg / 2.0), 0, hd), Vector3(seg, ROOF_Y, 0.15))
 	_glass_wall(Vector3(4.0 + seg / 2.0, 0, hd), Vector3(seg, ROOF_Y, 0.15))
 	_glass_wall(Vector3(0, BALCONY_Y, hd), Vector3(8.0, ROOF_Y - BALCONY_Y, 0.15))
-	# Entrance canopy.
+	# Entrance canopy, sign band, and logo mark.
 	_add_box(Vector3(10.0, 0.3, 3.0), Vector3(0, 4.0, hd + 1.5), FRAME)
+	_add_box(Vector3(12.0, 1.3, 0.3), Vector3(0, 8.6, hd + 0.2), Color(0.2, 0.5, 0.5), false)
+	_add_box(Vector3(0.9, 0.9, 0.32), Vector3(-4.6, 8.6, hd + 0.22), Color(0.95, 0.93, 0.85), false)
+	# Rooftop clutter: parapet lips and HVAC units, the honest mall silhouette.
+	_add_box(Vector3(MALL_W + 1.2, 0.5, 0.3), Vector3(0, ROOF_Y + 0.45, -hd), CONCRETE.darkened(0.05), false)
+	_add_box(Vector3(MALL_W + 1.2, 0.5, 0.3), Vector3(0, ROOF_Y + 0.45, hd), CONCRETE.darkened(0.05), false)
+	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(-hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
+	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
+	for def: Array in [
+		[-13.0, Vector3(2.2, 1.2, 1.8)],
+		[13.5, Vector3(1.8, 1.0, 1.6)],
+		[-15.5, Vector3(1.2, 0.9, 1.2)],
+	]:
+		var size: Vector3 = def[1]
+		_add_box(size, Vector3(def[0], ROOF_Y + 0.2 + size.y / 2.0, -hd + 3.0), FRAME.lightened(0.35))
 
 	# Balcony ring (atrium opening 30 x 16).
 	_add_box(Vector3(MALL_W, 0.3, 5.0), Vector3(0, BALCONY_Y, -hd + 2.5), CONCRETE)
@@ -218,6 +232,31 @@ func _build_lighting() -> void:
 	]:
 		var mi := _add_box(def[0], def[1], Color.WHITE, false)
 		mi.material_override = strip
+	# NOTE: no ReflectionProbe either; probes are clustered elements in
+	# Forward+ and tile-corrupt on this driver just like omni lights.
+	# Dust motes drifting in the skylight beams.
+	var motes := CPUParticles3D.new()
+	motes.amount = 70
+	motes.lifetime = 14.0
+	motes.preprocess = 14.0
+	motes.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	motes.emission_box_extents = Vector3(13.0, 4.0, 6.5)
+	motes.position = Vector3(0, 5.5, 0)
+	motes.gravity = Vector3.ZERO
+	motes.direction = Vector3(0, -1, 0)
+	motes.spread = 180.0
+	motes.initial_velocity_min = 0.03
+	motes.initial_velocity_max = 0.12
+	var grain := SphereMesh.new()
+	grain.radius = 0.012
+	grain.height = 0.024
+	var gm := StandardMaterial3D.new()
+	gm.albedo_color = Color(1.0, 0.98, 0.9, 0.5)
+	gm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	grain.material = gm
+	motes.mesh = grain
+	add_child(motes)
 
 # --- fixtures ---
 
@@ -248,6 +287,12 @@ func _build_shops() -> void:
 		_add_box(Vector3(0.35, 0.9, 4.8), Vector3(15.8, 3.55, z), shop_colors[i])
 		_add_scene(FURNITURE + ["tableCoffee.glb", "plantSmall2.glb", "lampRoundFloor.glb"][i],
 				Vector3(16.8, 0.4, z), PI / 2.0, 1.6)
+		# Window merchandise: little stacks of product boxes.
+		var box_colors := [Color(0.85, 0.6, 0.3), Color(0.5, 0.65, 0.8), Color(0.8, 0.75, 0.6)]
+		for k in 3:
+			_add_box(Vector3(0.35, 0.35, 0.35),
+					Vector3(16.6, 0.56 + (k / 2) * 0.36, z - 1.3 + (k % 2) * 0.45),
+					box_colors[(i + k) % box_colors.size()], false)
 	# West wall: two shops flanking the pet shop.
 	for z in [-8.5, 8.5]:
 		_add_box(Vector3(3.0, 3.6, 5.0), Vector3(-18.5, 2.15, z), CONCRETE.lightened(0.1))
@@ -396,6 +441,11 @@ func _build_dock() -> void:
 	for side in [-1.0, 1.0]:
 		for i in 3:
 			_add_mesh(_cylinder(0.12, 0.14, 1.5), Vector3(side * 1.1, -0.2, 30.0 + i * 4.5), Color(0.45, 0.38, 0.3))
+	# Concrete walkway from the dock to the entrance, with bollards.
+	_add_box(Vector3(4.0, 0.1, 16.0), Vector3(0, 0.31, 21.0), CONCRETE.darkened(0.04))
+	for side in [-1.0, 1.0]:
+		for z in [15.5, 20.5, 25.5]:
+			_add_mesh(_cylinder(0.1, 0.12, 0.7), Vector3(side * 2.5, 0.65, z), FRAME.lightened(0.15))
 
 # --- the robot, and the hiss ---
 

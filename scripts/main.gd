@@ -12,6 +12,29 @@ func _ready() -> void:
 	_schedule_gull()
 	# Ask the OS for keyboard focus; launches from scripts can open unfocused.
 	get_window().grab_focus.call_deferred()
+	_setup_clouds()
+
+## Soft procedural clouds on the sky dome (noise cover with an alpha ramp).
+func _setup_clouds() -> void:
+	var env: Environment = $WorldEnvironment.environment
+	var sky_mat := env.sky.sky_material as ProceduralSkyMaterial
+	if sky_mat == null:
+		return
+	var noise := FastNoiseLite.new()
+	noise.seed = 9
+	noise.fractal_octaves = 4
+	noise.frequency = 0.006
+	var cover := NoiseTexture2D.new()
+	cover.noise = noise
+	cover.seamless = true
+	cover.width = 512
+	cover.height = 256
+	var grad := Gradient.new()
+	grad.offsets = PackedFloat32Array([0.5, 0.62, 0.8])
+	grad.colors = PackedColorArray([Color(1, 1, 1, 0.0), Color(1, 1, 1, 0.35), Color(1, 1, 1, 0.85)])
+	cover.color_ramp = grad
+	sky_mat.sky_cover = cover
+	sky_mat.sky_cover_modulate = Color(1, 1, 1, 0.8)
 
 ## Swaps islands: frees the old one, loads the new, moves the player, fades
 ## in, and starts that island's music track (no-op until its file exists).

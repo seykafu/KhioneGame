@@ -20,7 +20,8 @@ varying vec3 wpos;
 void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	VERTEX.y += sin(wpos.x * 0.3 + TIME * wave_speed) * wave_height
-			+ cos(wpos.z * 0.24 + TIME * wave_speed * 1.25) * wave_height;
+			+ cos(wpos.z * 0.24 + TIME * wave_speed * 1.25) * wave_height
+			+ sin((wpos.x + wpos.z) * 0.045 + TIME * 0.45) * 0.18;
 }
 
 void fragment() {
@@ -43,5 +44,5 @@ void fragment() {
 	vec3 n1 = texture(wave_normal1, wpos.xz * 0.06 + vec2(TIME * 0.015, TIME * 0.02)).rgb;
 	vec3 n2 = texture(wave_normal2, wpos.xz * 0.11 - vec2(TIME * 0.02, TIME * 0.013)).rgb;
 	NORMAL_MAP = mix(n1, n2, 0.5);
-	NORMAL_MAP_DEPTH = 0.55;
+	NORMAL_MAP_DEPTH = 0.72;
 }

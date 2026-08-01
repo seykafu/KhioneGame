@@ -50,6 +50,8 @@ func _ready() -> void:
 	_scatter_trees()
 	_scatter_rocks()
 	_scatter_flora()
+	_scatter_beach_details()
+	_spawn_butterflies()
 	_place_pickups()
 	_add_location_trigger(Vector3(0, 0, 33), 8.0, "South Beach")
 	_add_location_trigger(Vector3(33, 0, -4), 9.0, "Echo Cove")
@@ -160,7 +162,16 @@ func _scatter_trees() -> void:
 			var t := _add_scene(palms[rng.randi_range(0, palms.size() - 1)], pos,
 					rng.randf_range(0.0, TAU), s)
 			t.rotation.x = rng.randf_range(-0.06, 0.06)
-			t.rotation.z = rng.randf_range(-0.06, 0.06)
+			var lean := rng.randf_range(-0.06, 0.06)
+			t.rotation.z = lean
+			# A slow breathing sway in the sea breeze.
+			var amp := rng.randf_range(0.008, 0.02)
+			var dur := rng.randf_range(2.2, 3.6)
+			var sway := t.create_tween().set_loops()
+			sway.tween_property(t, "rotation:z", lean + amp, dur) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			sway.tween_property(t, "rotation:z", lean - amp, dur) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 			# Trunk collider sized to the palm; climbable canopies return with real level design.
 			var sb := StaticBody3D.new()
 			var cs := CollisionShape3D.new()
@@ -214,9 +225,17 @@ func _scatter_flora() -> void:
 	for i in 140:
 		var r := rng.randf_range(13.5, 28.5)
 		var a := rng.randf_range(0.0, TAU)
-		_add_scene(flora[rng.randi_range(0, flora.size() - 1)],
+		var tuft := _add_scene(flora[rng.randi_range(0, flora.size() - 1)],
 				Vector3(cos(a) * r, 0.3, sin(a) * r),
 				rng.randf_range(0.0, TAU), rng.randf_range(2.0, 3.0))
+		if i % 3 == 0:
+			var amp := rng.randf_range(0.03, 0.06)
+			var dur := rng.randf_range(1.1, 1.9)
+			var sway := tuft.create_tween().set_loops()
+			sway.tween_property(tuft, "rotation:x", amp, dur) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			sway.tween_property(tuft, "rotation:x", -amp, dur) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _add_scene(scene: PackedScene, pos: Vector3, yrot: float, s: float, collide := false) -> Node3D:
 	var n: Node3D = scene.instantiate()
@@ -246,6 +265,79 @@ func _place_pickups() -> void:
 	_add_pickup(Vector3(-18, 0.4, -8), "coconut", "Coconut", COCONUT)
 	_add_pickup(Vector3(-14, 0.4, 15), "coconut", "Coconut", COCONUT)
 	_add_pickup(Vector3(21, 0.4, -7), "coconut", "Coconut", COCONUT)
+
+func _scatter_beach_details() -> void:
+	# Shells, starfish, and driftwood: the tideline's leavings.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 808
+	var shell_colors := [Color(0.95, 0.9, 0.82), Color(0.92, 0.78, 0.75), Color(0.85, 0.82, 0.7)]
+	for i in 16:
+		var r := rng.randf_range(31.5, 39.0)
+		var a := rng.randf_range(0.0, TAU)
+		var pos := _clear_channel(Vector3(cos(a) * r, 0.04, sin(a) * r))
+		var shell := CylinderMesh.new()
+		shell.top_radius = 0.0
+		shell.bottom_radius = rng.randf_range(0.06, 0.1)
+		shell.height = 0.05
+		_add_mesh(shell, pos, shell_colors[i % shell_colors.size()], false)
+	for i in 3:
+		var r := rng.randf_range(32.0, 38.0)
+		var a := rng.randf_range(0.0, TAU)
+		var center := _clear_channel(Vector3(cos(a) * r, 0.04, sin(a) * r))
+		for k in 5:
+			var arm := BoxMesh.new()
+			arm.size = Vector3(0.22, 0.03, 0.07)
+			var mi := _add_mesh(arm, center, Color(0.9, 0.5, 0.3), false)
+			mi.rotation.y = TAU * k / 5.0
+			mi.position += Vector3(cos(TAU * k / 5.0), 0, sin(TAU * k / 5.0)) * 0.08
+	for i in 4:
+		var r := rng.randf_range(31.0, 37.0)
+		var a := rng.randf_range(0.0, TAU)
+		var pos := _clear_channel(Vector3(cos(a) * r, 0.12, sin(a) * r))
+		var wood := CylinderMesh.new()
+		wood.top_radius = rng.randf_range(0.09, 0.13)
+		wood.bottom_radius = rng.randf_range(0.13, 0.18)
+		wood.height = rng.randf_range(1.6, 2.6)
+		var mi := _add_mesh(wood, pos, Color(0.55, 0.47, 0.4), true)
+		mi.rotation.z = PI / 2.0
+		mi.rotation.y = rng.randf_range(0.0, TAU)
+
+func _spawn_butterflies() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 555
+	var colors := [Color(0.9, 0.55, 0.2), Color(0.6, 0.5, 0.9), Color(0.95, 0.85, 0.3)]
+	for i in 8:
+		var b := Node3D.new()
+		var wing_mat := StandardMaterial3D.new()
+		wing_mat.albedo_color = colors[i % colors.size()]
+		wing_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		wing_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		for side in [-1.0, 1.0]:
+			var w := MeshInstance3D.new()
+			var q := QuadMesh.new()
+			q.size = Vector2(0.12, 0.16)
+			w.mesh = q
+			w.material_override = wing_mat
+			w.position = Vector3(0.06 * side, 0, 0)
+			w.rotation.x = -PI / 2.0
+			b.add_child(w)
+		var r := rng.randf_range(14.0, 27.0)
+		var a := rng.randf_range(0.0, TAU)
+		var home := Vector3(cos(a) * r, rng.randf_range(0.8, 1.5), sin(a) * r)
+		b.position = home
+		add_child(b)
+		# Wander a small loop of waypoints forever.
+		var path := b.create_tween().set_loops()
+		for k in 4:
+			var wp := home + Vector3(rng.randf_range(-3.0, 3.0),
+					rng.randf_range(-0.3, 0.5), rng.randf_range(-3.0, 3.0))
+			path.tween_property(b, "position", wp, rng.randf_range(2.0, 3.5)) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		path.tween_property(b, "position", home, 2.5).set_trans(Tween.TRANS_SINE)
+		# Wing flap: pinch on x at speed.
+		var flap := b.create_tween().set_loops()
+		flap.tween_property(b, "scale:x", 0.45, 0.09)
+		flap.tween_property(b, "scale:x", 1.0, 0.09)
 
 func _add_location_trigger(pos: Vector3, radius: float, title: String) -> void:
 	var area := Area3D.new()
