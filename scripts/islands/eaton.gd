@@ -40,6 +40,10 @@ func _ready() -> void:
 	_build_elevator()
 	_build_dock()
 	_build_robot()
+	var clock := Node3D.new()
+	clock.set_script(load("res://scripts/puzzles/mall_clock.gd"))
+	clock.name = "MallClock"
+	add_child(clock)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
 	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
 	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")

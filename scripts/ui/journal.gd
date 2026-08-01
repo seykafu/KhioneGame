@@ -26,6 +26,8 @@ const RIDDLES := [
 		"text": "The frame wants an oar, a sail, and rope to bind it."},
 	{"flag": "island1_complete", "title": "Set Sail",
 		"text": "The raft is ready. The sea is waiting."},
+	{"flag": "mall_time_3", "title": "The Wrong-Way Stairs", "island": 2,
+		"text": "Every stair runs against her. The stuck clock above the fountain still commands the mall, and the directory remembers when things happen."},
 ]
 
 const CONTROLS := [
@@ -244,7 +246,8 @@ func _refresh_riddles() -> void:
 		c.queue_free()
 	var current_shown := false
 	for r: Dictionary in RIDDLES:
-		var solved: bool = GameState.get_flag(r.flag)
+		var solved: bool = GameState.get_flag(r.flag) \
+				or (r.get("island", 1) == 1 and GameState.get_flag("island1_complete"))
 		var row := VBoxContainer.new()
 		var title := Label.new()
 		title.add_theme_font_size_override("font_size", 17)

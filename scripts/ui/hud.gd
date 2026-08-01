@@ -228,7 +228,9 @@ func _current_objective_text() -> String:
 	if GameState.get_flag("island1_complete"):
 		if not GameState.knows_vocal("hiss"):
 			return "A glass mall hums on the water… and something small and angry patrols its floors."
-		return "Sixty frozen geese hang over the atrium, waiting for a reason to fly. (Island 2 riddles coming soon)"
+		if not GameState.get_flag("mall_time_3"):
+			return "Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall's habits."
+		return "The mall believes the clock now. The fountain keeps old wishes… (more riddles soon)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):
