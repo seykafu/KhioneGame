@@ -1,8 +1,25 @@
 extends Node
-## Khione's inventory: 5 slots, upgradable to 10 later in the game.
-## Identical items stack into one slot with a count.
+## Khione's satchel: 5 pockets to start, and one new pocket for every
+## island finished (islandN_complete flags). Identical items stack into
+## one pocket with a count.
 
 signal changed
+
+const BASE_SLOTS := 5
+
+func _ready() -> void:
+	GameState.flag_changed.connect(_on_flag_changed)
+
+func _on_flag_changed(flag: String, value: bool) -> void:
+	if not value or not flag.begins_with("island") or not flag.ends_with("_complete"):
+		return
+	var completed := 0
+	for f in GameState.flags:
+		if String(f).begins_with("island") and String(f).ends_with("_complete") and GameState.flags[f]:
+			completed += 1
+	if BASE_SLOTS + completed != max_slots:
+		max_slots = BASE_SLOTS + completed
+		changed.emit()
 
 const NAMES := {
 	"sun_shell": "Sun Shell",
@@ -73,5 +90,5 @@ func upgrade_slots(new_max: int) -> void:
 
 func reset() -> void:
 	stacks.clear()
-	max_slots = 5
+	max_slots = BASE_SLOTS
 	changed.emit()

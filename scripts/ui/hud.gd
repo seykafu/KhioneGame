@@ -136,6 +136,8 @@ func _ready() -> void:
 	_build_location_label()
 	_build_objective()
 	_build_slots()
+	# Items live in the journal's Satchel (Tab); no persistent bar on screen.
+	inventory_bar.visible = false
 	GameState.letter_opened.connect(_show_letter)
 	GameState.flag_changed.connect(_on_flag_changed)
 	Inventory.changed.connect(_refresh_slots)

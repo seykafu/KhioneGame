@@ -18,7 +18,7 @@ shape = SubResource("col_shape")
 [node name="Body" type="Node3D" parent="."]
 
 [node name="CatModel" parent="Body" instance=ExtResource("3_cat")]
-transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 0, 0)
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, -0.03, 0)
 
 [node name="CameraRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
