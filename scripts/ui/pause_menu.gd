@@ -5,6 +5,13 @@ extends CanvasLayer
 
 const INK := Color(0.28, 0.2, 0.12)
 
+const ISLANDS := [
+	{"label": "Island 1: Ahalo", "scene": "res://scenes/islands/ahalo.tscn",
+		"spawn": Vector3(0, 1, 30), "track": "ahalo", "display": "Ahalo"},
+	{"label": "Island 2: The Eaton Centre", "scene": "res://scenes/islands/eaton.tscn",
+		"spawn": Vector3(0, 1.2, 40), "track": "eaton", "display": "The Eaton Centre"},
+]
+
 var _open := false
 var _panel: PanelContainer
 
@@ -37,6 +44,16 @@ func _close() -> void:
 	Settings.save_settings()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+## Skip-travel between islands. Jumping ahead marks earlier islands
+## complete so the riddle tracker and satchel stay coherent.
+func _travel_to_island(isl: Dictionary) -> void:
+	if isl.track == "eaton" and not GameState.get_flag("island1_complete"):
+		GameState.set_flag("island1_complete")
+	_close()
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	if mgr:
+		mgr.travel_to(isl.scene, isl.spawn, isl.track, isl.display)
+
 func _restart_island() -> void:
 	GameState.reset()
 	Inventory.reset()
@@ -52,9 +69,9 @@ func _build() -> void:
 			preload("res://scripts/ui/hud.gd").parchment_style())
 	_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_panel.offset_left = -250.0
-	_panel.offset_top = -280.0
+	_panel.offset_top = -330.0
 	_panel.offset_right = 250.0
-	_panel.offset_bottom = 280.0
+	_panel.offset_bottom = 330.0
 	add_child(_panel)
 
 	var margin := MarginContainer.new()
@@ -99,6 +116,10 @@ func _build() -> void:
 		Settings.fullscreen = on
 		Settings.apply())
 	vbox.add_child(fs)
+
+	_section(vbox, "Travel")
+	for isl: Dictionary in ISLANDS:
+		_button(vbox, isl.label, _travel_to_island.bind(isl))
 
 	vbox.add_child(HSeparator.new())
 	_button(vbox, "Resume", _close)
