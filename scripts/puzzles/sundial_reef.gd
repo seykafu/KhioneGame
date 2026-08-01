@@ -263,7 +263,7 @@ func _release_raft() -> void:
 	_raft = _build_raft(TARGET_ROCK + Vector3(-3.0, 0.58, 3.0))
 	# Drift around the east shore in open water, then ground on the south beach.
 	var t := create_tween()
-	t.tween_property(_raft, "position", Vector3(48.0, -0.2, 8.0), 3.5) \
+	t.tween_property(_raft, "position", Vector3(52.0, -0.2, 10.0), 3.5) \
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	t.tween_property(_raft, "position", Vector3(20.0, -0.1, 40.0), 3.5) \
 			.set_trans(Tween.TRANS_SINE)

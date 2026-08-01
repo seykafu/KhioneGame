@@ -188,15 +188,22 @@ func _scatter_rocks() -> void:
 		var a := rng.randf_range(0.0, TAU)
 		var pool: Array = big if rng.randf() < 0.35 else small
 		_add_scene(pool[rng.randi_range(0, pool.size() - 1)],
-				Vector3(cos(a) * r, 0.0, sin(a) * r),
+				_clear_channel(Vector3(cos(a) * r, 0.0, sin(a) * r)),
 				rng.randf_range(0.0, TAU), rng.randf_range(1.5, 2.5), true)
 	# Sea rocks poking above the surface — swim out and climb on.
 	for i in 5:
 		var r := rng.randf_range(43.0, 50.0)
 		var a := rng.randf_range(0.0, TAU)
 		_add_scene(big[rng.randi_range(0, big.size() - 1)],
-				Vector3(cos(a) * r, -0.8, sin(a) * r),
+				_clear_channel(Vector3(cos(a) * r, -0.8, sin(a) * r)),
 				rng.randf_range(0.0, TAU), rng.randf_range(3.0, 4.0), true)
+
+## The raft sails a fixed southern channel; any scattered rock that lands in
+## it gets mirrored to the north side so nothing sits in the boat lane.
+func _clear_channel(pos: Vector3) -> Vector3:
+	if pos.z > 24.0 and absf(pos.x) < 22.0:
+		pos.z = -pos.z
+	return pos
 
 func _scatter_flora() -> void:
 	var rng := RandomNumberGenerator.new()

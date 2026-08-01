@@ -152,7 +152,7 @@ func _set_sail() -> void:
 	_narrate("And so, with borrowed timbers and a stranger's wish, Khione left the only home she had ever known.")
 	Sfx.play("splash", 0.9, 0.1, -8.0)
 	var start: Vector3 = _raft.global_position
-	var dest := Vector3(14.0, start.y - 0.12, 78.0)
+	var dest := Vector3(2.0, start.y - 0.12, 80.0)  # straight down the cleared channel
 	var drift := create_tween()
 	var step := func(t: float) -> void:
 		var rp := start.lerp(dest, t)
@@ -190,7 +190,7 @@ func _set_sail() -> void:
 	var mgr := get_tree().get_first_node_in_group("island_manager")
 	if mgr:
 		mgr.call_deferred("travel_to", "res://scenes/islands/eaton.tscn",
-				Vector3(0, 1.2, 38.0), "eaton", "The Eaton Centre")
+				Vector3(0, 1.2, 40.0), "eaton", "The Eaton Centre")
 
 func _spawn_big_pawprints() -> void:
 	# Twice Khione's size. Players trained on her own prints will notice.

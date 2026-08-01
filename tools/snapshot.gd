@@ -39,12 +39,32 @@ func _run() -> void:
 		await get_tree().create_timer(0.5).timeout
 		var mgr := get_tree().get_first_node_in_group("island_manager")
 		if mgr:
-			mgr.travel_to("res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 38.0), "eaton", "The Eaton Centre")
+			mgr.travel_to("res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 40.0), "eaton", "The Eaton Centre")
 	if OS.get_environment("KH_RAFT") == "1":
 		await get_tree().create_timer(1.0).timeout
 		var sundial := get_tree().root.find_child("SundialReef", true, false)
 		if sundial:
 			sundial._release_raft()
+	if OS.get_environment("KH_HIDEWATER") == "1":
+		for island in get_tree().get_first_node_in_group("island_manager").get_children():
+			if island is Node3D:
+				for c in island.get_children():
+					if c is MeshInstance3D and c.material_override is ShaderMaterial \
+							and c.mesh is PlaneMesh:
+						c.visible = false
+	if OS.get_environment("KH_HIDEGLASS") == "1":
+		for island in get_tree().get_first_node_in_group("island_manager").get_children():
+			if island is Node3D:
+				for c in island.get_children():
+					if c is MeshInstance3D and c.material_override is StandardMaterial3D \
+							and (c.material_override as StandardMaterial3D).transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
+						c.visible = false
+	if OS.get_environment("KH_NOLIGHTS") == "1":
+		for island in get_tree().get_first_node_in_group("island_manager").get_children():
+			if island is Node3D:
+				for c in island.get_children():
+					if c is OmniLight3D:
+						c.visible = false
 	var cam_spec := OS.get_environment("KH_CAM")  # "px,py,pz|tx,ty,tz"
 	if not cam_spec.is_empty():
 		var parts := cam_spec.split("|")

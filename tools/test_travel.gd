@@ -18,7 +18,7 @@ func _run() -> void:
 		await get_tree().process_frame
 
 	var player: Node3D = get_tree().get_first_node_in_group("player")
-	main.travel_to("res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 38.0), "eaton", "The Eaton Centre")
+	main.travel_to("res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 40.0), "eaton", "The Eaton Centre")
 	for i in 10:
 		await get_tree().process_frame
 	assert(main.get_node_or_null("Ahalo") == null, "Ahalo should be freed")
@@ -26,12 +26,12 @@ func _run() -> void:
 	assert(eaton != null, "Eaton island should exist")
 	assert(eaton.get_node_or_null("Geese") != null, "geese flock missing")
 	assert(eaton.get_node_or_null("RobotVac") != null, "robot missing")
-	assert(player.global_position.distance_to(Vector3(0, 1.2, 38.0)) < 3.0, "player should arrive at the dock")
+	assert(player.global_position.distance_to(Vector3(0, 1.2, 40.0)) < 3.0, "player should arrive at the dock")
 	print("travel + island build: OK")
 
 	# Walk into the mall: the robot confronts and Khione learns to hiss.
 	assert(not GameState.knows_vocal("hiss"))
-	player.global_position = Vector3(0, 1.0, 8.0)
+	player.global_position = Vector3(0, 1.0, 11.0)
 	player.set("velocity", Vector3.ZERO)
 	for i in 6:
 		await get_tree().physics_frame
