@@ -35,6 +35,11 @@ func _run() -> void:
 		if j:
 			j._show()
 			j._select_tab(int(OS.get_environment("KH_JOURNAL")))
+	if OS.get_environment("KH_TRAVEL") == "eaton":
+		await get_tree().create_timer(0.5).timeout
+		var mgr := get_tree().get_first_node_in_group("island_manager")
+		if mgr:
+			mgr.travel_to("res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 38.0), "eaton", "The Eaton Centre")
 	if OS.get_environment("KH_RAFT") == "1":
 		await get_tree().create_timer(1.0).timeout
 		var sundial := get_tree().root.find_child("SundialReef", true, false)

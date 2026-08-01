@@ -21,6 +21,9 @@ const SOUNDS := {
 	"gate_open": "res://assets/audio/gate_open.wav",
 	"whisker_shimmer": "res://assets/audio/whisker_shimmer.wav",
 	"crab_snip": "res://assets/audio/crab_snip.wav",
+	"hiss": "res://assets/audio/hiss.wav",
+	"robot_whir": "res://assets/audio/robot_whir.wav",
+	"robot_flee": "res://assets/audio/robot_flee.wav",
 }
 const POOL_SIZE := 10
 

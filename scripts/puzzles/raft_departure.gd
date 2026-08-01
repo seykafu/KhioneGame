@@ -178,20 +178,19 @@ func _set_sail() -> void:
 
 	_fade(1.0, 1.6)
 	await _sleep(1.9)
-	player.global_position = Vector3(0, 1, 30)
+	GameState.set_flag("island1_complete")
 	player.set_physics_process(true)
 	player.controls_enabled = true
 	player.rig.set_process_unhandled_input(true)
 	var pcam: Camera3D = player.rig.get_node("SpringArm/Camera")
 	pcam.current = true
 	cam.queue_free()
-	_subtitle.visible = false
-	_fade(0.0, 1.4)
-	Music.play("ahalo", 3.0)
-	GameState.set_flag("island1_complete")
-	await _sleep(1.5)
-	_ui.queue_free()
-	_flash("Ahalo will remember you.   (Island 2 coming soon)", 6.0)
+	# Everything under Ahalo (this node included) is freed by the travel;
+	# the island manager owns the fade-in and arrival card from here.
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	if mgr:
+		mgr.call_deferred("travel_to", "res://scenes/islands/eaton.tscn",
+				Vector3(0, 1.2, 38.0), "eaton", "The Eaton Centre")
 
 func _spawn_big_pawprints() -> void:
 	# Twice Khione's size. Players trained on her own prints will notice.

@@ -234,10 +234,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				if kind == "meow":
 					_meow_sfx.play()
 					_whisker_sense()
+				elif kind == "hiss":
+					Sfx.play("hiss", 1.0, 0.06, -6.0)
 				vocalized.emit(kind)
 				GameState.vocal_used.emit(kind)
 			else:
 				vocal_unknown.emit(kind)
+
+func set_spawn(pos: Vector3) -> void:
+	_spawn = pos
 
 func is_swimming() -> bool:
 	return _water_zones > 0 and global_position.y < _water_surface - 0.25

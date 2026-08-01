@@ -223,8 +223,13 @@ func _update_objective() -> void:
 ## The current riddle, as an in-world nudge — points where to look, never
 ## spoils the answer. Priority-ordered over the island's beats.
 func _current_objective_text() -> String:
-	if not GameState.get_flag("intro_done") or GameState.get_flag("set_sail_started") \
-			or GameState.get_flag("island1_complete"):
+	if not GameState.get_flag("intro_done"):
+		return ""
+	if GameState.get_flag("island1_complete"):
+		if not GameState.knows_vocal("hiss"):
+			return "A glass mall hums on the water… and something small and angry patrols its floors."
+		return "Sixty frozen geese hang over the atrium, waiting for a reason to fly. (Island 2 riddles coming soon)"
+	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):
 		return "Reach the bottle on the south beach."

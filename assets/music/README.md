@@ -6,6 +6,7 @@ Drop finished tracks in this folder and they play automatically — no code chan
 |---|---|---|
 | `intro.mp3` (or `.ogg`/`.wav`) | Opening cinematic | Fades in with the narration, crossfades out at handoff |
 | `ahalo.mp3` (or `.ogg`/`.wav`) | Island 1 exploration | Starts as gameplay begins, loops forever |
+| `eaton.mp3` (or `.ogg`/`.wav`) | Island 2, the Eaton Centre | Crossfades in when Khione sails from Ahalo |
 
 The `Music` autoload (scripts/systems/music.gd) resolves `<track>.ogg` → `.mp3` → `.wav`,
 loops it, and crossfades between decks. Until a file exists, the hook no-ops and prints a
@@ -24,6 +25,12 @@ console note. Future islands just need `Music.play("<island>")` + a file here.
 > Instrumental only, no vocals. Storybook fairytale opening theme for a narrated cinematic. Begins with a delicate lone music box over faint ocean ambience, slowly joined by warm celesta, soft felt piano, and gently swelling warm strings. Mood: wonder, innocence, and quiet melancholy — a lonely little white cat, and a message in a bottle washing ashore. Slow, around 70 BPM, builds tenderly to one hopeful swell, then settles into a soft unresolved ending that hands off to gameplay. Intimate, cinematic, Ghibli-esque lullaby.
 
 *Exclude styles / avoid:* vocals, lyrics, singing, percussion, trailer epicness
+
+### Track 3 — `eaton` (Island 2, the empty mall)
+
+> Instrumental only, no vocals. Uncanny-cozy exploration theme for an abandoned shopping mall, sunlit and silent. Soft mallsoft-inspired electric piano and vibraphone, gentle tape-warble pads, a slow lonely melody with long reverb tails like music echoing through an empty atrium, light fingersnap-soft percussion far in the background. Mood: curious, dreamlike, gently mysterious, a little playful, never scary. Slow-mid tempo around 80 BPM, loops seamlessly. Style touchstones: mallsoft ambience, Animal Crossing museum, Spirited Away bathhouse at rest.
+
+*Exclude styles / avoid:* vocals, lyrics, singing, horror, dark ambient, heavy drums
 
 ### Tips for Suno
 
