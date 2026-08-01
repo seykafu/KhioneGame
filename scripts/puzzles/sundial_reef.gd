@@ -9,7 +9,7 @@ extends Node3D
 const SUNDIAL_POS := Vector3(1.8, 3.3, -1.5)
 const TARGET_ROCK := Vector3(38.0, -0.8, -32.0)
 const DECOY_ROCKS := [Vector3(-45.0, -0.8, 18.0), Vector3(-15.0, -0.8, -46.0)]
-const BEACH_POINT := Vector3(6.0, -0.05, 34.0)
+const BEACH_POINT := Vector3(-4.0, 0.14, 35.0)  # on the sand, clear of dunes, beside the bottle
 
 const STONE := Color(0.55, 0.55, 0.58)
 const DIAL := Color(0.85, 0.8, 0.66)
@@ -261,11 +261,17 @@ func _release_raft() -> void:
 	Sfx.play("splash", 0.8, 0.1, -6.0)
 	Sfx.play("wood_creak", 0.8, 0.1, -8.0)
 	_raft = _build_raft(TARGET_ROCK + Vector3(-3.0, 0.58, 3.0))
+	# Drift around the east shore in open water, then ground on the south beach.
 	var t := create_tween()
-	t.tween_property(_raft, "position", BEACH_POINT, 9.0) \
-			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	t.parallel().tween_property(_raft, "rotation:y", 1.2, 9.0)
+	t.tween_property(_raft, "position", Vector3(48.0, -0.2, 8.0), 3.5) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	t.tween_property(_raft, "position", Vector3(20.0, -0.1, 40.0), 3.5) \
+			.set_trans(Tween.TRANS_SINE)
+	t.tween_property(_raft, "position", BEACH_POINT, 2.5) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	t.tween_callback(_raft_beached)
+	var rt := create_tween()
+	rt.tween_property(_raft, "rotation:y", 1.2, 9.5)
 
 func _raft_beached() -> void:
 	GameState.set_flag("raft_frame_beached")

@@ -35,6 +35,11 @@ func _run() -> void:
 		if j:
 			j._show()
 			j._select_tab(int(OS.get_environment("KH_JOURNAL")))
+	if OS.get_environment("KH_RAFT") == "1":
+		await get_tree().create_timer(1.0).timeout
+		var sundial := get_tree().root.find_child("SundialReef", true, false)
+		if sundial:
+			sundial._release_raft()
 	var cam_spec := OS.get_environment("KH_CAM")  # "px,py,pz|tx,ty,tz"
 	if not cam_spec.is_empty():
 		var parts := cam_spec.split("|")
