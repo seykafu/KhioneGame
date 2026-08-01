@@ -28,6 +28,8 @@ const RIDDLES := [
 		"text": "The raft is ready. The sea is waiting."},
 	{"flag": "mall_time_3", "title": "The Wrong-Way Stairs", "island": 2,
 		"text": "Every stair runs against her. The stuck clock above the fountain still commands the mall, and the directory remembers when things happen."},
+	{"flag": "fountain_wish_made", "title": "The Fountain of Small Wishes", "island": 2,
+		"text": "Coins wait on the ledge, marked two ways. The mosaic under the water remembers three of them, in order."},
 ]
 
 const CONTROLS := [

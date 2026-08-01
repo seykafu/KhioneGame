@@ -44,6 +44,10 @@ func _ready() -> void:
 	clock.set_script(load("res://scripts/puzzles/mall_clock.gd"))
 	clock.name = "MallClock"
 	add_child(clock)
+	var wishes := Node3D.new()
+	wishes.set_script(load("res://scripts/puzzles/fountain_wishes.gd"))
+	wishes.name = "FountainWishes"
+	add_child(wishes)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
 	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
 	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")
@@ -267,18 +271,12 @@ func _build_lighting() -> void:
 func _build_fountain() -> void:
 	_add_mesh(_cylinder(3.4, 3.6, 0.7), Vector3(0, 0.72, 0), CONCRETE.darkened(0.1))
 	var water := _add_mesh(_cylinder(3.05, 3.05, 0.1), Vector3(0, 1.02, 0), Color(0.2, 0.5, 0.65, 0.7), false)
+	water.name = "FountainWater"
 	(water.material_override as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_add_mesh(_cylinder(0.5, 0.9, 1.2), Vector3(0, 1.45, 0), CONCRETE.darkened(0.15))
 	_add_mesh(_cylinder(1.5, 1.6, 0.28), Vector3(0, 2.15, 0), CONCRETE.darkened(0.1))
 	var upper := _add_mesh(_cylinder(1.3, 1.3, 0.08), Vector3(0, 2.32, 0), Color(0.25, 0.55, 0.68, 0.7), false)
 	(upper.material_override as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 202
-	for i in 12:
-		var a := rng.randf_range(0.0, TAU)
-		var r := rng.randf_range(0.4, 2.6)
-		_add_mesh(_cylinder(0.09, 0.09, 0.03),
-				Vector3(cos(a) * r, 0.99, sin(a) * r), Color(0.95, 0.8, 0.3), false)
 
 func _build_shops() -> void:
 	# Ground-floor shops, east wall: recessed interiors behind glass fronts.

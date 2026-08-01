@@ -92,6 +92,12 @@ class ItemIcon:
 				draw_line(c + Vector2(-10, 12), c + Vector2(6, -7), wood, 3.4, true)
 				draw_colored_polygon(_ellipse(c + Vector2(9, -11), 6.5, 4.0, -0.85), wood)
 				draw_arc(c + Vector2(9, -11), 5.0, 0.0, TAU, 16, dark, 1.2, true)
+			"brass_key":
+				var brass := Color(0.78, 0.62, 0.26)
+				draw_arc(c + Vector2(-7, -3), 5.5, 0.0, TAU, 20, brass, 3.0, true)
+				draw_line(c + Vector2(-2, -3), c + Vector2(12, -3), brass, 3.0, true)
+				draw_line(c + Vector2(8, -3), c + Vector2(8, 3), brass, 2.6, true)
+				draw_line(c + Vector2(12, -3), c + Vector2(12, 4.5), brass, 2.6, true)
 			"palm_frond":
 				var dry := Color(0.66, 0.61, 0.32)
 				var rib := Color(0.48, 0.44, 0.2)
@@ -230,7 +236,9 @@ func _current_objective_text() -> String:
 			return "A glass mall hums on the water… and something small and angry patrols its floors."
 		if not GameState.get_flag("mall_time_3"):
 			return "Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall's habits."
-		return "The mall believes the clock now. The fountain keeps old wishes… (more riddles soon)"
+		if not GameState.get_flag("fountain_wish_made"):
+			return "The fountain keeps old wishes. A mosaic under the water remembers three coins. Pay it in kind, in order."
+		return "A brass key, freed from the fountain. Somewhere, a lock has been waiting… (more riddles soon)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):

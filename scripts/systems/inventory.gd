@@ -29,6 +29,7 @@ const NAMES := {
 	"old_oar": "Old Oar",
 	"palm_frond": "Dry Frond",
 	"vine_rope": "Vine Rope",
+	"brass_key": "Brass Key",
 }
 
 const DESCRIPTIONS := {
@@ -39,6 +40,7 @@ const DESCRIPTIONS := {
 	"old_oar": "Smooth with years of use. Whose paws wore it smooth?",
 	"palm_frond": "A great dry frond. Practically a sail already.",
 	"vine_rope": "Fresh-cut vine, crab-approved. Strong enough to bind timbers.",
+	"brass_key": "Small, brass, and important somewhere. The fountain kept it safe for years.",
 }
 
 var max_slots: int = 5
