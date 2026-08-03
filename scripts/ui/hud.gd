@@ -28,6 +28,9 @@ var _objective_panel: PanelContainer
 var _objective_label: Label
 var _last_objective := ""
 var _letter_hint_shown := false
+var _msg_panel: PanelContainer
+var _msg_label: Label
+var _msg_timer := 0.0
 
 class PawMark:
 	extends Control
@@ -160,6 +163,7 @@ func _ready() -> void:
 	_apply_storybook_theme()
 	_build_location_label()
 	_build_objective()
+	_build_message_box()
 	_build_slots()
 	# Items live in the journal's Satchel (Tab); no persistent bar on screen.
 	inventory_bar.visible = false
@@ -178,6 +182,12 @@ func _process(delta: float) -> void:
 		_vocal_timer -= delta
 		if _vocal_timer <= 0.0:
 			vocal_label.text = ""
+	if _msg_timer > 0.0:
+		_msg_timer -= delta
+		if _msg_timer <= 0.0:
+			var t := create_tween()
+			t.tween_property(_msg_panel, "modulate:a", 0.0, 0.35)
+			t.tween_callback(func() -> void: _msg_panel.visible = false)
 	if is_instance_valid(player) and not get_tree().paused:
 		prompt.text = player.get_prompt_text()
 
@@ -339,9 +349,42 @@ func _refresh_slots() -> void:
 			_slots[i].tooltip_text = ""
 		_paw_marks[i].visible = not filled
 
+## A traditional text box: bottom-centre parchment panel with word wrap.
+func _build_message_box() -> void:
+	_msg_panel = PanelContainer.new()
+	_msg_panel.add_theme_stylebox_override("panel", parchment_style(0.93))
+	_msg_panel.anchor_left = 0.5
+	_msg_panel.anchor_right = 0.5
+	_msg_panel.anchor_top = 1.0
+	_msg_panel.anchor_bottom = 1.0
+	_msg_panel.offset_left = -370.0
+	_msg_panel.offset_right = 370.0
+	_msg_panel.offset_top = -168.0
+	_msg_panel.offset_bottom = -78.0
+	_msg_panel.visible = false
+	_msg_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var margin := MarginContainer.new()
+	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
+		margin.add_theme_constant_override(side, 14)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_msg_panel.add_child(margin)
+	_msg_label = Label.new()
+	_msg_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_msg_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_msg_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_msg_label.add_theme_font_size_override("font_size", 18)
+	_msg_label.add_theme_color_override("font_color", INK)
+	_msg_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_child(_msg_label)
+	add_child(_msg_panel)
+
 func flash_message(text: String, dur := 3.0) -> void:
-	vocal_label.text = text
-	_vocal_timer = dur
+	_msg_label.text = text
+	_msg_panel.visible = true
+	_msg_panel.modulate.a = 0.0
+	var t := create_tween()
+	t.tween_property(_msg_panel, "modulate:a", 1.0, 0.25)
+	_msg_timer = dur
 
 func _on_vocal(kind: String) -> void:
 	vocal_label.text = VOCAL_TEXT.get(kind, "")

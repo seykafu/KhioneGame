@@ -65,6 +65,11 @@ func _run() -> void:
 				for c in island.get_children():
 					if c is OmniLight3D:
 						c.visible = false
+	var msg := OS.get_environment("KH_MSG")
+	if not msg.is_empty():
+		var hud := get_tree().root.find_child("HUD", true, false)
+		if hud:
+			hud.flash_message(msg, 30.0)
 	var cam_spec := OS.get_environment("KH_CAM")  # "px,py,pz|tx,ty,tz"
 	if not cam_spec.is_empty():
 		var parts := cam_spec.split("|")

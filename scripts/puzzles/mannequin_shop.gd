@@ -82,20 +82,29 @@ func _build_door() -> void:
 	add_child(_door_plate)
 
 func _build_poster() -> void:
-	# On the right-hand pane (as seen from the atrium): a dusty band poster.
-	_add_box(Vector3(0.05, 1.25, 1.4), Vector3(15.88, 2.05, 9.65), POSTER_PAPER, false)
+	# Printed on the right-hand pane like window signage: translucent paper
+	# with the ink pushed through both faces, so it reads from the atrium
+	# and reads MIRRORED from inside the shop, as glass does.
+	var paper := _add_box(Vector3(0.03, 1.25, 1.4), Vector3(15.88, 2.05, 9.65), POSTER_PAPER, false)
+	var paper_mat := StandardMaterial3D.new()
+	paper_mat.albedo_color = Color(POSTER_PAPER.r, POSTER_PAPER.g, POSTER_PAPER.b, 0.45)
+	paper_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	paper_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	paper_mat.roughness = 0.9
+	paper.material_override = paper_mat
+	paper.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var glyph_z := [9.2, 9.5, 9.8, 10.1]
 	# Glyphs, left to right as seen from outside: left arrow, facing-dot,
-	# right arrow, away-cross.
-	_glyph_arrow(Vector3(15.85, 2.15, glyph_z[0]), -1.0)
-	_glyph_dot(Vector3(15.85, 2.15, glyph_z[1]))
-	_glyph_arrow(Vector3(15.85, 2.15, glyph_z[2]), 1.0)
-	_glyph_cross(Vector3(15.85, 2.15, glyph_z[3]))
-	# A worn caption bar under the glyphs.
-	_add_box(Vector3(0.04, 0.06, 1.1), Vector3(15.86, 1.72, 9.65), POSTER_INK, false)
+	# right arrow, away-cross. All centred in the pane so both sides see them.
+	_glyph_arrow(Vector3(15.88, 2.15, glyph_z[0]), -1.0)
+	_glyph_dot(Vector3(15.88, 2.15, glyph_z[1]))
+	_glyph_arrow(Vector3(15.88, 2.15, glyph_z[2]), 1.0)
+	_glyph_cross(Vector3(15.88, 2.15, glyph_z[3]))
+	# A worn caption bar under the glyphs, through-printed as well.
+	_add_box(Vector3(0.09, 0.06, 1.1), Vector3(15.88, 1.72, 9.65), POSTER_INK, false)
 
 func _glyph_arrow(pos: Vector3, dir_z: float) -> void:
-	var shaft := _add_box(Vector3(0.03, 0.045, 0.16), pos, POSTER_INK, false)
+	var shaft := _add_box(Vector3(0.09, 0.045, 0.16), pos, POSTER_INK, false)
 	shaft.position += Vector3(0, 0, -0.03 * dir_z)
 	var head := MeshInstance3D.new()
 	var cone := CylinderMesh.new()
@@ -113,7 +122,7 @@ func _glyph_dot(pos: Vector3) -> void:
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 0.055
 	cyl.bottom_radius = 0.055
-	cyl.height = 0.03
+	cyl.height = 0.09
 	dot.mesh = cyl
 	dot.material_override = _mat(POSTER_INK)
 	dot.rotation.z = PI / 2.0
@@ -122,7 +131,7 @@ func _glyph_dot(pos: Vector3) -> void:
 
 func _glyph_cross(pos: Vector3) -> void:
 	for rot in [0.7, -0.7]:
-		var bar := _add_box(Vector3(0.03, 0.04, 0.17), pos, POSTER_INK, false)
+		var bar := _add_box(Vector3(0.09, 0.04, 0.17), pos, POSTER_INK, false)
 		bar.rotation.x = rot
 
 func _build_mannequins() -> void:
