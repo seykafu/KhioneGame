@@ -52,6 +52,10 @@ func _ready() -> void:
 	quartet.set_script(load("res://scripts/puzzles/mannequin_shop.gd"))
 	quartet.name = "MannequinShop"
 	add_child(quartet)
+	var parliament := Node3D.new()
+	parliament.set_script(load("res://scripts/puzzles/pigeon_parliament.gd"))
+	parliament.name = "PigeonParliament"
+	add_child(parliament)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
 	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
 	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")

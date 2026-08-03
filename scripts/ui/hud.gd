@@ -104,6 +104,19 @@ class ItemIcon:
 				draw_line(c + Vector2(2, 6), c + Vector2(2, -6), steel, 3.4, true)
 				draw_line(c + Vector2(2, -6), c + Vector2(11, -6), steel, 3.4, true)
 				draw_circle(c + Vector2(11, -6), 3.4, Color(0.75, 0.35, 0.3))
+			"elevator_fuse":
+				var fuse_glass := Color(0.85, 0.75, 0.5)
+				var metal := Color(0.6, 0.6, 0.65)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(-8, -4), c + Vector2(8, -4),
+					c + Vector2(8, 4), c + Vector2(-8, 4)]), fuse_glass)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(-12, -5), c + Vector2(-8, -5),
+					c + Vector2(-8, 5), c + Vector2(-12, 5)]), metal)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(8, -5), c + Vector2(12, -5),
+					c + Vector2(12, 5), c + Vector2(8, 5)]), metal)
+				draw_line(c + Vector2(-8, 0), c + Vector2(8, 0), Color(0.5, 0.4, 0.25), 1.4, true)
 			"palm_frond":
 				var dry := Color(0.66, 0.61, 0.32)
 				var rib := Color(0.48, 0.44, 0.2)
@@ -248,7 +261,9 @@ func _current_objective_text() -> String:
 			return "The fountain's brass key is warm in her satchel. A dark shop past the east escalator has been locked for years."
 		if not GameState.get_flag("mannequins_posed"):
 			return "Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass."
-		return "The drummer surrendered a crank handle. Above the atrium, shutters have waited a long time… (main riddle soon)"
+		if not GameState.get_flag("pigeon_parliament_solved"):
+			return "Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds… always away from her, one tile at a time. The four grated tiles hum underneath."
+		return "Crank, clock, and a fat glass fuse. The mall is nearly awake… (the flock flies next)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):

@@ -31,6 +31,7 @@ const NAMES := {
 	"vine_rope": "Vine Rope",
 	"brass_key": "Brass Key",
 	"skylight_crank": "Skylight Crank",
+	"elevator_fuse": "Elevator Fuse",
 }
 
 const DESCRIPTIONS := {
@@ -43,6 +44,7 @@ const DESCRIPTIONS := {
 	"vine_rope": "Fresh-cut vine, crab-approved. Strong enough to bind timbers.",
 	"brass_key": "Small, brass, and important somewhere. The fountain kept it safe for years.",
 	"skylight_crank": "A well-oiled crank handle, warm from a drummer's grip. Something above wants turning.",
+	"elevator_fuse": "A fat glass fuse, miraculously intact. The elevator's call button has been waiting years for this.",
 }
 
 var max_slots: int = 5

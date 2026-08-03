@@ -32,6 +32,8 @@ const RIDDLES := [
 		"text": "Coins wait on the ledge, marked two ways. The mosaic under the water remembers three of them, in order."},
 	{"flag": "mannequins_posed", "title": "The Mannequin Quartet", "island": 2,
 		"text": "Four dancers behind brass-locked glass. The poster remembers their pose, but glass remembers things backwards."},
+	{"flag": "pigeon_parliament_solved", "title": "The Pigeon Parliament", "island": 2,
+		"text": "Pigeons rule the west tiles and flee from hisses, always away, one tile at a time. Four grated tiles wait beneath four birds."},
 ]
 
 const CONTROLS := [
