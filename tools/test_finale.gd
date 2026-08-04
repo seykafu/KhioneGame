@@ -61,5 +61,11 @@ func _run() -> void:
 	assert(GameState.get_flag("island2_complete"), "island 2 should complete")
 	assert(Inventory.max_slots == 7, "satchel should grow to 7 pockets")
 	print("banner glide + completion: OK")
+
+	# The elevator stays in service: call it from the ground and ride again.
+	finale.elevator_interact()
+	await get_tree().create_timer(12.0).timeout
+	assert(player.global_position.y > 9.0, "elevator should be reusable after the finale")
+	print("elevator reusable: OK")
 	print("ALL FINALE TESTS PASSED")
 	get_tree().quit()

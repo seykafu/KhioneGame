@@ -362,7 +362,7 @@ func _build_furnishings() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77
 	for i in 3:
-		var t_pos := Vector3(8.5 + (i % 2) * 4.0, 0.38, -8.0 + i * 2.6)
+		var t_pos := Vector3(7.5 + (i % 2) * 3.0, 0.38, -8.5 + i * 2.6)
 		_add_scene(FURNITURE + "tableRound.glb", t_pos, 0.0, 1.5, true)
 		for k in 2:
 			var a := rng.randf_range(0.0, TAU)
@@ -377,7 +377,7 @@ func _build_furnishings() -> void:
 		_add_scene(FURNITURE + ["pottedPlant.glb", "plantSmall1.glb", "plantSmall2.glb"][randi() % 3],
 				pos + Vector3(0, 0.7, 0), randf_range(0.0, TAU), 1.7)
 	# Floor lamps along the atrium.
-	for pos: Vector3 in [Vector3(-13, 0.38, -6), Vector3(13, 0.38, 6), Vector3(-13, 0.38, 6), Vector3(13, 0.38, -6)]:
+	for pos: Vector3 in [Vector3(-13, 0.38, -6), Vector3(13, 0.38, 6), Vector3(-13, 0.38, 6), Vector3(10.5, 0.38, -10.5)]:
 		_add_scene(FURNITURE + "lampRoundFloor.glb", pos, 0.0, 1.8, true)
 
 func _build_geese() -> void:
@@ -427,13 +427,26 @@ func _build_geese() -> void:
 		flock.add_child(goose)
 
 func _build_elevator() -> void:
-	var shaft := _add_box(Vector3(2.4, ROOF_Y - 0.3, 2.4), Vector3(13.5, ROOF_Y / 2.0 + 0.3, -6.5), GLASS)
+	var pos := Vector3(13.5, 0, -6.5)
+	# Glass shaft on a metal skeleton: corner posts, floor bands, machine
+	# box on top with a cable running the shaft's height.
+	var shaft := _add_box(Vector3(2.4, ROOF_Y - 0.3, 2.4), pos + Vector3(0, ROOF_Y / 2.0 + 0.3, 0), GLASS)
 	_glassify(shaft)
+	for cx in [-1.2, 1.2]:
+		for cz in [-1.2, 1.2]:
+			_add_box(Vector3(0.16, ROOF_Y - 0.3, 0.16), pos + Vector3(cx, ROOF_Y / 2.0 + 0.3, cz), FRAME)
+	for band_y in [BALCONY_Y, ROOF_Y - 0.4]:
+		_add_box(Vector3(2.6, 0.14, 2.6), pos + Vector3(0, band_y, 0), FRAME, false)
+	_add_box(Vector3(1.5, 0.8, 1.5), pos + Vector3(0, ROOF_Y + 0.8, 0), FRAME.lightened(0.15))
+	_add_mesh(_cylinder(0.045, 0.045, ROOF_Y - 1.0), pos + Vector3(0, ROOF_Y / 2.0, 0), Color(0.2, 0.2, 0.22), false)
+	# Call panel pillar with its patient little button.
+	_add_box(Vector3(0.22, 1.2, 0.22), pos + Vector3(-1.55, 0.9, 0.9), FRAME)
+	_add_box(Vector3(0.1, 0.12, 0.12), pos + Vector3(-1.68, 1.35, 0.9), Color(0.8, 0.25, 0.2), false)
 	var plate := ElevatorDoor.new()
-	plate.position = Vector3(12.0, 1.0, -6.5)
+	plate.position = pos + Vector3(-1.4, 1.0, 0.2)
 	var cs := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
-	sph.radius = 1.8
+	sph.radius = 2.0
 	cs.shape = sph
 	plate.add_child(cs)
 	add_child(plate)

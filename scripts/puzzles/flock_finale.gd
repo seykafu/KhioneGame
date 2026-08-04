@@ -17,7 +17,11 @@ const STEEL := Color(0.45, 0.47, 0.52)
 var _skylight_shutters: Array[MeshInstance3D] = []
 var _sunset_done := false
 var _ridden := false
+var _riding := false
 var _gliding := false
+var _cab: Node3D
+var _cab_top := false
+var _doors: Array[MeshInstance3D] = []
 var _elevator_light: MeshInstance3D
 var _materials := {}
 var _ui: CanvasLayer
@@ -43,6 +47,16 @@ class BannerPlate:
 
 	func interact(_player: Node) -> void:
 		owner_puzzle.start_glide()
+
+class RideDownPlate:
+	extends Interactable
+	var owner_puzzle: Node
+
+	func _init() -> void:
+		prompt = "Ride the elevator down"
+
+	func interact(_player: Node) -> void:
+		owner_puzzle.ride_down()
 
 func _ready() -> void:
 	add_to_group("flock_finale")
@@ -180,14 +194,49 @@ func _shadow_goose(pos: Vector3, yaw: float, delay: float) -> void:
 # --- phase 3: the elevator ---
 
 func _build_elevator_bits() -> void:
+	# The riding cab: floor pad, waist-high rails, and a roof plate. The
+	# whole cab travels the shaft with the player.
+	_cab = Node3D.new()
+	_cab.position = ELEVATOR_POS
+	add_child(_cab)
 	var pad := MeshInstance3D.new()
 	var pb := BoxMesh.new()
-	pb.size = Vector3(2.2, 0.15, 2.2)
+	pb.size = Vector3(2.1, 0.15, 2.1)
 	pad.mesh = pb
 	pad.material_override = _mat(STEEL)
-	pad.position = ELEVATOR_POS + Vector3(0, 0.45, 0)
-	add_child(pad)
+	pad.position = Vector3(0, 0.45, 0)
+	_cab.add_child(pad)
 	pad.create_trimesh_collision()
+	for def: Array in [
+		[Vector3(0.08, 0.9, 2.0), Vector3(0.98, 1.05, 0)],
+		[Vector3(2.0, 0.9, 0.08), Vector3(0, 1.05, 0.98)],
+		[Vector3(2.0, 0.9, 0.08), Vector3(0, 1.05, -0.98)],
+	]:
+		var rail := MeshInstance3D.new()
+		var rb := BoxMesh.new()
+		rb.size = def[0]
+		rail.mesh = rb
+		rail.material_override = _mat(STEEL.lightened(0.1))
+		rail.position = def[1]
+		_cab.add_child(rail)
+	var roof := MeshInstance3D.new()
+	var rf := BoxMesh.new()
+	rf.size = Vector3(2.1, 0.07, 2.1)
+	roof.mesh = rf
+	roof.material_override = _mat(STEEL)
+	roof.position = Vector3(0, 2.0, 0)
+	_cab.add_child(roof)
+	# Sliding doors on the atrium face; they part when the fuse seats.
+	for s in [-1.0, 1.0]:
+		var door := MeshInstance3D.new()
+		var db := BoxMesh.new()
+		db.size = Vector3(0.07, 2.1, 0.98)
+		door.mesh = db
+		door.material_override = _mat(Color(0.3, 0.32, 0.36))
+		door.position = ELEVATOR_POS + Vector3(-1.17, 1.35, s * 0.5)
+		add_child(door)
+		door.create_trimesh_collision()
+		_doors.append(door)
 	# Landing pad at the shaft's top so the roof exit is safe.
 	var top := MeshInstance3D.new()
 	var tb := BoxMesh.new()
@@ -197,10 +246,30 @@ func _build_elevator_bits() -> void:
 	top.position = ELEVATOR_POS + Vector3(0, 10.55, 0)
 	add_child(top)
 	top.create_trimesh_collision()
+	# Roof-side call plate for the ride back down.
+	var down := RideDownPlate.new()
+	down.owner_puzzle = self
+	down.position = ELEVATOR_POS + Vector3(-1.5, 11.2, 0)
+	var cs := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 2.2
+	cs.shape = sph
+	down.add_child(cs)
+	add_child(down)
+
+func _open_doors() -> void:
+	for i in _doors.size():
+		var door := _doors[i]
+		var s := -1.0 if i == 0 else 1.0
+		var t := door.create_tween()
+		t.tween_property(door, "position:z", ELEVATOR_POS.z + s * 1.45, 1.0) \
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 func elevator_interact() -> void:
-	if _ridden:
-		_flash("The elevator hums, content with its one job done.", 3.0)
+	if _riding:
+		return
+	if GameState.get_flag("elevator_powered"):
+		_travel(true)
 		return
 	if not GameState.get_flag("mall_sunset"):
 		_flash("Dark, silent, waiting. Its call button wants something the mall hasn't given yet.", 4.0)
@@ -225,8 +294,64 @@ func elevator_interact() -> void:
 	_elevator_light.material_override = lm
 	_elevator_light.position = ELEVATOR_POS + Vector3(0, 9.6, 0)
 	add_child(_elevator_light)
-	_flash("The fuse seats with a satisfying clunk. The elevator wakes.", 3.0)
-	_ride()
+	_open_doors()
+	_flash("The fuse seats with a satisfying clunk. The elevator wakes, and its doors part.", 3.5)
+	_travel(true)
+
+func ride_down() -> void:
+	if _riding:
+		return
+	if not GameState.get_flag("elevator_powered"):
+		_flash("The elevator sleeps. Its fuse socket waits below.", 3.5)
+		return
+	_travel(false)
+
+## Reusable two-way ride: summons the cab to the caller's floor if needed,
+## boards the player, and travels the shaft.
+func _travel(up: bool) -> void:
+	_riding = true
+	_ridden = true
+	var player: CharacterBody3D = get_tree().get_first_node_in_group("player")
+	if player == null:
+		_riding = false
+		return
+	player.controls_enabled = false
+	player.set_physics_process(false)
+	var start_y := 0.0 if up else 10.15
+	var end_y := 10.15 if up else 0.0
+	# Summon the cab if it is on the wrong floor.
+	if absf(_cab.position.y - (ELEVATOR_POS.y + start_y)) > 0.5:
+		Sfx.play("robot_whir", 1.1, 0.0, -12.0)
+		_flash("The car hums %s to meet her." % ("down" if up else "up"), 2.0)
+		var s := create_tween()
+		s.tween_property(_cab, "position:y", ELEVATOR_POS.y + start_y, 1.6) \
+				.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		await s.finished
+	# Board.
+	var board := create_tween()
+	board.tween_property(player, "global_position",
+			ELEVATOR_POS + Vector3(0, start_y + 0.75, 0), 0.8)
+	await board.finished
+	Sfx.play("robot_whir", 1.3, 0.0, -10.0)
+	# Ride: cab and player move together.
+	var ride := create_tween()
+	var step := func(t: float) -> void:
+		var y := lerpf(start_y, end_y, t)
+		_cab.position.y = ELEVATOR_POS.y + y
+		player.global_position = ELEVATOR_POS + Vector3(0, y + 0.75, 0)
+	ride.tween_method(step, 0.0, 1.0, 3.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await ride.finished
+	_cab_top = up
+	# Step off.
+	var exit_pos := ELEVATOR_POS + (Vector3(-1.4, 10.85, -1.2) if up else Vector3(-1.8, 0.75, 0.5))
+	var exit := create_tween()
+	exit.tween_property(player, "global_position", exit_pos, 0.9)
+	await exit.finished
+	player.set_physics_process(true)
+	player.controls_enabled = true
+	_riding = false
+	if up and not GameState.get_flag("island2_complete"):
+		_flash("The roof of the world. Or at least of the mall. A great banner waits at the south edge.", 5.0)
 
 func _elevator_light_pulse() -> void:
 	var ring := MeshInstance3D.new()
@@ -249,21 +374,7 @@ func _elevator_light_pulse() -> void:
 	cleanup.tween_callback(ring.queue_free)
 
 func _ride() -> void:
-	var player: CharacterBody3D = get_tree().get_first_node_in_group("player")
-	if player == null:
-		return
-	player.controls_enabled = false
-	player.set_physics_process(false)
-	var t := create_tween()
-	t.tween_property(player, "global_position", ELEVATOR_POS + Vector3(0, 0.75, 0), 0.8)
-	t.tween_interval(0.4)
-	t.tween_property(player, "global_position", ELEVATOR_POS + Vector3(0, 10.9, 0), 3.8) \
-			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	t.tween_property(player, "global_position", ELEVATOR_POS + Vector3(-1.4, 10.85, -1.2), 0.9)
-	t.tween_callback(func() -> void:
-		player.set_physics_process(true)
-		player.controls_enabled = true
-		_flash("The roof of the world. Or at least of the mall. A great banner waits at the south edge.", 5.0))
+	_travel(true)
 
 # --- phase 4: the banner and the glide ---
 
