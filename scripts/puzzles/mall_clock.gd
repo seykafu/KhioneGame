@@ -79,9 +79,12 @@ func advance_clock() -> void:
 	var t := create_tween()
 	t.tween_property(_hand_pivot, "rotation:z", -TAU * clock_hour / 12.0, 0.3) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	GameState.set_flag("clock_at_6", clock_hour == 6)
 	if clock_hour == 3:
 		GameState.set_flag("mall_time_3")
 		_time_is_three()
+	elif clock_hour == 6 and GameState.get_flag("skylight_open"):
+		pass  # the finale speaks for this hour
 	else:
 		_flash("Clunk. The hands settle on %d o'clock. Nothing happens." % clock_hour, 2.5)
 

@@ -34,6 +34,8 @@ const RIDDLES := [
 		"text": "Four dancers behind brass-locked glass. The poster remembers their pose, but glass remembers things backwards."},
 	{"flag": "pigeon_parliament_solved", "title": "The Pigeon Parliament", "island": 2,
 		"text": "Pigeons rule the west tiles and flee from hisses, always away, one tile at a time. Four grated tiles wait beneath four birds."},
+	{"flag": "island2_complete", "title": "Make the Flock Fly", "island": 2,
+		"text": "Crank the sky open. Lean the light to evening. Follow sixty shadows to the sleeping elevator, wake it, and take the roof. The flock knows the rest."},
 ]
 
 const CONTROLS := [

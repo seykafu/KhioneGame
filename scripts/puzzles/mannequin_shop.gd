@@ -9,7 +9,11 @@ extends Node3D
 
 # Facing indices: 0 = +z, 1 = -x, 2 = -z, 3 = +x (clockwise steps).
 const NAIVE := [2, 1, 0, 3]   # copying the poster literally from outside
-const TARGET := [3, 2, 1, 0]  # the mirrored truth
+# The mirrored truth has two honest readings, depending on whether the
+# player keeps the poster's frame or turns to face the mannequins while
+# applying it. Both are accepted.
+const TARGET := [3, 2, 1, 0]
+const ALT_TARGET := [2, 3, 0, 1]
 const MANNEQUIN_Z := [6.5, 7.5, 8.5, 9.5]
 const ROOM_X := 18.0
 
@@ -248,7 +252,7 @@ func _check_config() -> void:
 	if _facings == _last_config:
 		return
 	_last_config = _facings.duplicate()
-	if _facings == TARGET:
+	if _facings == TARGET or _facings == ALT_TARGET:
 		_solve()
 	elif _facings == NAIVE:
 		Sfx.play("fail", 1.4, 0.05, -14.0)

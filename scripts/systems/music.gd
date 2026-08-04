@@ -13,6 +13,8 @@ var _deck_b: AudioStreamPlayer
 var _active: AudioStreamPlayer
 var _current_track := ""
 var _warned := {}
+var _deck_tweens := {}  # deck -> Tween; killed before reuse so a stale
+                        # fade-out stop() can never silence a reused deck
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -36,18 +38,23 @@ func play(track: String, fade := 2.0) -> void:
 	incoming.stream = stream
 	incoming.volume_db = -60.0
 	incoming.play()
-	create_tween().tween_property(incoming, "volume_db", 0.0, fade)
+	_fade_deck(incoming, 0.0, fade, false)
 	if outgoing.playing:
-		var t := create_tween()
-		t.tween_property(outgoing, "volume_db", -60.0, fade)
-		t.tween_callback(outgoing.stop)
+		_fade_deck(outgoing, -60.0, fade, true)
 
 func stop(fade := 2.0) -> void:
 	_current_track = ""
 	if _active and _active.playing:
-		var t := create_tween()
-		t.tween_property(_active, "volume_db", -60.0, fade)
-		t.tween_callback(_active.stop)
+		_fade_deck(_active, -60.0, fade, true)
+
+func _fade_deck(deck: AudioStreamPlayer, to_db: float, fade: float, stop_after: bool) -> void:
+	if _deck_tweens.has(deck) and (_deck_tweens[deck] as Tween).is_valid():
+		(_deck_tweens[deck] as Tween).kill()
+	var t := create_tween()
+	t.tween_property(deck, "volume_db", to_db, fade)
+	if stop_after:
+		t.tween_callback(deck.stop)
+	_deck_tweens[deck] = t
 
 func set_music_volume_db(db: float) -> void:
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), db)

@@ -273,7 +273,13 @@ func _current_objective_text() -> String:
 			return "Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass."
 		if not GameState.get_flag("pigeon_parliament_solved"):
 			return "Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds… always away from her, one tile at a time. The four grated tiles hum underneath."
-		return "Crank, clock, and a fat glass fuse. The mall is nearly awake… (the flock flies next)"
+		if not GameState.get_flag("skylight_open"):
+			return "The drummer's crank wants a socket. The balcony above the atrium keeps one, near the skylight's edge."
+		if not GameState.get_flag("mall_sunset"):
+			return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
+		if not GameState.get_flag("island2_complete"):
+			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
+		return "The Eaton Centre sleeps again, lighter by one flock. (Island 3 coming soon)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):
@@ -402,7 +408,9 @@ func _show_letter() -> void:
 		_letter_base = letter_text.text
 	var extra := ""
 	if GameState.get_flag("letter_fragment_1"):
-		extra = "\n\nA recovered scrap, tucked in the raft's knots:\n“… one final …”"
+		extra += "\n\nA recovered scrap, tucked in the raft's knots:\n“… one final …”"
+	if GameState.get_flag("letter_fragment_2"):
+		extra += "\n\nA scrap that fell from the mall's banner:\n“… not supposed to …”"
 	letter_text.text = _letter_base + extra
 	letter_panel.visible = true
 	get_tree().paused = true

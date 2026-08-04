@@ -56,6 +56,10 @@ func _ready() -> void:
 	parliament.set_script(load("res://scripts/puzzles/pigeon_parliament.gd"))
 	parliament.name = "PigeonParliament"
 	add_child(parliament)
+	var finale := Node3D.new()
+	finale.set_script(load("res://scripts/puzzles/flock_finale.gd"))
+	finale.name = "FlockFinale"
+	add_child(finale)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
 	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
 	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")
@@ -441,6 +445,10 @@ class ElevatorDoor:
 		prompt = "A dark glass elevator"
 
 	func interact(_player: Node) -> void:
+		var finale := get_tree().get_first_node_in_group("flock_finale")
+		if finale:
+			finale.elevator_interact()
+			return
 		var mgr := get_tree().get_first_node_in_group("island_manager")
 		var hud: Node = mgr.get_node_or_null("HUD") if mgr else null
 		if hud:
