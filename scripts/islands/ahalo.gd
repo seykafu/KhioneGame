@@ -47,6 +47,7 @@ var _grass_mat: ShaderMaterial
 func _ready() -> void:
 	_build_island()
 	_build_water()
+	_build_river()
 	_scatter_trees()
 	_scatter_rocks()
 	_scatter_flora()
@@ -121,6 +122,127 @@ func _build_island() -> void:
 	terrain.create_trimesh_collision()
 	_scatter_outcrops()
 	_scatter_dunes()
+
+## The creek: a spring pond on the first terrace spills over the lip as a
+## small waterfall, then winds northwest across the grass to the sea. The
+## ribbon drapes over the analytic height field, so it follows the terraces.
+const RIVER_XZ: Array[Vector2] = [
+	Vector2(-8.8, -6.8), Vector2(-10.3, -7.9), Vector2(-11.8, -9.0),
+	Vector2(-14.0, -11.0), Vector2(-16.5, -12.2), Vector2(-19.5, -12.8),
+	Vector2(-22.5, -14.2), Vector2(-25.5, -16.2), Vector2(-29.0, -18.5),
+	Vector2(-33.0, -21.0), Vector2(-36.0, -23.0),
+]
+
+func _catmull(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2, t: float) -> Vector2:
+	var t2 := t * t
+	var t3 := t2 * t
+	return 0.5 * ((2.0 * p1) + (-p0 + p2) * t
+			+ (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2
+			+ (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3)
+
+func _river_material() -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/river.gdshader")
+	m.set_shader_parameter("flow_noise", _noise_tex(212, 0.1))
+	return m
+
+func _build_river() -> void:
+	var river_mat := _river_material()
+	# Densify the path with Catmull-Rom so the ribbon bends smoothly.
+	var pts: Array[Vector2] = []
+	var n_seg := RIVER_XZ.size() - 1
+	for i in n_seg:
+		var p0 := RIVER_XZ[maxi(i - 1, 0)]
+		var p3 := RIVER_XZ[mini(i + 2, RIVER_XZ.size() - 1)]
+		for k in 10:
+			pts.append(_catmull(p0, RIVER_XZ[i], RIVER_XZ[i + 1], p3, k / 10.0))
+	pts.append(RIVER_XZ[-1])
+	# Ribbon vertices: left/right banks, draped over the terrain. On steep
+	# stretches the analytic height can dip under the coarser render mesh,
+	# so the drape offset grows with the local drop.
+	var left: Array[Vector3] = []
+	var right: Array[Vector3] = []
+	var us: Array[float] = []
+	var arc := 0.0
+	for i in pts.size():
+		var p := pts[i]
+		var prev := pts[maxi(i - 1, 0)]
+		var next := pts[mini(i + 1, pts.size() - 1)]
+		var dir := (next - prev).normalized()
+		var side := Vector2(-dir.y, dir.x)
+		if i > 0:
+			arc += (p - prev).length()
+		var drop := absf(_terrain_height(prev.x, prev.y) - _terrain_height(next.x, next.y))
+		var lift := 0.08 + clampf(drop * 0.55, 0.0, 0.34)
+		var w := 0.55 + 0.25 * sin(arc * 0.31 + 1.1) + arc * 0.008
+		for pair: Array in [[left, 1.0], [right, -1.0]]:
+			var q: Vector2 = p + side * w * (pair[1] as float)
+			var y := maxf(_terrain_height(q.x, q.y), -0.5) + lift
+			(pair[0] as Array[Vector3]).append(Vector3(q.x, y, q.y))
+		us.append(arc * 0.22)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in pts.size() - 1:
+		var quad: Array = [
+			[left[i], 0.0, us[i]], [right[i], 1.0, us[i]], [right[i + 1], 1.0, us[i + 1]],
+			[left[i], 0.0, us[i]], [right[i + 1], 1.0, us[i + 1]], [left[i + 1], 0.0, us[i + 1]],
+		]
+		for v: Array in quad:
+			st.set_uv(Vector2(v[2], v[1]))
+			st.add_vertex(v[0])
+	st.generate_normals()
+	var ribbon := MeshInstance3D.new()
+	ribbon.mesh = st.commit()
+	ribbon.material_override = river_mat
+	ribbon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(ribbon)
+	# The spring pond feeding it.
+	var pond := MeshInstance3D.new()
+	var pond_mesh := CylinderMesh.new()
+	pond_mesh.top_radius = 1.25
+	pond_mesh.bottom_radius = 1.25
+	pond_mesh.height = 0.1
+	pond.mesh = pond_mesh
+	var pond_mat := _river_material()
+	pond_mat.set_shader_parameter("flow_speed", 0.07)
+	pond.material_override = pond_mat
+	pond.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	pond.position = Vector3(-8.8, 1.34, -6.8)
+	add_child(pond)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 909
+	var rocks: Array = [load("res://assets/nature/rock_smallA.glb"),
+			load("res://assets/nature/rock_smallB.glb")]
+	for i in 7:  # a rim of stones around the spring
+		var a := TAU * i / 7.0 + rng.randf_range(-0.15, 0.15)
+		var pos := Vector3(-8.8 + cos(a) * 1.5, 1.3, -6.8 + sin(a) * 1.5)
+		_add_scene(rocks[rng.randi_range(0, rocks.size() - 1)], pos,
+				rng.randf_range(0.0, TAU), rng.randf_range(0.55, 0.85), false)
+	# Stepping stones where the brook crosses the meadow.
+	for stone_xz: Vector2 in [Vector2(-16.5, -12.2), Vector2(-19.5, -12.8), Vector2(-25.5, -16.2)]:
+		var sy := _terrain_height(stone_xz.x, stone_xz.y)
+		var stone := _add_scene(rocks[rng.randi_range(0, rocks.size() - 1)],
+				Vector3(stone_xz.x, sy + 0.02, stone_xz.y),
+				rng.randf_range(0.0, TAU), rng.randf_range(1.0, 1.3), true)
+		stone.scale.y *= 0.5
+	# Water sounds, placed where the water works hardest.
+	_add_ambient_loop("res://assets/audio/waterfall.wav", Vector3(-11.5, 0.8, -8.8), -6.0, 24.0)
+	_add_ambient_loop("res://assets/audio/brook.wav", Vector3(-22.5, 0.4, -14.2), -10.0, 15.0)
+	_add_location_trigger(Vector3(-11.8, 0.4, -9.0), 7.0, "The Falls")
+
+func _add_ambient_loop(path: String, pos: Vector3, volume_db: float, max_dist: float) -> void:
+	var stream: AudioStreamWAV = (load(path) as AudioStreamWAV).duplicate()
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	stream.loop_begin = 0
+	stream.loop_end = stream.data.size() / 2  # 16-bit mono: 2 bytes per frame
+	var player := AudioStreamPlayer3D.new()
+	player.stream = stream
+	player.position = pos
+	player.volume_db = volume_db
+	player.max_distance = max_dist
+	player.bus = "SFX"
+	player.autoplay = true
+	add_child(player)
 
 func _terrain_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
