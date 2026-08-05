@@ -10,8 +10,8 @@ const CLOCK_POS := Vector3(5.2, 0.38, 0.0)
 const KIOSK_POS := Vector3(-6.5, 0.38, 2.5)
 const DIRECTORY_POS := Vector3(3.2, 0.38, 11.0)
 const ESCALATORS := [
-	[Vector3(11.0, 0.38, 5.5), Vector3(15.5, 4.4, 1.0)],
-	[Vector3(-11.0, 0.38, -5.5), Vector3(-15.5, 4.4, -1.0)],
+	[Vector3(15.0, 0.38, 4.5), Vector3(19.5, 4.4, 0.0)],
+	[Vector3(-15.0, 0.38, -4.5), Vector3(-19.5, 4.4, 0.0)],
 ]
 const PUSH_SPEED := 1.9
 const START_HOUR := 7

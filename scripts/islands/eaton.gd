@@ -13,8 +13,8 @@ const GLASS := Color(0.7, 0.85, 0.92, 0.22)
 const GOOSE_WHITE := Color(0.95, 0.95, 0.92)
 const WATER_SURFACE_Y := -0.4
 
-const MALL_W := 40.0
-const MALL_D := 26.0
+const MALL_W := 48.0
+const MALL_D := 32.0
 const BALCONY_Y := 4.4
 const ROOF_Y := 10.5
 
@@ -26,7 +26,7 @@ var _robot: Node3D
 var _robot_tween: Tween
 var _confronted := false
 var _robot_home := Vector3(-13.0, 0.5, -9.0)
-const PATROL := [Vector3(10, 0.5, -5), Vector3(-10, 0.5, -5), Vector3(-10, 0.5, 5), Vector3(10, 0.5, 5)]
+const PATROL := [Vector3(13, 0.5, -6), Vector3(-13, 0.5, -6), Vector3(-13, 0.5, 6), Vector3(13, 0.5, 6)]
 
 func _ready() -> void:
 	_build_island()
@@ -61,15 +61,17 @@ func _ready() -> void:
 	finale.name = "FlockFinale"
 	add_child(finale)
 	_add_location_trigger(Vector3(0, 0, 0), 9.0, "The Atrium")
-	_add_location_trigger(Vector3(-16, 0, 0), 5.0, "The Pet Shop")
-	_add_location_trigger(Vector3(11, 0, -6), 5.0, "The Food Court")
+	_add_location_trigger(Vector3(-20, 0, 0), 5.0, "The Pet Shop")
+	_add_location_trigger(Vector3(12, 0, -11), 5.5, "The Food Court")
+	_add_location_trigger(Vector3(0, 0, -13.5), 5.5, "The North Arcade")
+	_add_location_trigger(Vector3(0, BALCONY_Y, -13.5), 6.0, "The Upper Gallery")
 	GameState.vocal_used.connect(_on_vocal)
 
 # --- terrain & water ---
 
 func _build_island() -> void:
-	_add_mesh(_cylinder(38.0, 52.0, 6.0), Vector3(0, -3.0, 0), SAND)
-	_add_mesh(_cylinder(27.0, 29.0, 0.3), Vector3(0, 0.15, 0), CONCRETE)
+	_add_mesh(_cylinder(44.0, 58.0, 6.0), Vector3(0, -3.0, 0), SAND)
+	_add_mesh(_cylinder(33.0, 35.0, 0.3), Vector3(0, 0.15, 0), CONCRETE)
 	# Tiled mall floor.
 	var floor_mesh := BoxMesh.new()
 	floor_mesh.size = Vector3(MALL_W - 0.5, 0.08, MALL_D - 0.5)
@@ -93,7 +95,7 @@ func _build_water() -> void:
 	sm.shader = load("res://shaders/water.gdshader")
 	sm.set_shader_parameter("wave_normal1", _noise_tex(61, 0.08, true))
 	sm.set_shader_parameter("wave_normal2", _noise_tex(62, 0.13, true))
-	sm.set_shader_parameter("shore_radius", 39.0)
+	sm.set_shader_parameter("shore_radius", 44.0)
 	mi.material_override = sm
 	mi.position = Vector3(0, WATER_SURFACE_Y, 0)
 	add_child(mi)
@@ -150,12 +152,17 @@ func _build_mall() -> void:
 	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(-hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
 	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
 	for def: Array in [
-		[-13.0, Vector3(2.2, 1.2, 1.8)],
-		[13.5, Vector3(1.8, 1.0, 1.6)],
-		[-15.5, Vector3(1.2, 0.9, 1.2)],
+		[-15.0, Vector3(2.2, 1.2, 1.8)],
+		[10.0, Vector3(1.8, 1.0, 1.6)],
+		[-18.5, Vector3(1.2, 0.9, 1.2)],
+		[20.0, Vector3(1.6, 1.1, 1.4)],
 	]:
 		var size: Vector3 = def[1]
 		_add_box(size, Vector3(def[0], ROOF_Y + 0.2 + size.y / 2.0, -hd + 3.0), FRAME.lightened(0.35))
+	# Duct runs between the units, plus a slim radio mast.
+	_add_mesh(_cylinder(0.18, 0.18, 8.0), Vector3(-11.0, ROOF_Y + 0.55, -hd + 3.0), FRAME.lightened(0.3), false).rotation.z = PI / 2.0
+	_add_mesh(_cylinder(0.03, 0.05, 3.2), Vector3(-21.5, ROOF_Y + 1.9, -hd + 2.0), FRAME.lightened(0.2), false)
+	_add_mesh(_cylinder(0.14, 0.14, 0.5), Vector3(-21.5, ROOF_Y + 0.4, -hd + 2.0), FRAME.lightened(0.3), false)
 
 	# Balcony ring (atrium opening 30 x 16).
 	_add_box(Vector3(MALL_W, 0.3, 5.0), Vector3(0, BALCONY_Y, -hd + 2.5), CONCRETE)
@@ -177,26 +184,36 @@ func _build_mall() -> void:
 	_add_box(Vector3(6.5, 0.4, MALL_D - 13.0), Vector3(hw - 3.25, ROOF_Y, 0), CONCRETE)
 	var sky := _add_box(Vector3(MALL_W - 12.0, 0.1, MALL_D - 12.5), Vector3(0, ROOF_Y + 0.2, 0), GLASS, false)
 	_glassify(sky)
-	for i in 7:
-		var x := -12.0 + i * 4.0
+	for i in 10:
+		var x := -18.0 + i * 4.0
 		_add_box(Vector3(0.25, 0.4, MALL_D - 13.0), Vector3(x, ROOF_Y - 0.1, 0), FRAME, false)
+	for cz in [-6.0, 0.0, 6.0]:  # cross chords tie the truss together
+		_add_box(Vector3(MALL_W - 12.0, 0.22, 0.22), Vector3(0, ROOF_Y - 0.2, cz), FRAME, false)
 
 	# Escalators with side skirts.
-	_ramp(Vector3(11.0, 0.38, 5.5), Vector3(15.5, BALCONY_Y, 1.0), 2.2, true)
-	_ramp(Vector3(-11.0, 0.38, -5.5), Vector3(-15.5, BALCONY_Y, -1.0), 2.2, true)
+	_ramp(Vector3(15.0, 0.38, 4.5), Vector3(19.5, BALCONY_Y, 0.0), 2.2, true)
+	_ramp(Vector3(-15.0, 0.38, -4.5), Vector3(-19.5, BALCONY_Y, 0.0), 2.2, true)
 
-	# Second-floor storefront facades along the north balcony.
-	var upper_colors := [Color(0.7, 0.45, 0.5), Color(0.45, 0.55, 0.7), Color(0.6, 0.6, 0.4), Color(0.5, 0.65, 0.55)]
-	for i in 4:
-		var x := -12.0 + i * 8.0
+	# Second-floor storefront facades along both long balconies.
+	var upper_colors := [Color(0.7, 0.45, 0.5), Color(0.45, 0.55, 0.7), Color(0.6, 0.6, 0.4), Color(0.5, 0.65, 0.55), Color(0.65, 0.5, 0.35)]
+	for i in 5:
+		var x := -16.0 + i * 8.0
 		_add_box(Vector3(6.0, 3.2, 2.2), Vector3(x, BALCONY_Y + 1.9, -hd + 1.4), CONCRETE.lightened(0.08))
 		_add_box(Vector3(6.2, 0.7, 0.3), Vector3(x, BALCONY_Y + 3.2, -hd + 2.6), upper_colors[i])
+		var glow := _add_box(Vector3(4.6, 0.28, 0.06), Vector3(x, BALCONY_Y + 3.2, -hd + 2.78), Color.WHITE, false)
+		_sign_glow(glow, upper_colors[i])
+	for i in 4:  # south balcony keeps the entrance bay clear
+		var x := -18.0 + i * 12.0
+		if absf(x) < 5.0:
+			continue
+		_add_box(Vector3(5.4, 3.2, 2.2), Vector3(x, BALCONY_Y + 1.9, hd - 1.4), CONCRETE.lightened(0.08))
+		_add_box(Vector3(5.6, 0.7, 0.3), Vector3(x, BALCONY_Y + 3.2, hd - 2.6), upper_colors[(i + 2) % 5])
 
 	# Banners hanging from the balcony rails.
 	var banner_colors := [Color(0.75, 0.35, 0.3), Color(0.35, 0.5, 0.7), Color(0.85, 0.7, 0.3), Color(0.45, 0.65, 0.5)]
-	for i in 4:
-		var x := -9.0 + i * 6.0
-		_add_box(Vector3(0.06, 2.4, 1.3), Vector3(x, BALCONY_Y - 1.1, -hd + 5.1), banner_colors[i], false)
+	for i in 6:
+		var x := -15.0 + i * 6.0
+		_add_box(Vector3(0.06, 2.4, 1.3), Vector3(x, BALCONY_Y - 1.1, -hd + 5.1), banner_colors[i % 4], false)
 		_add_box(Vector3(0.06, 2.4, 1.3), Vector3(x, BALCONY_Y - 1.1, hd - 5.1), banner_colors[(i + 2) % 4], false)
 
 func _glass_wall(pos: Vector3, size: Vector3) -> void:
@@ -243,15 +260,22 @@ func _build_lighting() -> void:
 	# depth-texture bugs), so the interior is lit by emissive strips, the
 	# skylight, and sky ambient instead.
 	for def: Array in [
-		[Vector3(28.0, 0.08, 0.5), Vector3(0, BALCONY_Y - 0.18, -8.2)],
-		[Vector3(28.0, 0.08, 0.5), Vector3(0, BALCONY_Y - 0.18, 8.2)],
-		[Vector3(0.5, 0.08, 14.0), Vector3(-14.8, BALCONY_Y - 0.18, 0)],
-		[Vector3(0.5, 0.08, 14.0), Vector3(14.8, BALCONY_Y - 0.18, 0)],
-		[Vector3(0.5, 0.08, 22.0), Vector3(-19.6, ROOF_Y - 0.4, 0)],
-		[Vector3(0.5, 0.08, 22.0), Vector3(19.6, ROOF_Y - 0.4, 0)],
+		[Vector3(36.0, 0.08, 0.5), Vector3(0, BALCONY_Y - 0.18, -10.7)],
+		[Vector3(36.0, 0.08, 0.5), Vector3(0, BALCONY_Y - 0.18, 10.7)],
+		[Vector3(0.5, 0.08, 20.0), Vector3(-18.7, BALCONY_Y - 0.18, 0)],
+		[Vector3(0.5, 0.08, 20.0), Vector3(18.7, BALCONY_Y - 0.18, 0)],
+		[Vector3(0.5, 0.08, 28.0), Vector3(-23.6, ROOF_Y - 0.4, 0)],
+		[Vector3(0.5, 0.08, 28.0), Vector3(23.6, ROOF_Y - 0.4, 0)],
 	]:
 		var mi := _add_box(def[0], def[1], Color.WHITE, false)
 		mi.material_override = strip
+	# Pendant lamps over the balcony walkways: warm discs on thin cables.
+	for x in [-18.0, -12.0, -6.0, 0.0, 6.0, 12.0, 18.0]:
+		for z in [-13.5, 13.5]:
+			_pendant(Vector3(x, 0, z))
+	for z in [-6.0, 0.0, 6.0]:
+		for x in [-21.5, 21.5]:
+			_pendant(Vector3(x, 0, z))
 	# NOTE: no ReflectionProbe either; probes are clustered elements in
 	# Forward+ and tile-corrupt on this driver just like omni lights.
 	# Dust motes drifting in the skylight beams.
@@ -290,48 +314,72 @@ func _build_fountain() -> void:
 	var upper := _add_mesh(_cylinder(1.3, 1.3, 0.08), Vector3(0, 2.32, 0), Color(0.25, 0.55, 0.68, 0.7), false)
 	(upper.material_override as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 
+func _shop_unit(pos: Vector3, facing: float, accent: Color, depth := 3.0, width := 5.0,
+		prop := "") -> void:
+	# A storefront unit: back box, glass front, sign band with glow, striped
+	# awning, and a little merchandise in the window. `facing` is the yaw of
+	# the front face (0 faces +z).
+	var back := Vector3(0, 0, -depth / 2.0 - 0.05).rotated(Vector3.UP, facing)
+	var front_off := Vector3(0, 0, depth / 2.0 - 0.4).rotated(Vector3.UP, facing)
+	var body := _add_box(Vector3(width, 3.6, depth), pos + back + Vector3(0, 2.15, 0), CONCRETE.lightened(0.1))
+	body.rotation.y = facing
+	var front := _add_box(Vector3(width - 0.8, 2.6, 0.1), pos + front_off + Vector3(0, 1.75, 0), GLASS, true)
+	front.rotation.y = facing
+	_glassify(front)
+	var sign := _add_box(Vector3(width - 0.2, 0.9, 0.35), pos + front_off + Vector3(0, 3.55, 0.2)
+			.rotated(Vector3.UP, facing), accent)
+	sign.rotation.y = facing
+	var glow := _add_box(Vector3(width - 1.6, 0.3, 0.06), pos + front_off + Vector3(0, 3.55, 0.42)
+			.rotated(Vector3.UP, facing), Color.WHITE, false)
+	glow.rotation.y = facing
+	_sign_glow(glow, accent.lightened(0.35))
+	for s in [-1.0, 1.0]:  # striped awning halves
+		var awn := _add_box(Vector3((width - 1.0) / 2.0, 0.06, 0.9),
+				pos + front_off + Vector3(s * (width - 1.0) / 4.0, 3.02, 0.55).rotated(Vector3.UP, facing),
+				accent.lightened(0.3) if s < 0 else Color(0.94, 0.93, 0.88), false)
+		awn.rotation.y = facing
+		awn.rotation.x = 0.28
+	if prop != "":
+		_add_scene(FURNITURE + prop, pos + Vector3(0, 0.4, 0.2).rotated(Vector3.UP, facing),
+				facing + PI, 1.6)
+	var box_colors := [Color(0.85, 0.6, 0.3), Color(0.5, 0.65, 0.8), Color(0.8, 0.75, 0.6)]
+	for k in 3:
+		var m_off := Vector3(-1.0 + (k % 2) * 0.45, 0.56 + (k / 2) * 0.36, 0.5)
+		_add_box(Vector3(0.35, 0.35, 0.35), pos + m_off.rotated(Vector3.UP, facing),
+				box_colors[k % box_colors.size()], false)
+
 func _build_shops() -> void:
-	# Ground-floor shops, east wall (the z=8 slot belongs to the mannequin
-	# shop, built by its own puzzle script).
-	var shop_colors := [Color(0.75, 0.4, 0.35), Color(0.4, 0.55, 0.7), Color(0.65, 0.55, 0.3)]
-	for i in 2:
-		var z := -8.0 + i * 8.0
-		_add_box(Vector3(3.0, 3.6, 5.0), Vector3(18.5, 2.15, z), CONCRETE.lightened(0.1))
-		var front := _add_box(Vector3(0.1, 2.6, 4.2), Vector3(15.9, 1.75, z), GLASS, true)
-		_glassify(front)
-		_add_box(Vector3(0.35, 0.9, 4.8), Vector3(15.8, 3.55, z), shop_colors[i])
-		_add_scene(FURNITURE + ["tableCoffee.glb", "plantSmall2.glb", "lampRoundFloor.glb"][i],
-				Vector3(16.8, 0.4, z), PI / 2.0, 1.6)
-		# Window merchandise: little stacks of product boxes.
-		var box_colors := [Color(0.85, 0.6, 0.3), Color(0.5, 0.65, 0.8), Color(0.8, 0.75, 0.6)]
-		for k in 3:
-			_add_box(Vector3(0.35, 0.35, 0.35),
-					Vector3(16.6, 0.56 + (k / 2) * 0.36, z - 1.3 + (k % 2) * 0.45),
-					box_colors[(i + k) % box_colors.size()], false)
+	var hd := MALL_D / 2.0
+	# East wall (the z=8 slot belongs to the mannequin boutique, built by its
+	# own puzzle script as a freestanding glass pavilion).
+	_shop_unit(Vector3(21.0, 0, -10.0), -PI / 2.0, Color(0.75, 0.4, 0.35), 3.0, 5.0, "tableCoffee.glb")
+	_shop_unit(Vector3(21.0, 0, 0.0), -PI / 2.0, Color(0.4, 0.55, 0.7), 3.0, 5.0, "lampRoundFloor.glb")
 	# West wall: two shops flanking the pet shop.
-	for z in [-8.5, 8.5]:
-		_add_box(Vector3(3.0, 3.6, 5.0), Vector3(-18.5, 2.15, z), CONCRETE.lightened(0.1))
-		var front := _add_box(Vector3(0.1, 2.6, 4.2), Vector3(-15.9, 1.75, z), GLASS, true)
-		_glassify(front)
-		_add_box(Vector3(0.35, 0.9, 4.8), Vector3(-15.8, 3.55, z), Color(0.55, 0.45, 0.65))
-		_add_scene(FURNITURE + "plantSmall3.glb", Vector3(-16.8, 0.4, z), -PI / 2.0, 1.6)
+	_shop_unit(Vector3(-21.0, 0, -10.0), PI / 2.0, Color(0.55, 0.45, 0.65), 3.0, 5.0, "plantSmall3.glb")
+	_shop_unit(Vector3(-21.0, 0, 10.0), PI / 2.0, Color(0.35, 0.55, 0.5), 3.0, 5.0, "plantSmall2.glb")
+	# North arcade: storefronts under the balcony.
+	_shop_unit(Vector3(-18.0, 0, -hd + 1.6), 0.0, Color(0.72, 0.55, 0.3), 2.6, 5.4, "")
+	_shop_unit(Vector3(-8.0, 0, -hd + 1.6), 0.0, Color(0.4, 0.6, 0.65), 2.6, 5.4, "")
+	_shop_unit(Vector3(8.0, 0, -hd + 1.6), 0.0, Color(0.62, 0.42, 0.55), 2.6, 5.4, "")
 	# The pet shop: one collar on a stand, and a door that will not open.
-	_add_box(Vector3(3.0, 3.6, 6.0), Vector3(-18.5, 2.15, 0), CONCRETE.lightened(0.05))
-	var win := _add_box(Vector3(0.1, 2.4, 4.4), Vector3(-15.9, 1.7, 0), GLASS, true)
+	_add_box(Vector3(3.0, 3.6, 6.0), Vector3(-22.5, 2.15, 0), CONCRETE.lightened(0.05))
+	var win := _add_box(Vector3(0.1, 2.4, 4.4), Vector3(-19.9, 1.7, 0), GLASS, true)
 	_glassify(win)
-	_add_box(Vector3(0.35, 0.9, 5.4), Vector3(-15.8, 3.55, 0), Color(0.45, 0.6, 0.45))
-	_add_mesh(_cylinder(0.08, 0.12, 0.9), Vector3(-16.8, 0.85, 0), FRAME, false)
+	_add_box(Vector3(0.35, 0.9, 5.4), Vector3(-19.8, 3.55, 0), Color(0.45, 0.6, 0.45))
+	var pglow := _add_box(Vector3(0.06, 0.3, 4.0), Vector3(-19.6, 3.55, 0), Color.WHITE, false)
+	_sign_glow(pglow, Color(0.6, 0.85, 0.6))
+	_add_mesh(_cylinder(0.08, 0.12, 0.9), Vector3(-20.8, 0.85, 0), FRAME, false)
 	var collar := MeshInstance3D.new()
 	var torus := TorusMesh.new()
 	torus.inner_radius = 0.14
 	torus.outer_radius = 0.2
 	collar.mesh = torus
 	collar.material_override = _mat(Color(0.5, 0.3, 0.2))
-	collar.position = Vector3(-16.8, 1.38, 0)
+	collar.position = Vector3(-20.8, 1.38, 0)
 	collar.rotation.x = 0.4
 	add_child(collar)
 	var plate := PetWindow.new()
-	plate.position = Vector3(-15.2, 1.0, 0)
+	plate.position = Vector3(-19.2, 1.0, 0)
 	var cs := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
 	sph.radius = 2.2
@@ -358,27 +406,53 @@ func _build_furnishings() -> void:
 		var a := TAU * i / 4.0 + PI / 4.0
 		var pos := Vector3(cos(a) * 5.6, 0.38, sin(a) * 5.6)
 		_add_scene(FURNITURE + "bench.glb", pos, atan2(-pos.x, -pos.z), 1.5, true)
-	# Food court, north-east corner of the ground floor.
+	# Food court, north-east, with a counter against the arcade and parasol
+	# tables in front of it.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77
-	for i in 3:
-		var t_pos := Vector3(7.5 + (i % 2) * 3.0, 0.38, -8.5 + i * 2.6)
+	_add_box(Vector3(4.6, 1.05, 1.2), Vector3(13.0, 0.86, -13.6), Color(0.5, 0.36, 0.28))
+	_add_box(Vector3(4.6, 0.12, 1.5), Vector3(13.0, 1.44, -13.6), Color(0.85, 0.82, 0.76), false)
+	_add_box(Vector3(3.4, 1.1, 0.2), Vector3(13.0, 3.0, -14.6), Color(0.3, 0.3, 0.34), false)
+	var menu_glow := _add_box(Vector3(3.0, 0.8, 0.06), Vector3(13.0, 3.0, -14.46), Color.WHITE, false)
+	_sign_glow(menu_glow, Color(1.0, 0.8, 0.45))
+	for i in 4:
+		var t_pos := Vector3(9.5 + (i % 2) * 3.4, 0.38, -10.8 + (i / 2) * 3.2)
 		_add_scene(FURNITURE + "tableRound.glb", t_pos, 0.0, 1.5, true)
+		_add_mesh(_cylinder(0.035, 0.035, 2.4), t_pos + Vector3(0, 1.55, 0), FRAME, false)
+		var parasol := MeshInstance3D.new()
+		parasol.mesh = _cylinder(0.02, 1.35, 0.5)
+		parasol.material_override = _mat([Color(0.85, 0.45, 0.35), Color(0.4, 0.6, 0.7)][i % 2])
+		parasol.position = t_pos + Vector3(0, 2.75, 0)
+		add_child(parasol)
 		for k in 2:
 			var a := rng.randf_range(0.0, TAU)
 			var c_pos := t_pos + Vector3(cos(a) * 1.1, 0, sin(a) * 1.1)
 			_add_scene(FURNITURE + "chairModernCushion.glb", c_pos, a + PI, 1.5, true)
-	# Planters at the atrium corners and flanking the entrance.
+	# A soft lounge on the west hall: rug, benches, low table.
+	_add_box(Vector3(5.4, 0.04, 3.6), Vector3(-12.0, 0.4, 4.5), Color(0.55, 0.4, 0.42), false)
+	_add_scene(FURNITURE + "bench.glb", Vector3(-12.0, 0.38, 5.8), PI, 1.5, true)
+	_add_scene(FURNITURE + "bench.glb", Vector3(-12.0, 0.38, 3.2), 0.0, 1.5, true)
+	_add_scene(FURNITURE + "tableCoffee.glb", Vector3(-12.0, 0.38, 4.5), PI / 2.0, 1.4, true)
+	# Planters with indoor trees at the atrium corners and the entrance.
 	for pos: Vector3 in [
-		Vector3(-8, 0.38, -6), Vector3(8, 0.38, 6), Vector3(-8, 0.38, 6),
-		Vector3(-5, 0.38, 11.5), Vector3(5, 0.38, 11.5),
+		Vector3(-9, 0.38, -7), Vector3(9, 0.38, 7), Vector3(-9, 0.38, 7), Vector3(9, 0.38, -7),
+		Vector3(-5.5, 0.38, 14.0), Vector3(5.5, 0.38, 14.0),
+		Vector3(-17, 0.38, -7), Vector3(17, 0.38, 7),
 	]:
 		_add_box(Vector3(1.6, 0.7, 1.6), pos + Vector3(0, 0.35, 0), CONCRETE.darkened(0.12))
 		_add_scene(FURNITURE + ["pottedPlant.glb", "plantSmall1.glb", "plantSmall2.glb"][randi() % 3],
-				pos + Vector3(0, 0.7, 0), randf_range(0.0, TAU), 1.7)
-	# Floor lamps along the atrium.
-	for pos: Vector3 in [Vector3(-13, 0.38, -6), Vector3(13, 0.38, 6), Vector3(-13, 0.38, 6), Vector3(10.5, 0.38, -10.5)]:
+				pos + Vector3(0, 0.7, 0), randf_range(0.0, TAU), 2.0)
+	# Bins and floor lamps along the halls.
+	for pos: Vector3 in [Vector3(-15, 0.38, -6), Vector3(15, 0.38, 6), Vector3(-13, 0.38, 8),
+			Vector3(12.5, 0.38, -6.5), Vector3(0, 0.38, -10.5)]:
 		_add_scene(FURNITURE + "lampRoundFloor.glb", pos, 0.0, 1.8, true)
+	for pos: Vector3 in [Vector3(6.5, 0, 11.5), Vector3(-6.5, 0, -10.5), Vector3(19.0, 0, 4.0)]:
+		_add_mesh(_cylinder(0.3, 0.26, 0.75), pos + Vector3(0, 0.75, 0), FRAME.lightened(0.2))
+		_add_mesh(_cylinder(0.32, 0.32, 0.06), pos + Vector3(0, 1.16, 0), Color(0.25, 0.26, 0.3), false)
+	# Wayfinding totem mid-hall.
+	_add_box(Vector3(0.9, 2.3, 0.28), Vector3(-6.0, 1.5, 8.0), FRAME)
+	var totem_glow := _add_box(Vector3(0.7, 1.5, 0.06), Vector3(-6.0, 1.7, 8.18), Color.WHITE, false)
+	_sign_glow(totem_glow, Color(0.55, 0.8, 0.85))
 
 func _build_geese() -> void:
 	var flock := Node3D.new()
@@ -427,7 +501,7 @@ func _build_geese() -> void:
 		flock.add_child(goose)
 
 func _build_elevator() -> void:
-	var pos := Vector3(13.5, 0, -6.5)
+	var pos := Vector3(16.5, 0, -7.5)
 	# Glass shaft on a metal skeleton: corner posts, floor bands, machine
 	# box on top with a cable running the shaft's height.
 	var shaft := _add_box(Vector3(2.4, ROOF_Y - 0.3, 2.4), pos + Vector3(0, ROOF_Y / 2.0 + 0.3, 0), GLASS)
@@ -439,11 +513,11 @@ func _build_elevator() -> void:
 		_add_box(Vector3(2.6, 0.14, 2.6), pos + Vector3(0, band_y, 0), FRAME, false)
 	_add_box(Vector3(1.5, 0.8, 1.5), pos + Vector3(0, ROOF_Y + 0.8, 0), FRAME.lightened(0.15))
 	_add_mesh(_cylinder(0.045, 0.045, ROOF_Y - 1.0), pos + Vector3(0, ROOF_Y / 2.0, 0), Color(0.2, 0.2, 0.22), false)
-	# Call panel pillar with its patient little button.
-	_add_box(Vector3(0.22, 1.2, 0.22), pos + Vector3(-1.55, 0.9, 0.9), FRAME)
-	_add_box(Vector3(0.1, 0.12, 0.12), pos + Vector3(-1.68, 1.35, 0.9), Color(0.8, 0.25, 0.2), false)
+	# Call panel pillar with its patient little button, beside the north door.
+	_add_box(Vector3(0.22, 1.2, 0.22), pos + Vector3(-1.6, 0.9, -1.55), FRAME)
+	_add_box(Vector3(0.12, 0.12, 0.1), pos + Vector3(-1.6, 1.35, -1.68), Color(0.8, 0.25, 0.2), false)
 	var plate := ElevatorDoor.new()
-	plate.position = pos + Vector3(-1.4, 1.0, 0.2)
+	plate.position = pos + Vector3(-0.4, 1.0, -1.6)
 	var cs := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
 	sph.radius = 2.0
@@ -473,11 +547,16 @@ func _build_dock() -> void:
 	for side in [-1.0, 1.0]:
 		for i in 3:
 			_add_mesh(_cylinder(0.12, 0.14, 1.5), Vector3(side * 1.1, -0.2, 30.0 + i * 4.5), Color(0.45, 0.38, 0.3))
-	# Concrete walkway from the dock to the entrance, with bollards.
-	_add_box(Vector3(4.0, 0.1, 16.0), Vector3(0, 0.31, 21.0), CONCRETE.darkened(0.04))
+	# Concrete walkway from the dock to the entrance, with bollards and a
+	# little arrival plaza.
+	_add_box(Vector3(4.0, 0.1, 13.0), Vector3(0, 0.31, 22.5), CONCRETE.darkened(0.04))
+	_add_box(Vector3(10.0, 0.1, 3.0), Vector3(0, 0.31, 17.5), CONCRETE.darkened(0.02))
 	for side in [-1.0, 1.0]:
-		for z in [15.5, 20.5, 25.5]:
+		for z in [18.5, 22.5, 26.5]:
 			_add_mesh(_cylinder(0.1, 0.12, 0.7), Vector3(side * 2.5, 0.65, z), FRAME.lightened(0.15))
+		# Flag poles with teal mall banners flanking the plaza.
+		_add_mesh(_cylinder(0.05, 0.07, 5.0), Vector3(side * 4.2, 2.5, 17.5), FRAME.lightened(0.2))
+		_add_box(Vector3(0.06, 1.4, 0.9), Vector3(side * 4.2, 4.1, 18.0), Color(0.2, 0.5, 0.5), false)
 
 # --- the robot, and the hiss ---
 
@@ -594,6 +673,29 @@ func _on_location_entered(body: Node3D, area: Area3D) -> void:
 
 ## Glass never casts shadows: alpha-dithered shadow maps stamp checker
 ## noise over the whole interior otherwise.
+func _pendant(pos: Vector3) -> void:
+	# A warm hanging lamp: thin cable from the roof, emissive disc shade.
+	var cable := _add_box(Vector3(0.03, 1.5, 0.03), Vector3(pos.x, ROOF_Y - 0.95, pos.z), FRAME, false)
+	cable.visible = true
+	var shade := MeshInstance3D.new()
+	shade.mesh = _cylinder(0.16, 0.4, 0.3)
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.95, 0.9, 0.8)
+	m.emission_enabled = true
+	m.emission = Color(1.0, 0.9, 0.72)
+	m.emission_energy_multiplier = 1.4
+	shade.material_override = m
+	shade.position = Vector3(pos.x, ROOF_Y - 1.75, pos.z)
+	add_child(shade)
+
+func _sign_glow(mi: MeshInstance3D, color: Color) -> void:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = color
+	m.emission_enabled = true
+	m.emission = color
+	m.emission_energy_multiplier = 1.5
+	mi.material_override = m
+
 func _glassify(mi: MeshInstance3D) -> void:
 	mi.material_override = _glass_mat()
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

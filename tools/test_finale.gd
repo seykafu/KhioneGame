@@ -50,7 +50,11 @@ func _run() -> void:
 	Inventory.add_item("elevator_fuse")
 	finale.elevator_interact()
 	assert(GameState.get_flag("elevator_powered"), "fuse should wake the elevator")
-	await get_tree().create_timer(7.0).timeout
+	# The doors open; the player steps aboard herself (simulated here) and
+	# the cab carries her up on its physical floor.
+	await get_tree().create_timer(2.0).timeout
+	player.global_position = finale.ELEVATOR_POS + Vector3(0, 1.2, 0)
+	await get_tree().create_timer(10.5).timeout
 	assert(player.global_position.y > 9.0, "the ride should end on the roof")
 	print("elevator ride: OK")
 
@@ -62,9 +66,12 @@ func _run() -> void:
 	assert(Inventory.max_slots == 7, "satchel should grow to 7 pockets")
 	print("banner glide + completion: OK")
 
-	# The elevator stays in service: call it from the ground and ride again.
+	# The elevator stays in service: call it from the ground, step in, and
+	# ride again.
 	finale.elevator_interact()
-	await get_tree().create_timer(12.0).timeout
+	await get_tree().create_timer(6.0).timeout
+	player.global_position = finale.ELEVATOR_POS + Vector3(0, 1.2, 0)
+	await get_tree().create_timer(10.5).timeout
 	assert(player.global_position.y > 9.0, "elevator should be reusable after the finale")
 	print("elevator reusable: OK")
 	print("ALL FINALE TESTS PASSED")
