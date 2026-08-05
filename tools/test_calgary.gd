@@ -26,7 +26,9 @@ func _run() -> void:
 	var isl: Node3D = main.get_node("Calgary")
 	assert(isl != null, "calgary island missing")
 	assert(absf(isl._terrain_height(0.0, 10.0) - 0.35) < 0.05, "park lawn should sit at plain height")
-	assert(isl._terrain_height(-11.0, -1.0) < -0.5, "lagoon hollow should dip below the waterline")
+	var lagoon_bed: float = isl._terrain_height(-11.0, -1.0)
+	assert(lagoon_bed < -0.1, "lagoon hollow should dip below the waterline")
+	assert(lagoon_bed > -0.4, "lagoon must stay wading depth: never deep enough to trigger swim mode")
 	assert(isl._terrain_height(0.0, 55.0) < -1.0, "south channel should be river")
 
 	var player: Node3D = get_tree().get_first_node_in_group("player")

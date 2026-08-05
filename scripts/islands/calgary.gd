@@ -80,10 +80,11 @@ func _terrain_height(x: float, z: float) -> float:
 	if d >= coast:
 		return -6.0 * clampf((d - coast) / 12.0, 0.0, 1.0)
 	var h := 0.35 * (1.0 - smoothstep(coast - 4.0, coast - 1.5, d))
-	# The lagoon hollow.
+	# The lagoon hollow: wading depth only. The bed never dips below the
+	# swim threshold (-0.4), so the pond can never trap her in swim mode.
 	var lag := Vector2(x, z) - LAGOON_CENTER
 	var lag_d := Vector2(lag.x / LAGOON_RADII.x, lag.y / LAGOON_RADII.y).length()
-	h -= 1.15 * (1.0 - smoothstep(0.55, 1.0, lag_d))
+	h -= 0.68 * (1.0 - smoothstep(0.55, 1.0, lag_d))
 	return h
 
 func _build_island() -> void:
@@ -220,7 +221,24 @@ func _build_peace_bridge() -> void:
 	dm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	deck.material_override = dm
 	add_child(deck)
-	deck.create_trimesh_collision()
+	# Solid box colliders under the deck instead of a paper-thin trimesh:
+	# thin surfaces wedge and swallow a jumping cat, thick boxes do not.
+	var deck_body := StaticBody3D.new()
+	add_child(deck_body)
+	for i in samples - 1:
+		var t0 := i / float(samples - 1)
+		var t1 := (i + 1) / float(samples - 1)
+		var z0 := lerpf(from_z, to_z, t0)
+		var z1 := lerpf(from_z, to_z, t1)
+		var y0: float = deck_y.call(t0)
+		var y1: float = deck_y.call(t1)
+		var cs := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(2.2, 0.3, Vector2(z1 - z0, y1 - y0).length() + 0.06)
+		cs.shape = shape
+		cs.position = Vector3(x, (y0 + y1) / 2.0 - 0.15, (z0 + z1) / 2.0)
+		cs.rotation.x = -atan2(y1 - y0, z1 - z0)
+		deck_body.add_child(cs)
 	# Continuous rails and lattice ribs along the curve.
 	for i in samples - 1:
 		var t0 := i / float(samples - 1)

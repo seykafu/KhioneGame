@@ -7,7 +7,7 @@ extends Node3D
 ## run under the bridge flushes the west-rim nook: a small brass clapper,
 ## carried back soggy.
 
-const PLANK_POS := Vector3(-6.2, 0.3, 3.6)
+const PLANK_POS := Vector3(-6.2, 0.42, 3.6)  # proud of the grass: no z-fighting
 const LEVER_POS := Vector3(-10.0, 0.35, 5.2)
 const WEIR_POS := Vector3(-11.0, 0.1, 1.4)
 const CLAPPER_POS := Vector3(-16.0, 0.28, -1.6)
