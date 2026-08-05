@@ -58,28 +58,92 @@ func _ready() -> void:
 	_add_location_trigger(Vector3(-14.5, 0, 4.4), 8.0, "The Hillside Den")
 	_add_location_trigger(Vector3(0, 3.3, 0), 7.0, "The Old Summit")
 
+## The island's coastline, shared analytically with the terrain and water
+## shaders so mesh, wet band, and foam all agree. The southern sector is
+## damped flat: that's the boat channel.
+func _coast_radius(theta: float) -> float:
+	var wob := 2.6 * sin(3.0 * theta + 1.7) + 1.7 * sin(5.0 * theta + 4.2) \
+			+ 1.1 * sin(8.0 * theta + 0.9)
+	var d := absf(wrapf(theta - PI / 2.0, -PI, PI))
+	wob *= smoothstep(0.55, 1.1, d)
+	return 40.0 + wob
+
+## Terraced height field: beach 0, grass 0.3, tiers 1.3 / 2.3 / 3.3 — the
+## same height contract the puzzles were built on, with steep (jump-only)
+## terrace lips and a walkable grass ramp.
+func _terrain_height(x: float, z: float) -> float:
+	var d := Vector2(x, z).length()
+	var theta := atan2(z, x)
+	var coast := _coast_radius(theta)
+	if d >= coast:
+		return -6.0 * clampf((d - coast) / 12.0, 0.0, 1.0)
+	var grass_r := coast * 0.74
+	var h := 0.3 * (1.0 - smoothstep(grass_r - 2.0, grass_r - 0.4, d))
+	h += 1.0 * (1.0 - smoothstep(12.6, 13.4, d))
+	h += 1.0 * (1.0 - smoothstep(9.0, 9.7, d))
+	h += 1.0 * (1.0 - smoothstep(5.7, 6.4, d))
+	return h
+
 func _build_island() -> void:
-	_sand_mat = _island_material(SAND, Color(0.85, 0.75, 0.52), 11, true)
-	_grass_mat = _island_material(GRASS, Color(0.33, 0.6, 0.27), 22, false)
-	# Sandy base: flat top at y=0, gentle beach slope down into the water.
-	_add_mesh(_cylinder(40.0, 55.0, 6.0), Vector3(0, -3.0, 0), SAND, true, _sand_mat)
-	# Grass plateau with a tapered edge so Khione can walk up without jumping.
-	_add_mesh(_cylinder(30.0, 33.0, 0.3), Vector3(0, 0.15, 0), GRASS, true, _grass_mat)
-	# Tiered hill in the middle — each 1m step is a deliberate jump challenge.
-	_add_mesh(_cylinder(12.0, 13.5, 1.0), Vector3(0, 0.8, 0), GRASS, true, _grass_mat)
-	_add_mesh(_cylinder(8.5, 9.8, 1.0), Vector3(0, 1.8, 0), GRASS, true, _grass_mat)
-	_add_mesh(_cylinder(5.5, 6.5, 1.0), Vector3(0, 2.8, 0), ROCK)
+	_sand_mat = _terrain_material()
+	_grass_mat = _sand_mat
+	# One sculpted terrain mesh replaces the old cylinder stack.
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := 140
+	var span := 108.0
+	var step := span / (n - 1)
+	var heights := []
+	for iz in n:
+		var row := PackedFloat32Array()
+		for ix in n:
+			var x := -span / 2.0 + ix * step
+			var z := -span / 2.0 + iz * step
+			row.append(_terrain_height(x, z))
+		heights.append(row)
+	for iz in n - 1:
+		for ix in n - 1:
+			var x0 := -span / 2.0 + ix * step
+			var z0 := -span / 2.0 + iz * step
+			var p00 := Vector3(x0, heights[iz][ix], z0)
+			var p10 := Vector3(x0 + step, heights[iz][ix + 1], z0)
+			var p01 := Vector3(x0, heights[iz + 1][ix], z0 + step)
+			var p11 := Vector3(x0 + step, heights[iz + 1][ix + 1], z0 + step)
+			for p: Vector3 in [p00, p10, p11, p00, p11, p01]:
+				st.set_uv(Vector2(p.x, p.z) * 0.05)
+				st.add_vertex(p)
+	st.generate_normals()
+	st.generate_tangents()
+	var terrain := MeshInstance3D.new()
+	terrain.mesh = st.commit()
+	terrain.material_override = _sand_mat
+	add_child(terrain)
+	terrain.create_trimesh_collision()
+	_scatter_outcrops()
 	_scatter_dunes()
 
-func _island_material(base: Color, alt: Color, seed_v: int, wet: bool) -> ShaderMaterial:
+func _terrain_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/island.gdshader")
-	m.set_shader_parameter("base_color", base)
-	m.set_shader_parameter("alt_color", alt)
-	m.set_shader_parameter("noise_tex", _noise_tex(seed_v, 0.06))
-	m.set_shader_parameter("detail_normal", _noise_tex(seed_v + 100, 0.15, true))
-	m.set_shader_parameter("wet_enabled", 1.0 if wet else 0.0)
+	m.set_shader_parameter("noise_tex", _noise_tex(11, 0.06))
+	m.set_shader_parameter("detail_normal", _noise_tex(111, 0.15, true))
 	return m
+
+## Rock outcrops along the terrace lips hide their circular geometry.
+func _scatter_outcrops() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 616
+	var pools: Array = [load("res://assets/nature/rock_smallA.glb"),
+			load("res://assets/nature/rock_smallB.glb"), load("res://assets/nature/rock_largeB.glb")]
+	for def: Array in [[13.0, 10, 0.7], [9.35, 8, 1.7], [6.05, 6, 2.7]]:
+		var radius: float = def[0]
+		var count: int = def[1]
+		var base_y: float = def[2]
+		for i in count:
+			var a := TAU * i / count + rng.randf_range(-0.2, 0.2)
+			var pos := Vector3(cos(a) * radius, base_y + rng.randf_range(-0.1, 0.1), sin(a) * radius)
+			_add_scene(pools[rng.randi_range(0, pools.size() - 1)], pos,
+					rng.randf_range(0.0, TAU), rng.randf_range(1.3, 2.1), true)
 
 func _noise_tex(seed_v: int, freq: float, as_normal := false) -> NoiseTexture2D:
 	var noise := FastNoiseLite.new()
@@ -126,6 +190,8 @@ func _build_water() -> void:
 	sm.shader = load("res://shaders/water.gdshader")
 	sm.set_shader_parameter("wave_normal1", _noise_tex(51, 0.08, true))
 	sm.set_shader_parameter("wave_normal2", _noise_tex(52, 0.13, true))
+	sm.set_shader_parameter("shore_radius", 40.0)
+	sm.set_shader_parameter("coast_wobble", 1.0)
 	mi.material_override = sm
 	mi.position = Vector3(0, WATER_SURFACE_Y, 0)
 	add_child(mi)

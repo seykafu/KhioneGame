@@ -206,7 +206,7 @@ func _spawn_big_pawprints() -> void:
 		m.roughness = 1.0
 		paw.material_override = m
 		var flip := 1.0 if i % 2 == 0 else -1.0
-		paw.position = Vector3(1.5, 0.03, 29.0) + dir * (0.55 * i) + side * 0.16 * flip
+		paw.position = Vector3(2.0, 0.05, 31.5) + dir * (0.55 * i) + side * 0.16 * flip
 		paw.rotation.y = atan2(dir.x, dir.z)
 		add_child(paw)
 

@@ -14,8 +14,16 @@ uniform float wave_speed = 0.9;
 uniform float shore_radius = 41.0;
 uniform float shallow_band = 13.0;
 uniform float foam_band = 2.6;
+uniform float coast_wobble = 0.0;  // 1.0 on Ahalo: foam follows the sculpted coast
 
 varying vec3 wpos;
+
+float coast_offset(float theta) {
+	float wob = 2.6 * sin(3.0 * theta + 1.7) + 1.7 * sin(5.0 * theta + 4.2)
+			+ 1.1 * sin(8.0 * theta + 0.9);
+	float d = abs(mod(theta - 1.5707963 + 3.14159265, 6.2831853) - 3.14159265);
+	return wob * smoothstep(0.55, 1.1, d);
+}
 
 void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
@@ -26,12 +34,14 @@ void vertex() {
 
 void fragment() {
 	float r = length(wpos.xz);
-	float depth_blend = smoothstep(shore_radius, shore_radius + shallow_band, r);
+	float theta = atan(wpos.z, wpos.x);
+	float local_shore = shore_radius + coast_offset(theta) * coast_wobble;
+	float depth_blend = smoothstep(local_shore, local_shore + shallow_band, r);
 	vec3 col = mix(shallow_color, deep_color, depth_blend);
 
 	// Foam: a breathing ring at the waterline, broken up by noise.
 	float breathe = sin(TIME * 0.9) * 0.5;
-	float foam = 1.0 - smoothstep(0.0, foam_band + breathe, r - shore_radius + 1.2);
+	float foam = 1.0 - smoothstep(0.0, foam_band + breathe, r - local_shore + 1.2);
 	float breakup = texture(wave_normal1, wpos.xz * 0.18 + vec2(TIME * 0.025)).r;
 	foam *= 0.55 + 0.45 * breakup;
 	col = mix(col, vec3(0.95, 0.98, 0.98), clamp(foam, 0.0, 1.0) * 0.85);
