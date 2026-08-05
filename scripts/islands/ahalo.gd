@@ -43,6 +43,8 @@ var _materials := {}
 var _visited_locations := {}
 var _sand_mat: ShaderMaterial
 var _grass_mat: ShaderMaterial
+var _palm_spots: Array[Vector3] = []
+var _water_mesh: MeshInstance3D
 
 func _ready() -> void:
 	_build_island()
@@ -52,8 +54,13 @@ func _ready() -> void:
 	_scatter_rocks()
 	_scatter_flora()
 	_scatter_beach_details()
+	_scatter_grass_blades()
 	_spawn_butterflies()
 	_place_pickups()
+	var life := Node3D.new()
+	life.name = "Life"
+	life.set_script(load("res://scripts/islands/ahalo_life.gd"))
+	add_child(life)
 	_add_location_trigger(Vector3(0, 0, 33), 8.0, "South Beach")
 	_add_location_trigger(Vector3(33, 0, -4), 9.0, "Echo Cove")
 	_add_location_trigger(Vector3(-14.5, 0, 4.4), 8.0, "The Hillside Den")
@@ -317,6 +324,7 @@ func _build_water() -> void:
 	mi.material_override = sm
 	mi.position = Vector3(0, WATER_SURFACE_Y, 0)
 	add_child(mi)
+	_water_mesh = mi
 
 	# Invisible volume that tells the player she is in water.
 	var area := Area3D.new()
@@ -347,6 +355,7 @@ func _scatter_trees() -> void:
 			if flat_r > 28.0 or flat_r < 14.5:
 				continue
 			var s := rng.randf_range(2.6, 3.4)
+			_palm_spots.append(pos)
 			var t := _add_scene(palms[rng.randi_range(0, palms.size() - 1)], pos,
 					rng.randf_range(0.0, TAU), s)
 			t.rotation.x = rng.randf_range(-0.06, 0.06)
@@ -490,6 +499,61 @@ func _scatter_beach_details() -> void:
 		mi.rotation.z = PI / 2.0
 		mi.rotation.y = rng.randf_range(0.0, TAU)
 
+func near_river(p: Vector2, margin: float) -> bool:
+	if p.distance_to(Vector2(-8.8, -6.8)) < 2.9:
+		return true  # the spring pond
+	for i in RIVER_XZ.size() - 1:
+		var q := Geometry2D.get_closest_point_to_segment(p, RIVER_XZ[i], RIVER_XZ[i + 1])
+		if p.distance_to(q) < margin:
+			return true
+	return false
+
+func _scatter_grass_blades() -> void:
+	# A meadow of instanced blades over the grass zone, swaying by shader.
+	var blade := SurfaceTool.new()
+	blade.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for rot: float in [0.0, PI / 2.0]:
+		var basis := Basis(Vector3.UP, rot)
+		for v: Vector3 in [Vector3(-0.03, 0, 0), Vector3(0.03, 0, 0), Vector3(0, 0.19, 0)]:
+			# Normals point up so blades shade like the ground they grow from.
+			blade.set_normal(Vector3.UP)
+			blade.add_vertex(basis * v)
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = blade.commit()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3131
+	var placed := 0
+	var transforms: Array[Transform3D] = []
+	var attempts := 0
+	while placed < 14000 and attempts < 90000:
+		attempts += 1
+		var x := rng.randf_range(-32.0, 32.0)
+		var z := rng.randf_range(-32.0, 32.0)
+		var d := Vector2(x, z).length()
+		var theta := atan2(z, x)
+		if d > _coast_radius(theta) * 0.74 - 2.6:
+			continue
+		var h := _terrain_height(x, z)
+		if h < 0.28 or h > 2.45:
+			continue
+		if near_river(Vector2(x, z), 1.7):
+			continue
+		var t := Transform3D(Basis(Vector3.UP, rng.randf_range(0.0, TAU))
+				.scaled(Vector3.ONE * rng.randf_range(0.75, 1.25)), Vector3(x, h, z))
+		transforms.append(t)
+		placed += 1
+	mm.instance_count = transforms.size()
+	for i in transforms.size():
+		mm.set_instance_transform(i, transforms[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = mm
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://shaders/grass_blade.gdshader")
+	mmi.material_override = mat
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mmi)
+
 func _spawn_butterflies() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 555
@@ -595,6 +659,7 @@ func _add_pickup(pos: Vector3, id: String, disp: String, color: Color) -> void:
 	sph.radius = 1.2
 	cs.shape = sph
 	a.add_child(cs)
+	a.add_to_group("pickup_" + id)
 	var mi := MeshInstance3D.new()
 	var mesh := SphereMesh.new()
 	mesh.radius = 0.25
