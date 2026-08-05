@@ -132,6 +132,41 @@ class ItemIcon:
 				draw_arc(c, 10.5, 0.3, TAU + 0.1, 28, vine, 3.0, true)
 				draw_arc(c, 7.0, -0.6, TAU - 0.9, 24, vine, 3.0, true)
 				draw_arc(c, 3.8, 0.9, TAU + 0.4, 18, dark_vine, 2.6, true)
+			"brass_clapper":
+				var brass2 := Color(0.78, 0.62, 0.26)
+				draw_line(c + Vector2(0, -10), c + Vector2(0, 6), brass2, 3.0, true)
+				draw_circle(c + Vector2(0, 9), 4.5, brass2)
+				draw_circle(c + Vector2(0, -10), 2.6, Color(0.6, 0.48, 0.2))
+			"dog_biscuits":
+				var biscuit := Color(0.72, 0.55, 0.3)
+				for off: Vector2 in [Vector2(-5, -4), Vector2(5, 2)]:
+					draw_circle(c + off + Vector2(-6, 0), 3.2, biscuit)
+					draw_circle(c + off + Vector2(6, 0), 3.2, biscuit)
+					draw_rect(Rect2(c + off + Vector2(-6, -2.4), Vector2(12, 4.8)), biscuit)
+			"paw_key":
+				var steel2 := Color(0.7, 0.66, 0.5)
+				var ink := Color(0.3, 0.25, 0.2)
+				draw_arc(c + Vector2(-7, 0), 5.0, 0.0, TAU, 20, steel2, 3.0, true)
+				draw_line(c + Vector2(-2, 0), c + Vector2(11, 0), steel2, 3.0, true)
+				draw_line(c + Vector2(7, 0), c + Vector2(7, 5), steel2, 2.4, true)
+				draw_circle(c + Vector2(-7, 0), 2.0, ink)
+				for off: Vector2 in [Vector2(-9.5, -2), Vector2(-7, -3), Vector2(-4.5, -2)]:
+					draw_circle(c + off, 0.9, ink)
+			"tennis_ball":
+				var felt := Color(0.78, 0.88, 0.3)
+				var seam := Color(0.9, 0.95, 0.85)
+				draw_circle(c, 11.0, felt)
+				draw_arc(c + Vector2(-7, 0), 10.0, -0.9, 0.9, 16, seam, 2.0, true)
+				draw_arc(c + Vector2(7, 0), 10.0, PI - 0.9, PI + 0.9, 16, seam, 2.0, true)
+				draw_circle(c + Vector2(4, -5), 1.4, Color(0.55, 0.6, 0.25))
+			"cream_jug":
+				var jug := Color(0.93, 0.9, 0.82)
+				var band := Color(0.5, 0.65, 0.75)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(-7, 12), c + Vector2(-9, -2), c + Vector2(-5, -8),
+					c + Vector2(5, -8), c + Vector2(9, -2), c + Vector2(7, 12)]), jug)
+				draw_rect(Rect2(c + Vector2(-8, 0), Vector2(16, 4)), band)
+				draw_arc(c + Vector2(0, -8), 4.0, PI, TAU, 12, Color(0.7, 0.66, 0.6), 2.0, true)
 			_:
 				draw_circle(c, 10.0, Color(0.6, 0.55, 0.45))
 				draw_arc(c, 10.0, 0.0, TAU, 24, Color(0.4, 0.35, 0.28), 2.0, true)
@@ -281,7 +316,23 @@ func _current_objective_text() -> String:
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
 		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
-			return "A green park on a turquoise river, and a low howl between breezes, from the fenced meadow at the north point."
+			if GameState.get_flag("island3_complete"):
+				return "Prince's Island hums with summer, two friends in a canoe. Vancouver waits west. (Island 4 coming soon)"
+			if not GameState.get_flag("regatta_done"):
+				return "Paper boats lie becalmed on the lagoon. The cottonwood fluff knows when the breeze comes… and the little weir decides what passes the narrows."
+			if not GameState.get_flag("ice_cream_done"):
+				return "A brass clapper wants a bell. The old ice-cream cart wears four painted notes: the vendor's round, rung just so."
+			if not GameState.get_flag("kite_freed"):
+				return "A kite thrashes at the top of the red bridge. Grab it when the fluff rests… and mind where its string leads."
+			if not GameState.get_flag("gopher_semaphore_done"):
+				return "The gophers keep something buried. A crayon map under a picnic table knows their doors by number, and meows carry underground."
+			if not GameState.get_flag("meadow_open"):
+				return "The howl comes from the fenced meadow at the north point. The vendor's spare key wears a paw."
+			if not GameState.get_flag("oreo_untangled"):
+				return "The run-line loops tree, bench, and stone, wound in that order. Walk it backwards, and it lets go."
+			if not GameState.get_flag("oreo_joined"):
+				return "Free is not the same as friends. Cream, biscuits… and one good throw."
+			return "The canoe on the gravel bar is heavy, and she is small. Her new friend knows the way to the water."
 		return "The Bow runs turquoise around a green park island, and something there is howling for company. (travel from the pause menu)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
@@ -414,6 +465,8 @@ func _show_letter() -> void:
 		extra += "\n\nA recovered scrap, tucked in the raft's knots:\n“… one final …”"
 	if GameState.get_flag("letter_fragment_2"):
 		extra += "\n\nA scrap that fell from the mall's banner:\n“… not supposed to …”"
+	if GameState.get_flag("letter_fragment_3"):
+		extra += "\n\nA scrap that slipped from a friendly collar:\n“Could I …”"
 	letter_text.text = _letter_base + extra
 	letter_panel.visible = true
 	get_tree().paused = true

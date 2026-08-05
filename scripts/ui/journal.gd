@@ -36,6 +36,16 @@ const RIDDLES := [
 		"text": "Pigeons rule the west tiles and flee from hisses, always away, one tile at a time. Four grated tiles wait beneath four birds."},
 	{"flag": "island2_complete", "title": "Make the Flock Fly", "island": 2,
 		"text": "Crank the sky open. Lean the light to evening. Follow sixty shadows to the sleeping elevator, wake it, and take the roof. The flock knows the rest."},
+	{"flag": "regatta_done", "title": "The Paper Regatta", "island": 3,
+		"text": "Paper boats lie becalmed on the lagoon. The fluff gives one beat of warning, and the little weir decides what passes under the red bridge."},
+	{"flag": "ice_cream_done", "title": "The Ice Cream Round", "island": 3,
+		"text": "The cart's bell wants its clapper back, and then the vendor's round: four painted notes, rung just so, in one short breath."},
+	{"flag": "kite_freed", "title": "The Bridge and the Kite", "island": 3,
+		"text": "A kite thrashes at the arch of the red bridge, still only in the lull. Its string runs down into the shallows, tied to something."},
+	{"flag": "gopher_semaphore_done", "title": "The Gopher Semaphore", "island": 3,
+		"text": "A crayon map under a picnic table numbers six burrows. Meows carry underground… pulse the doors in the map's order."},
+	{"flag": "island3_complete", "title": "The Howl in the Off-Leash Meadow", "island": 3,
+		"text": "The paw key opens the gate. The run-line loops tree, bench, stone: walk it backwards. Then cream, biscuits, and one good throw."},
 ]
 
 const CONTROLS := [
@@ -255,7 +265,9 @@ func _refresh_riddles() -> void:
 	var current_shown := false
 	for r: Dictionary in RIDDLES:
 		var solved: bool = GameState.get_flag(r.flag) \
-				or (r.get("island", 1) == 1 and GameState.get_flag("island1_complete"))
+				or (r.get("island", 1) == 1 and GameState.get_flag("island1_complete")) \
+				or (r.get("island", 1) == 2 and GameState.get_flag("island2_complete")) \
+				or (r.get("island", 1) == 3 and GameState.get_flag("island3_complete"))
 		var row := VBoxContainer.new()
 		var title := Label.new()
 		title.add_theme_font_size_override("font_size", 17)

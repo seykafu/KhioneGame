@@ -42,6 +42,21 @@ func _ready() -> void:
 	_spawn_butterflies()
 	_add_ambient_loop("res://assets/audio/park_birds.wav", Vector3(0, 3.0, -4), -10.0, 70.0)
 	_add_ambient_loop("res://assets/audio/brook.wav", Vector3(-5.5, 0.3, 3.5), -14.0, 12.0)
+	var breeze := Node3D.new()
+	breeze.name = "BowBreeze"
+	breeze.set_script(load("res://scripts/islands/bow_breeze.gd"))
+	add_child(breeze)
+	for def: Array in [
+		["PaperRegatta", "res://scripts/puzzles/paper_regatta.gd"],
+		["IceCreamRound", "res://scripts/puzzles/ice_cream_round.gd"],
+		["GopherSemaphore", "res://scripts/puzzles/gopher_semaphore.gd"],
+		["BridgeKite", "res://scripts/puzzles/bridge_kite.gd"],
+		["OffleashHowl", "res://scripts/puzzles/offleash_howl.gd"],
+	]:
+		var puzzle := Node3D.new()
+		puzzle.name = def[0]
+		puzzle.set_script(load(def[1]))
+		add_child(puzzle)
 	_add_location_trigger(Vector3(0, 0, 15), 6.0, "The Landing")
 	_add_location_trigger(Vector3(-11, 0, -1), 8.0, "The Lagoon")
 	_add_location_trigger(Vector3(-11, 0.8, -7), 4.0, "The Peace Bridge")
@@ -280,6 +295,7 @@ func _build_dock() -> void:
 		for i in 3:
 			_add_mesh(_cyl(0.12, 0.14, 1.6), Vector3(side * 1.1, -0.15, 41.0 + i * 4.0), Color(0.42, 0.35, 0.28))
 	var canoe := MeshInstance3D.new()
+	canoe.name = "Canoe"
 	var cb := CapsuleMesh.new()
 	cb.radius = 0.55
 	cb.height = 3.6
@@ -764,3 +780,25 @@ func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true)
 	var box := BoxMesh.new()
 	box.size = size
 	return _add_mesh(box, pos, color, with_collision)
+
+func _add_pickup(pos: Vector3, id: String, disp: String, color: Color) -> void:
+	var a := Area3D.new()
+	a.set_script(load("res://scripts/interaction/item_pickup.gd"))
+	a.set("item_id", id)
+	a.set("display_name", disp)
+	a.position = pos
+	var cs := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 1.2
+	cs.shape = sph
+	a.add_child(cs)
+	a.add_to_group("pickup_" + id)
+	var mi := MeshInstance3D.new()
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.25
+	mesh.height = 0.5
+	mi.mesh = mesh
+	mi.material_override = _mat(color)
+	mi.position = Vector3(0, 0.25, 0)
+	a.add_child(mi)
+	add_child(a)

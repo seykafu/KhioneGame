@@ -32,6 +32,11 @@ const NAMES := {
 	"brass_key": "Brass Key",
 	"skylight_crank": "Skylight Crank",
 	"elevator_fuse": "Elevator Fuse",
+	"brass_clapper": "Brass Clapper",
+	"dog_biscuits": "Dog Biscuits",
+	"paw_key": "Paw-Marked Key",
+	"tennis_ball": "Chewed Tennis Ball",
+	"cream_jug": "Cream Jug",
 }
 
 const DESCRIPTIONS := {
@@ -45,6 +50,11 @@ const DESCRIPTIONS := {
 	"brass_key": "Small, brass, and important somewhere. The fountain kept it safe for years.",
 	"skylight_crank": "A well-oiled crank handle, warm from a drummer's grip. Something above wants turning.",
 	"elevator_fuse": "A fat glass fuse, miraculously intact. The elevator's call button has been waiting years for this.",
+	"brass_clapper": "Small, brass, and boat-delivered. Some bell somewhere has been clearing its throat for years.",
+	"dog_biscuits": "A paper bag of biscuits from the vendor's corkboard. She does not know why she needs these. Yet.",
+	"paw_key": "A spare key on a nail-worn tag, one paw drawn in marker. It knows exactly which gate it opens.",
+	"tennis_ball": "Chewed soft, one blue thread in the felt. Buried long ago by somebody who meant to come back for it.",
+	"cream_jug": "Cold cream, kept perfect in glacier water. A picnicker's loss is a friendship's beginning.",
 }
 
 var max_slots: int = 5
