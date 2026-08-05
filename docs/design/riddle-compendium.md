@@ -85,32 +85,30 @@ Oreo artifact: in the pet store window, one dog collar on a stand, tag blank but
 
 ---
 
-## Island 3 · The Calgary Crescent
-*A snowy crescent of bungalows under the foothills, a frozen playground, woodsmoke, magpies on the fence line, and far off a chinook arch parting the cloud. Khione is white on white: snow is her camouflage. This island's true reward is not a verb. It is Oreo, and this is the city that raised him.*
-
-*The chinook is the island's heartbeat: every few minutes a warm gust rolls through, the light goes gold, icicles drip, and the snow softens for a moment. Riddles breathe with it.*
+## Island 3 · Prince's Island
+*Calgary in high summer: a green park island in the milky-turquoise braid of the Bow, cottonwood fluff on the breeze, the red lattice tube of the Peace Bridge, a lagoon with ducklings, gophers on the east lawn, and the downtown skyline (the Tower, the Saddledome) hazy across the water. Golden hour that never quite ends. This island's true reward is not a verb. It is Oreo, and this is the city that raised him.*
 
 ### Small riddles
 
-**The Backyard Rink.** A real Calgary backyard rink, boards and all: once Khione steps on, she slides until she hits something. Classic ice-maze, but the "walls" are snowmen you can build by rolling (push a small snowball; it grows as it rolls, then blocks a lane). Plan the snowmen, then skate the line. Failure: gentle crash into a snowbank, hat of snow (hats are this game's failure motif). Reward: frozen in the rink's centre, a thermos; it thaws by the fire barrel into warm milk (item). During a chinook the ice sweats and slides run a little farther: risk or gift, player's call.
+**The Paper Regatta.** Kids' paper boats are stranded all over the lagoon, becalmed. The Bow breeze comes in readable waves: the cottonwood fluff lifts first, one second of warning (the gust-reading seed that Island 8's blizzards will demand at full price). Fold and release a boat only when the fluff flies, and steer it under the footbridge by opening the lagoon's tiny outflow sluice at the right beat. The winning boat comes back soggy, carrying its cargo: a small brass clapper.
 
-**The Mailbox Morse.** Six mailboxes on the crescent, each with a red flag. From the top of the playground slide (only from up there), you can see house numbers painted on the curb. The numbers are odd or even. Flags up for odd, down for even, and the postal truck's tape player (stuck on repeat in a snowdrift) clicks open with the neighbourhood's "route code." Inside: dog biscuits. The player does not know why they need dog biscuits. They will.
+**The Ice Cream Round.** The abandoned ice-cream cart's bell is missing its clapper (see Regatta). The vendor's jingle is painted on the cart's side as note dots. Ring the old round correctly and the routine wakes: sprinklers chuff, the hatch pops, and inside is the vendor's corkboard — dog biscuits in a paper bag, and a spare key on a nail labelled only with a paw drawn in marker. The player does not know why they need either. They will.
 
-**The Swing Set Launch.** The playground swing works: hop on, pump momentum (timed presses), and launch. The arc is fixed; the landing is not. Rotate the merry-go-round to move a padded target (an old mattress) to catch her at three roofs' heights. Each roof holds one shiny thing, including the weathercock that unlocks the Ice Pond shortcut. Pure motion joy; the riddle is *where to aim*, read from tracks in the snow on the roofs.
+**The Gopher Semaphore.** The east lawn is a gopher town, fifty holes, all gossip. A crayon map under a picnic table numbers six burrows in a kid's handwriting. Pulse Whisker Sense into the numbered burrows in order and the whole town surfaces at once to look at her — and the eldest gopher pushes up something buried long ago: a tennis ball, chewed soft, one blue thread snagged in the felt.
 
-**The Chimney Choir.** Four chimneys smoke in different rhythms. A child's drawing taped inside a frosted window shows four houses and musical notes. Hiss into a chimney and the smoke puffs stutter. Match the drawing's rhythm across all four chimneys and every icicle on the crescent rings like a bell, shaking loose the frozen gate of the last backyard. Smoke only reads clearly in the still air between chinooks: the sky teaches patience.
+**The Bridge and the Kite.** The red tube bridge over the lagoon narrows is a climbing game: kids' chalk arrows dare you across the *outside* of the lattice. Mid-arch, a stuck kite thrashes; grab it only in the lull between breezes (fluff falling, string slack). Its string runs down to the shallows below, tied to a cream jug some picnicker left cooling in the river. Retrieve it: cold cream, keeping perfectly in the glacier water.
 
-### Main riddle · The Howl at Number Eight
+### Main riddle · The Howl in the Off-Leash Meadow
 
-All island long, a low howl surfaces between gusts. Whisker Sense points at it only when the chinook drops (wind matters, taught cheaply here, spent hard on Island 8).
+All island long, a low howl surfaces between breezes, from the fenced off-leash meadow at the island's north point. Whisker Sense points at it only when the wind drops. The gate latch is dog-proof and stranger-proof; the vendor's paw-marked key (Ice Cream Round) opens it.
 
-The last backyard (opened by the Chimney Choir) holds a snowed-under doghouse and a border collie with one blue eye, tangled in his own run-line around the yard's only tree. The untangling is the riddle: walking the line's path in reverse (a topology puzzle drawn in leash-loops around tree, fence, doghouse). Wrong loops tighten it; his ears drop; the player physically feels the stakes. The milk and biscuits are for after: he will not follow a stranger, but he follows a friend who shares food.
+Inside, under the meadow's one great cottonwood, a border collie with one blue eye is tangled in his own run-line, looped around the tree, a bench, and a low memorial stone. The untangling is the riddle: walking the line's path in reverse, a topology puzzle drawn in leash-loops. Wrong loops tighten it; his ears drop; the player physically feels the stakes.
 
-He has no tag on his collar, just a paw-shaped charm. The doghouse is built from fence boards, kid-painted with a wobbly mountain skyline: he was born in this yard, raised on this crescent, and the island is his memory of it. He answers to nothing until the graveyard-truth finale, but if the player meows, he barks back, always, instantly, joyfully. From here on, Oreo follows.
+Free is not the same as friends. He will not follow a stranger: the cream and the biscuits are for sharing, and then the ball. Throw the chewed tennis ball once, and he brings it back and drops it at her paws, tail going like a metronome in a hurricane. That is the whole handshake. If the player meows, he barks back, always, instantly, joyfully. From here on, Oreo follows.
 
-The island's exit is anticlimactically simple, on purpose: Oreo digs the snowdrift off a buried canoe in five seconds flat, looks back at Khione, and the two paddle out. Some doors just need a friend.
+The island's exit is anticlimactically simple, on purpose: the canoe is beached hard on the gravel bar, too heavy for one small cat, and Oreo shoves it off in five seconds flat, looks back at her, and hops in the bow. Some doors just need a friend. As he settles, a scrap of paper slips from under his collar: the fragment reads "Could I …".
 
-Oreo artifact: this entire island, in hindsight. The dusty bowl in the doghouse reads a name the camera never quite frames.
+Oreo artifact: the memorial stone under the cottonwood, old and sun-warmed, its engraving always just out of frame. He sleeps against it like it is the warmest thing in the park.
 
 ---
 
@@ -219,27 +217,28 @@ Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder hei
 
 ---
 
-## Island 8 · The Forks
-*Winnipeg's park where two rivers meet: prairie wind funnelled off Portage and Main (the windiest corner in Canada), kites, the white cable spar of a walking bridge, a gopher metropolis, a lagoon. The wind never stops. Teaches: the wind is a tool.*
+## Island 8 · The Winnipeg Crescent
+*A snowed-in crescent of bungalows under prairie wind that never stops: woodsmoke torn sideways, laundry lines snapping, white-outs rolling through in waves. Khione is white on white; Oreo is the dark thing the blizzard cannot hide, and he loves it here. The gust-reading learned on a summer kite in Calgary comes due at full price. Teaches: the wind is a tool.*
+
+*The squall is the island's metronome: every minute or so the light goes cold silver, the snow flies flat, and everything loose sings. Between squalls, stillness. Riddles live in both.*
 
 ### Small riddles
 
-**The Kite Truants.** Four kites escaped their reels and snagged around the island. Reaching each is a wind-platforming bite: gusts come in readable waves (grass lays flat first, a second of warning, the Calgary chinook lesson matured). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized kite reel post, and four flying kites become the island's living wind gauge, visible from everywhere. You are not collecting; you are instrumenting the sky.
+**The Backyard Rink.** A backyard rink, boards and all: once Khione steps on, she slides until she hits something. Classic ice-maze, but the "walls" are snowmen you can build by rolling (push a small snowball; it grows as it rolls, then blocks a lane), and a squall mid-slide shoves her line sideways. Time your runs to the stillness, or use the shove on purpose. Failure: gentle crash into a snowbank, hat of snow. Reward: frozen in the rink's centre, a thermos of cocoa for the fire barrel.
 
-**The Esplanade Run.** The white walking bridge is a marble-run in disguise: its hollow handrail tubes carry rainwater down the cable spar to a cistern button that has never been pressed (moss says so). Drop a golf ball (old friend from Island 5, findable in the lagoon) at the high mouth, then sprint *along the deck* flipping three gates before the ball passes each junction. A race against your own puzzle. The button opens the boathouse.
+**The Mailbox Morse.** Six mailboxes on the crescent, each with a red flag, but every squall flips them at random. From the top of the playground slide you can read the house numbers painted on the curb: odd flags up, even flags down. Set all six in one stillness, before the next squall scrambles them, and the postal truck's tape deck clicks open with the route code. Speed-puzzle with a weather clock.
 
-**The Gopher Parliament.** A burrow city with fifty holes. One gopher wears a bottle cap like a crown. Follow-the-leader through the burrow network: he pops up, chirps, dives; pop your head (Whisker Sense pulse) into the *same acoustic chamber*, heard not seen. Oreo digs shortcut trenches between chambers you have confirmed. Win, and the crowned one gifts his greatest treasure: the weir winch handle, way too big for him, which explains the crown-sized ambitions.
+**The Swing Set Launch.** The playground swing works: pump momentum with timed presses, then launch. The arc alone reaches nothing, but launching *into* a squall doubles it. Read the warning (laundry lines snap first, one second ahead), release on the gust, and ride the wind to three different roofs. Each roof holds one shiny thing, including a rusted weathervane crank. Wind-platforming, graduated from the kite lull on Prince's Island.
 
-**The Vane Compass.** Four weathervanes on the park's old bandstand, rusted to random headings. The kites (Truants) all pull one direction: true wind. Set every vane to agree with the kites. When all four align, the bandstand's floor rose-compass creaks and rotates, opening its underfloor: the sheet music stash of the summer band, one page circled: a melody the player has *heard before*, hummed by three hollow stones an ocean ago.
+**The Icicle Chimes.** The eaves of four bungalows hang with icicles, and every squall strums them like a dulcimer. Most are dull; Oreo's ears find the true ones. Break the dead icicles (a hiss cracks them) so each eave holds only ringing lengths. When all four eaves are tuned, the next squall plays a chord the whole crescent long, and a frozen storm-cellar door on the last backyard groans in sympathy, loose in its frame.
 
-### Main riddle · The Fountain Organ
+### Main riddle · The Chimney Choir
 
-The lagoon's fountain is a derelict musical instrument: sluice gates route river water to jet clusters, each cluster a pitch.
+Four chimneys smoke in different rhythms, and the wind owns all of them. A child's drawing taped inside a frosted window shows four houses and musical notes: a melody the player has heard before, hummed by three hollow stones an ocean ago, written by whoever keeps walking one island ahead.
 
-Phase 1: the winch (Gophers) reopens the main sluice. The fountain breathes, tunelessly.
-Phase 2: gates assign water to pitches; the circled sheet music (Vane Compass) is the target melody, and it is Ahalo's stone-song, written by whoever keeps walking one island ahead.
-Phase 3: play it: gates set the notes, but tempo comes from wind pressure. The kites gust in waves; open the final valve only on the gust. The fountain plays the hollow stones' song at full height in the prairie sunset, and the weir gate downstream lowers in answer, like the island heard its name.
-Sail the river out. The kites, released, follow overhead for exactly one bend, then let go.
+Hiss into a chimney and its smoke stutters; the pattern only holds in stillness, and only reads against the sky during a squall (flat smoke draws legible lines; rising smoke is mush). So the choir is conducted across the weather: set each chimney's rhythm in the calm, read the whole score on the gust, correct, repeat. When all four chimneys puff the stone-song in time, the tuned icicles (Chimes) ring the melody back, the storm-cellar door bangs open, and the blizzard — for one held breath — goes utterly still.
+
+In the cellar: the letter fragment, and a shelf of summer things put away against the winter, one of them a kite reel with no kite. Oreo digs the drifted-over toboggan free in five seconds flat, and the two of them ride it down the crescent to the shore. The wind, for once, pushes them exactly where they want to go.
 
 Oreo artifact: the circled sheet music's corner bears a doodle: a stick-figure dog and cat on a raft. The player has never told anyone about the raft.
 
@@ -311,7 +310,7 @@ The door opens on white light and the memory: the park, the storm, the vortex, a
 | 5 Pirate Ship | Growl | ★★★ | loud joy |
 | 6 Halifax | Ear-navigation | ★★★★ | hushed |
 | 7 Mont Royal | Vertical patience | ★★★★ | melancholy glow |
-| 8 Winnipeg | Wind | ★★★★ | open-sky |
+| 8 Winnipeg | Wind | ★★★★ | white-out |
 | 9 Ottawa | Synthesis | ★★★★★ | reverent |
 | 10 Agrea | Mastery remix | ★★★ (fast) | catharsis |
 

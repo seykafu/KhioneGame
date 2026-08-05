@@ -10,8 +10,8 @@ const ISLANDS := [
 		"spawn": Vector3(0, 1, 30), "track": "ahalo", "display": "Ahalo"},
 	{"label": "Island 2: The Eaton Centre", "scene": "res://scenes/islands/eaton.tscn",
 		"spawn": Vector3(0, 1.2, 40), "track": "eaton", "display": "The Eaton Centre"},
-	{"label": "Island 3: The Calgary Crescent", "scene": "res://scenes/islands/calgary.tscn",
-		"spawn": Vector3(0, 1.2, 42), "track": "calgary", "display": "The Calgary Crescent"},
+	{"label": "Island 3: Prince's Island", "scene": "res://scenes/islands/calgary.tscn",
+		"spawn": Vector3(0, 1.2, 42), "track": "calgary", "display": "Prince's Island"},
 ]
 
 var _open := false
