@@ -65,6 +65,7 @@ func _ready() -> void:
 	_add_location_trigger(Vector3(33, 0, -4), 9.0, "Echo Cove")
 	_add_location_trigger(Vector3(-14.5, 0, 4.4), 8.0, "The Hillside Den")
 	_add_location_trigger(Vector3(0, 3.3, 0), 7.0, "The Old Summit")
+	_build_story_flourishes()
 
 ## The island's coastline, shared analytically with the terrain and water
 ## shaders so mesh, wet band, and foam all agree. The southern sector is
@@ -498,6 +499,56 @@ func _scatter_beach_details() -> void:
 		var mi := _add_mesh(wood, pos, Color(0.55, 0.47, 0.4), true)
 		mi.rotation.z = PI / 2.0
 		mi.rotation.y = rng.randf_range(0.0, TAU)
+
+## Stage-setting props that whisper at the wider story without gating
+## anything: a lamp that should not exist, the nest Khione leaves behind,
+## and a glassy glint far south, the way the raft will go.
+func _build_story_flourishes() -> void:
+	var lamp := Area3D.new()
+	lamp.name = "BuriedStreetlamp"
+	lamp.set_script(load("res://scripts/interaction/buried_streetlamp.gd"))
+	lamp.position = Vector3(16.4, 0.05, 30.6)
+	add_child(lamp)
+	var nest := Area3D.new()
+	nest.name = "KhioneNest"
+	nest.set_script(load("res://scripts/interaction/khione_nest.gd"))
+	nest.position = Vector3(-3.5, 2.31, 8.5)
+	add_child(nest)
+	# Far towers on the southern horizon. On a clear day you can just make
+	# them out; one pane catches the sun now and then.
+	var tower_mat := StandardMaterial3D.new()
+	tower_mat.albedo_color = Color(0.62, 0.7, 0.78)
+	tower_mat.emission_enabled = true
+	tower_mat.emission = Color(0.7, 0.78, 0.86)
+	tower_mat.emission_energy_multiplier = 0.25
+	for def: Array in [[Vector3(10, 0, 268), 16.0, 5.0], [Vector3(-2, 0, 272), 11.0, 4.0],
+			[Vector3(20, 0, 266), 8.0, 3.5]]:
+		var t := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(def[2], def[1], def[2])
+		t.mesh = box
+		t.material_override = tower_mat
+		t.position = (def[0] as Vector3) + Vector3(0, (def[1] as float) / 2.0 - 1.0, 0)
+		add_child(t)
+	var glint := MeshInstance3D.new()
+	var gmesh := SphereMesh.new()
+	gmesh.radius = 0.8
+	gmesh.height = 1.6
+	glint.mesh = gmesh
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(1, 1, 0.9)
+	gmat.emission_enabled = true
+	gmat.emission = Color(1.0, 0.97, 0.85)
+	gmat.emission_energy_multiplier = 0.0
+	glint.material_override = gmat
+	glint.position = Vector3(10, 14.2, 268)
+	add_child(glint)
+	var tw := glint.create_tween().set_loops()
+	tw.tween_interval(6.5)
+	tw.tween_property(gmat, "emission_energy_multiplier", 5.0, 0.5) \
+			.set_trans(Tween.TRANS_SINE)
+	tw.tween_property(gmat, "emission_energy_multiplier", 0.0, 1.1) \
+			.set_trans(Tween.TRANS_SINE)
 
 func near_river(p: Vector2, margin: float) -> bool:
 	if p.distance_to(Vector2(-8.8, -6.8)) < 2.9:
