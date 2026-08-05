@@ -252,7 +252,7 @@ func _build_elevator_bits() -> void:
 	for s in [-1.0, 1.0]:
 		var door := AnimatableBody3D.new()
 		door.sync_to_physics = true
-		door.position = Vector3(s * 0.49, 1.35, -1.03)
+		door.position = Vector3(s * 0.47, 1.35, -1.03)
 		var mesh := MeshInstance3D.new()
 		var db := BoxMesh.new()
 		db.size = Vector3(0.96, 2.1, 0.07)
@@ -335,7 +335,7 @@ func _set_doors(open: bool) -> void:
 	for i in _doors.size():
 		var door := _doors[i]
 		var s := -1.0 if i == 0 else 1.0
-		var target := s * (1.32 if open else 0.49)
+		var target := s * (1.32 if open else 0.47)
 		var t := door.create_tween()
 		t.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 		t.tween_property(door, "position:x", target, 0.9) \

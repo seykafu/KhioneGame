@@ -44,15 +44,26 @@ func _run() -> void:
 	assert(GameState.get_flag("mall_sunset"), "6 o'clock under open sky should lean the light")
 	print("sunset + shadow flock: OK")
 
-	# Elevator gate.
+	# Elevator gate. First: with the doors shut, the doorway must be a wall.
+	var space := player.get_world_3d().direct_space_state
+	var ray := PhysicsRayQueryParameters3D.create(
+			finale.ELEVATOR_POS + Vector3(0.3, 1.2, -3.4),
+			finale.ELEVATOR_POS + Vector3(0.3, 1.2, 0))
+	var hit := space.intersect_ray(ray)
+	assert(not hit.is_empty() and hit.position.z < finale.ELEVATOR_POS.z - 0.9,
+			"closed doors should block the doorway")
 	finale.elevator_interact()
 	assert(not GameState.get_flag("elevator_powered"), "no fuse, no ride")
 	Inventory.add_item("elevator_fuse")
 	finale.elevator_interact()
 	assert(GameState.get_flag("elevator_powered"), "fuse should wake the elevator")
-	# The doors open; the player steps aboard herself (simulated here) and
-	# the cab carries her up on its physical floor.
+	# The doors open; the walkway into the cab must be physically clear —
+	# the player walks in on her own paws (the old sealed shaft bug).
 	await get_tree().create_timer(2.0).timeout
+	hit = space.intersect_ray(ray)
+	assert(hit.is_empty() or hit.position.z > finale.ELEVATOR_POS.z - 1.05,
+			"open doorway should be walk-through")
+	print("doorway clearance: OK")
 	player.global_position = finale.ELEVATOR_POS + Vector3(0, 1.2, 0)
 	await get_tree().create_timer(10.5).timeout
 	assert(player.global_position.y > 9.0, "the ride should end on the roof")

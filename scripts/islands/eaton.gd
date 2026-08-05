@@ -503,9 +503,22 @@ func _build_geese() -> void:
 func _build_elevator() -> void:
 	var pos := Vector3(16.5, 0, -7.5)
 	# Glass shaft on a metal skeleton: corner posts, floor bands, machine
-	# box on top with a cable running the shaft's height.
-	var shaft := _add_box(Vector3(2.4, ROOF_Y - 0.3, 2.4), pos + Vector3(0, ROOF_Y / 2.0 + 0.3, 0), GLASS)
-	_glassify(shaft)
+	# box on top with a cable running the shaft's height. The north face
+	# keeps a full-height doorway slot: the player walks in and out of the
+	# cab herself, so the shaft must never be a sealed box. Every panel
+	# tops out below the cab's roof-landing floor so stepping onto the
+	# catwalk stays clear.
+	var shaft_h := ROOF_Y - 0.4
+	var shaft_mid := shaft_h / 2.0 + 0.3
+	for def: Array in [
+		[Vector3(2.4, shaft_h, 0.15), Vector3(0, shaft_mid, 1.2)],    # south
+		[Vector3(0.15, shaft_h, 2.4), Vector3(1.2, shaft_mid, 0)],    # east
+		[Vector3(0.15, shaft_h, 2.4), Vector3(-1.2, shaft_mid, 0)],   # west
+		[Vector3(0.5, shaft_h, 0.15), Vector3(0.95, shaft_mid, -1.2)],   # north slivers
+		[Vector3(0.5, shaft_h, 0.15), Vector3(-0.95, shaft_mid, -1.2)],  # (doorway between)
+	]:
+		var panel := _add_box(def[0], pos + (def[1] as Vector3), GLASS)
+		_glassify(panel)
 	for cx in [-1.2, 1.2]:
 		for cz in [-1.2, 1.2]:
 			_add_box(Vector3(0.16, ROOF_Y - 0.3, 0.16), pos + Vector3(cx, ROOF_Y / 2.0 + 0.3, cz), FRAME)
