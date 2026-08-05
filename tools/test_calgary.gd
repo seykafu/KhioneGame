@@ -39,5 +39,11 @@ func _run() -> void:
 	assert(isl.get_node_or_null("MeadowGate") != null, "off-leash gate missing")
 	assert(isl.get_node_or_null("MemorialStone") != null, "memorial stone missing")
 	print("meadow landmarks: OK")
+
+	# Jumping ahead must silence earlier islands' objective chains.
+	var objective: String = main.get_node("HUD")._current_objective_text()
+	assert(objective.find("glass mall") == -1, "the mall hint must not leak onto island 3")
+	assert(objective.find("becalmed") != -1, "island 3 should open with the regatta hint")
+	print("objective tracker: OK")
 	print("ALL CALGARY PARK TESTS PASSED")
 	get_tree().quit()

@@ -13,7 +13,10 @@ var _island: Node3D
 var _tail: Node3D
 var _ear_l: Node3D
 var _ear_r: Node3D
+var _legs: Array[MeshInstance3D] = []  # FL, FR, BL, BR — for the trot
 var _run_phase := 0.0
+var _chasing := false     # hysteresis so he doesn't stutter at the follow edge
+var _hopping := false
 var _move_target := Vector3.INF  # scripted move (fetch, canoe) overrides follow
 
 func _ready() -> void:
@@ -100,6 +103,7 @@ func _build_dog() -> void:
 		leg.material_override = black
 		leg.position = Vector3(def.x, 0.15, def.y)
 		add_child(leg)
+		_legs.append(leg)
 		var sock := MeshInstance3D.new()
 		var sc := CylinderMesh.new()
 		sc.top_radius = 0.042
@@ -175,11 +179,15 @@ func shake_free() -> void:
 	set_ears_droop(false)
 
 func hop() -> void:
+	if _hopping:
+		return
+	_hopping = true
 	var t := create_tween()
 	t.tween_property(self, "position:y", position.y + 0.35, 0.18) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	t.tween_property(self, "position:y", position.y, 0.2) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	t.tween_callback(func() -> void: _hopping = false)
 
 func move_to(target: Vector3) -> void:
 	_move_target = target
@@ -201,16 +209,28 @@ func _process(delta: float) -> void:
 		target = _move_target
 	elif following:
 		var player: Node3D = get_tree().get_first_node_in_group("player")
-		if player and Vector2(player.global_position.x - global_position.x,
-				player.global_position.z - global_position.z).length() > FOLLOW_DIST:
-			var dir3 := (global_position - player.global_position).normalized()
-			target = player.global_position + dir3 * CATCH_UP_DIST
+		if player:
+			var to_player := Vector2(player.global_position.x - global_position.x,
+					player.global_position.z - global_position.z).length()
+			# Hysteresis: start chasing well outside the heel ring, stop well
+			# inside it, so he never stutters on the boundary.
+			if to_player > FOLLOW_DIST + 0.6:
+				_chasing = true
+			elif to_player < CATCH_UP_DIST:
+				_chasing = false
+			if _chasing:
+				var dir := Vector2(global_position.x - player.global_position.x,
+						global_position.z - player.global_position.z).normalized()
+				target = player.global_position \
+						+ Vector3(dir.x, 0, dir.y) * CATCH_UP_DIST
 	if target == Vector3.INF:
+		_settle(delta)
 		return
 	var flat := Vector2(target.x - global_position.x, target.z - global_position.z)
 	if flat.length() < 0.25:
 		if _move_target != Vector3.INF:
 			_move_target = Vector3.INF
+		_settle(delta)
 		return
 	# Far behind? Border collies do not do "far behind."
 	if following and _move_target == Vector3.INF and flat.length() > 30.0:
@@ -221,12 +241,29 @@ func _process(delta: float) -> void:
 	var step := flat.normalized() * minf(speed * delta, flat.length())
 	global_position.x += step.x
 	global_position.z += step.y
-	rotation.y = atan2(step.x, step.y)
-	_run_phase += delta * 11.0
-	var ground := 0.35
+	rotation.y = lerp_angle(rotation.y, atan2(step.x, step.y), minf(10.0 * delta, 1.0))
+	# The trot: diagonal leg pairs swing opposite ways, the body rides a
+	# gentle bounce, and everything eases out again at rest.
+	_run_phase += delta * (7.0 + speed * 0.5)
+	for i in _legs.size():
+		var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
+		_legs[i].rotation.x = sin(phase) * 0.55
+	if not _hopping:
+		global_position.y = maxf(_ground_at(global_position), 0.0) \
+				+ absf(sin(_run_phase)) * 0.05
+
+func _settle(delta: float) -> void:
+	# At rest: legs straighten, body eases down onto the grass.
+	for leg in _legs:
+		leg.rotation.x = lerpf(leg.rotation.x, 0.0, minf(12.0 * delta, 1.0))
+	if not _hopping:
+		var ground := maxf(_ground_at(global_position), 0.0)
+		global_position.y = lerpf(global_position.y, ground, minf(10.0 * delta, 1.0))
+
+func _ground_at(pos: Vector3) -> float:
 	if _island and _island.has_method("_terrain_height"):
-		ground = _island._terrain_height(global_position.x, global_position.z)
-	global_position.y = maxf(ground, 0.0) + absf(sin(_run_phase)) * 0.09
+		return _island._terrain_height(pos.x, pos.z)
+	return 0.35
 
 func _m(color: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()

@@ -296,23 +296,25 @@ func _current_objective_text() -> String:
 	if not GameState.get_flag("intro_done"):
 		return ""
 	if GameState.get_flag("island1_complete"):
-		if not GameState.knows_vocal("hiss"):
-			return "A glass mall hums on the water… and something small and angry patrols its floors."
-		if not GameState.get_flag("mall_time_3"):
-			return "Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall's habits."
-		if not GameState.get_flag("fountain_wish_made"):
-			return "The fountain keeps old wishes. A mosaic under the water remembers three coins. Pay it in kind, in order."
-		if not GameState.get_flag("mannequin_shop_open"):
-			return "The fountain's brass key is warm in her satchel. A dark shop past the east escalator has been locked for years."
-		if not GameState.get_flag("mannequins_posed"):
-			return "Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass."
-		if not GameState.get_flag("pigeon_parliament_solved"):
-			return "Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds… always away from her, one tile at a time. The four grated tiles hum underneath."
-		if not GameState.get_flag("skylight_open"):
-			return "The drummer's crank wants a socket. The balcony above the atrium keeps one, near the skylight's edge."
-		if not GameState.get_flag("mall_sunset"):
-			return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
+		# The mall chain only speaks while island 2 is actually in progress —
+		# jumping ahead (which grants island2_complete) must silence it.
 		if not GameState.get_flag("island2_complete"):
+			if not GameState.knows_vocal("hiss"):
+				return "A glass mall hums on the water… and something small and angry patrols its floors."
+			if not GameState.get_flag("mall_time_3"):
+				return "Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall's habits."
+			if not GameState.get_flag("fountain_wish_made"):
+				return "The fountain keeps old wishes. A mosaic under the water remembers three coins. Pay it in kind, in order."
+			if not GameState.get_flag("mannequin_shop_open"):
+				return "The fountain's brass key is warm in her satchel. A dark shop past the east escalator has been locked for years."
+			if not GameState.get_flag("mannequins_posed"):
+				return "Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass."
+			if not GameState.get_flag("pigeon_parliament_solved"):
+				return "Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds… always away from her, one tile at a time. The four grated tiles hum underneath."
+			if not GameState.get_flag("skylight_open"):
+				return "The drummer's crank wants a socket. The balcony above the atrium keeps one, near the skylight's edge."
+			if not GameState.get_flag("mall_sunset"):
+				return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
 		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
