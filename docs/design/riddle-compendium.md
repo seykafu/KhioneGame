@@ -22,7 +22,7 @@ House rules, carried from Ahalo:
 - **Small riddles are 5-15 minute wins. The main riddle is a synthesis** that needs at least two small-riddle rewards or lessons to crack.
 - Future hook: the *subtle clue feature* will piggyback on Whisker Sense (a meow near a solvable riddle returns a warmer, closer shimmer). Design every riddle so its clue object can shimmer without giving the answer away.
 
-**The verb ladder:** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Winnipeg) → Dig & team moves (Vancouver) → Growl (Pirate Ship) → sound-navigation mastery (Halifax) → vertical mastery (Mont Royal) → wind mastery (Calgary) → full synthesis (Ottawa) → remix of everything (Agrea).
+**The verb ladder:** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Vancouver) → Growl (Pirate Ship) → sound-navigation mastery (Halifax) → vertical mastery (Mont Royal) → wind mastery (Winnipeg) → full synthesis (Ottawa) → remix of everything (Agrea).
 
 **The letter, assembled across ten islands.** Full text, known only to us:
 
@@ -34,12 +34,12 @@ Fragment reward order (chosen for emotional shape, not sentence order):
 |---|---|
 | 1 Ahalo | "… one final …" |
 | 2 Eaton Centre | "… not supposed to …" |
-| 3 Winnipeg | "Could I …" *(found the day a dog joins her)* |
+| 3 Calgary | "Could I …" *(found the day a dog joins her)* |
 | 4 Vancouver | "… meet you?" |
 | 5 Pirate Ship | "… adventure." |
 | 6 Halifax | "… know that …" |
 | 7 Mont Royal | "I wish …" |
-| 8 Calgary | "… be here." |
+| 8 Winnipeg | "… be here." |
 | 9 Ottawa | "If you found this …" |
 | 10 Agrea | "Love," and a smudged signature, legible only in the finale |
 
@@ -85,26 +85,28 @@ Oreo artifact: in the pet store window, one dog collar on a stand, tag blank but
 
 ---
 
-## Island 3 · The Winnipeg Suburb
-*A snowy crescent of bungalows, a frozen playground, woodsmoke, one distant howl. Khione is white on white: snow is her camouflage. This island's true reward is not a verb. It is Oreo.*
+## Island 3 · The Calgary Crescent
+*A snowy crescent of bungalows under the foothills, a frozen playground, woodsmoke, magpies on the fence line, and far off a chinook arch parting the cloud. Khione is white on white: snow is her camouflage. This island's true reward is not a verb. It is Oreo, and this is the city that raised him.*
+
+*The chinook is the island's heartbeat: every few minutes a warm gust rolls through, the light goes gold, icicles drip, and the snow softens for a moment. Riddles breathe with it.*
 
 ### Small riddles
 
-**The Ice Pond.** A backyard rink: once Khione steps on, she slides until she hits something. Classic ice-maze, but the "walls" are snowmen you can build by rolling (push a small snowball; it grows as it rolls, then blocks a lane). Plan the snowmen, then skate the line. Failure: gentle crash into a snowbank, hat of snow (hats are this game's failure motif). Reward: frozen in the pond's centre, a thermos; it thaws by the fire barrel into warm milk (item).
+**The Backyard Rink.** A real Calgary backyard rink, boards and all: once Khione steps on, she slides until she hits something. Classic ice-maze, but the "walls" are snowmen you can build by rolling (push a small snowball; it grows as it rolls, then blocks a lane). Plan the snowmen, then skate the line. Failure: gentle crash into a snowbank, hat of snow (hats are this game's failure motif). Reward: frozen in the rink's centre, a thermos; it thaws by the fire barrel into warm milk (item). During a chinook the ice sweats and slides run a little farther: risk or gift, player's call.
 
 **The Mailbox Morse.** Six mailboxes on the crescent, each with a red flag. From the top of the playground slide (only from up there), you can see house numbers painted on the curb. The numbers are odd or even. Flags up for odd, down for even, and the postal truck's tape player (stuck on repeat in a snowdrift) clicks open with the neighbourhood's "route code." Inside: dog biscuits. The player does not know why they need dog biscuits. They will.
 
 **The Swing Set Launch.** The playground swing works: hop on, pump momentum (timed presses), and launch. The arc is fixed; the landing is not. Rotate the merry-go-round to move a padded target (an old mattress) to catch her at three roofs' heights. Each roof holds one shiny thing, including the weathercock that unlocks the Ice Pond shortcut. Pure motion joy; the riddle is *where to aim*, read from tracks in the snow on the roofs.
 
-**The Chimney Choir.** Four chimneys smoke in different rhythms. A child's drawing taped inside a frosted window shows four houses and musical notes. Hiss into a chimney and the smoke puffs stutter. Match the drawing's rhythm across all four chimneys and every icicle on the crescent rings like a bell, shaking loose the frozen gate of the last backyard.
+**The Chimney Choir.** Four chimneys smoke in different rhythms. A child's drawing taped inside a frosted window shows four houses and musical notes. Hiss into a chimney and the smoke puffs stutter. Match the drawing's rhythm across all four chimneys and every icicle on the crescent rings like a bell, shaking loose the frozen gate of the last backyard. Smoke only reads clearly in the still air between chinooks: the sky teaches patience.
 
 ### Main riddle · The Howl at Number Eight
 
-All island long, a low howl surfaces between gusts. Whisker Sense points at it only when the wind drops (wind matters, taught cheaply here, spent hard on Island 8).
+All island long, a low howl surfaces between gusts. Whisker Sense points at it only when the chinook drops (wind matters, taught cheaply here, spent hard on Island 8).
 
 The last backyard (opened by the Chimney Choir) holds a snowed-under doghouse and a border collie with one blue eye, tangled in his own run-line around the yard's only tree. The untangling is the riddle: walking the line's path in reverse (a topology puzzle drawn in leash-loops around tree, fence, doghouse). Wrong loops tighten it; his ears drop; the player physically feels the stakes. The milk and biscuits are for after: he will not follow a stranger, but he follows a friend who shares food.
 
-He has no tag on his collar, just a paw-shaped charm. He answers to nothing until the graveyard-truth finale, but if the player meows, he barks back, always, instantly, joyfully. From here on, Oreo follows.
+He has no tag on his collar, just a paw-shaped charm. The doghouse is built from fence boards, kid-painted with a wobbly mountain skyline: he was born in this yard, raised on this crescent, and the island is his memory of it. He answers to nothing until the graveyard-truth finale, but if the player meows, he barks back, always, instantly, joyfully. From here on, Oreo follows.
 
 The island's exit is anticlimactically simple, on purpose: Oreo digs the snowdrift off a buried canoe in five seconds flat, looks back at Khione, and the two paddle out. Some doors just need a friend.
 
@@ -174,7 +176,7 @@ Oreo artifact: carved into the capstan's wood, old and shallow: tally marks in s
 
 **The Donair Diplomacy.** The seagull gang (island menace, immune to hiss, unimpressed by growl, they are *Halifax* gulls) besieges the lighthouse door. The donair shop has everything on the menu board: meat on the spit, sauce bottles, pita. Assemble one correctly *in menu order* (the board is the recipe) and leave it on the pier. Gulls descend as one screaming cloud. Door unguarded. The player who assembles it wrong learns gulls still eat it, but only carry it *to* the lighthouse doorstep to mock you. Failure is somehow worse gulls.
 
-**The Net of Knots.** A fishing net tangles the lighthouse supply crate. Pulling ropes in the wrong order tightens it (leash lesson from Winnipeg, scaled up). The net's floats are numbered cork buoys; the tide log nailed to the wharf lists the order the floats went overboard. Undo in reverse. Topology with a paper trail.
+**The Net of Knots.** A fishing net tangles the lighthouse supply crate. Pulling ropes in the wrong order tightens it (leash lesson from Calgary, scaled up). The net's floats are numbered cork buoys; the tide log nailed to the wharf lists the order the floats went overboard. Undo in reverse. Topology with a paper trail.
 
 **The Buoy Bells.** Four bell buoys bob in the harbour. The church tower ashore rings a five-note evening carillon through the fog. One note is missing from the buoys' range. Ring the four buoys (swim, climb, jump-slam) in the carillon's order, and *sing the fifth yourself*: the meow lands the missing pitch. The harbour answers: every bell in town rings once, and the sunken lens' resting spot glows with disturbed herring. Echo stones, graduated to open water.
 
@@ -217,16 +219,16 @@ Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder hei
 
 ---
 
-## Island 8 · Prince's Island
-*Calgary's park on a river braid: prairie wind, kites, a red helix bridge, prairie dog metropolis, a lagoon. The wind never stops. Teaches: the wind is a tool.*
+## Island 8 · The Forks
+*Winnipeg's park where two rivers meet: prairie wind funnelled off Portage and Main (the windiest corner in Canada), kites, the white cable spar of a walking bridge, a gopher metropolis, a lagoon. The wind never stops. Teaches: the wind is a tool.*
 
 ### Small riddles
 
-**The Kite Truants.** Four kites escaped their reels and snagged around the island. Reaching each is a wind-platforming bite: gusts come in readable waves (grass lays flat first, a second of warning, the Winnipeg lesson matured). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized kite reel post, and four flying kites become the island's living wind gauge, visible from everywhere. You are not collecting; you are instrumenting the sky.
+**The Kite Truants.** Four kites escaped their reels and snagged around the island. Reaching each is a wind-platforming bite: gusts come in readable waves (grass lays flat first, a second of warning, the Calgary chinook lesson matured). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized kite reel post, and four flying kites become the island's living wind gauge, visible from everywhere. You are not collecting; you are instrumenting the sky.
 
-**The Helix Run.** The red Peace Bridge is a marble-run in disguise: its lattice tubes carry rainwater to a cistern button that has never been pressed (moss says so). Drop a golf ball (old friend from Island 5, findable in the lagoon) at the high mouth, then sprint *inside the helix* flipping three gates before the ball passes each junction. A race against your own puzzle. The button opens the boathouse.
+**The Esplanade Run.** The white walking bridge is a marble-run in disguise: its hollow handrail tubes carry rainwater down the cable spar to a cistern button that has never been pressed (moss says so). Drop a golf ball (old friend from Island 5, findable in the lagoon) at the high mouth, then sprint *along the deck* flipping three gates before the ball passes each junction. A race against your own puzzle. The button opens the boathouse.
 
-**The Prairie Dog Parliament.** A burrow city with fifty holes. One prairie dog wears a bottle cap like a crown. Follow-the-leader through the burrow network: he pops up, chirps, dives; pop your head (Whisker Sense pulse) into the *same acoustic chamber*, heard not seen. Oreo digs shortcut trenches between chambers you have confirmed. Win, and the crowned one gifts his greatest treasure: the weir winch handle, way too big for him, which explains the crown-sized ambitions.
+**The Gopher Parliament.** A burrow city with fifty holes. One gopher wears a bottle cap like a crown. Follow-the-leader through the burrow network: he pops up, chirps, dives; pop your head (Whisker Sense pulse) into the *same acoustic chamber*, heard not seen. Oreo digs shortcut trenches between chambers you have confirmed. Win, and the crowned one gifts his greatest treasure: the weir winch handle, way too big for him, which explains the crown-sized ambitions.
 
 **The Vane Compass.** Four weathervanes on the park's old bandstand, rusted to random headings. The kites (Truants) all pull one direction: true wind. Set every vane to agree with the kites. When all four align, the bandstand's floor rose-compass creaks and rotates, opening its underfloor: the sheet music stash of the summer band, one page circled: a melody the player has *heard before*, hummed by three hollow stones an ocean ago.
 
@@ -234,7 +236,7 @@ Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder hei
 
 The lagoon's fountain is a derelict musical instrument: sluice gates route river water to jet clusters, each cluster a pitch.
 
-Phase 1: the winch (Prairie Dogs) reopens the main sluice. The fountain breathes, tunelessly.
+Phase 1: the winch (Gophers) reopens the main sluice. The fountain breathes, tunelessly.
 Phase 2: gates assign water to pitches; the circled sheet music (Vane Compass) is the target melody, and it is Ahalo's stone-song, written by whoever keeps walking one island ahead.
 Phase 3: play it: gates set the notes, but tempo comes from wind pressure. The kites gust in waves; open the final valve only on the gust. The fountain plays the hollow stones' song at full height in the prairie sunset, and the weir gate downstream lowers in answer, like the island heard its name.
 Sail the river out. The kites, released, follow overhead for exactly one bend, then let go.
@@ -278,12 +280,12 @@ Each mini-district holds a shrine and a remixed, compressed riddle of its island
 
 1. **Ahalo Shrine:** three stones, but now *five*, and the carving is water-worn: the melody, not the sizes, is the order (sing the letter's phrase).
 2. **Eaton Shrine:** one goose, one lamp, one mirror: land the shadow on the door in one move.
-3. **Winnipeg Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers.
+3. **Calgary Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers the yard.
 4. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
 5. **Galleon Shrine:** a ship in a bottle and one wave lever: time one swell to seat it on its stand.
 6. **Halifax Shrine:** a dark fog dome; cross it by ear in total whiteout, following Oreo's bark.
 7. **Mont Royal Shrine:** one lantern, three fireflies, one drum. Minimalist rhythm.
-8. **Calgary Shrine:** a single jet fountain and the wind: one note, released on one gust.
+8. **Winnipeg Shrine:** a single jet fountain and the wind: one note, released on one gust.
 9. **Ottawa Shrine:** a five-bell stand, and you know the phrase. You have always known the phrase.
 
 ### Main riddle · The Letter Table
@@ -304,12 +306,12 @@ The door opens on white light and the memory: the park, the storm, the vortex, a
 |---|---|---|---|
 | 1 Ahalo | Meow | ★ | wonder |
 | 2 Eaton | Hiss | ★★ | playful uncanny |
-| 3 Winnipeg | Oreo | ★★ | warmth |
+| 3 Calgary | Oreo | ★★ | warmth |
 | 4 Vancouver | Dig, duets | ★★★ | golden hour |
 | 5 Pirate Ship | Growl | ★★★ | loud joy |
 | 6 Halifax | Ear-navigation | ★★★★ | hushed |
 | 7 Mont Royal | Vertical patience | ★★★★ | melancholy glow |
-| 8 Calgary | Wind | ★★★★ | open-sky |
+| 8 Winnipeg | Wind | ★★★★ | open-sky |
 | 9 Ottawa | Synthesis | ★★★★★ | reverent |
 | 10 Agrea | Mastery remix | ★★★ (fast) | catharsis |
 
