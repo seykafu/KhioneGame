@@ -10,6 +10,8 @@ const ISLANDS := [
 		"spawn": Vector3(0, 1, 30), "track": "ahalo", "display": "Ahalo"},
 	{"label": "Island 2: The Eaton Centre", "scene": "res://scenes/islands/eaton.tscn",
 		"spawn": Vector3(0, 1.2, 40), "track": "eaton", "display": "The Eaton Centre"},
+	{"label": "Island 3: The Calgary Crescent", "scene": "res://scenes/islands/calgary.tscn",
+		"spawn": Vector3(0, 1.2, 42), "track": "calgary", "display": "The Calgary Crescent"},
 ]
 
 var _open := false
@@ -47,8 +49,11 @@ func _close() -> void:
 ## Skip-travel between islands. Jumping ahead marks earlier islands
 ## complete so the riddle tracker and satchel stay coherent.
 func _travel_to_island(isl: Dictionary) -> void:
-	if isl.track == "eaton" and not GameState.get_flag("island1_complete"):
+	# Jumping ahead grants the flags earlier islands would have set.
+	if isl.track in ["eaton", "calgary"] and not GameState.get_flag("island1_complete"):
 		GameState.set_flag("island1_complete")
+	if isl.track == "calgary" and not GameState.get_flag("island2_complete"):
+		GameState.set_flag("island2_complete")
 	_close()
 	var mgr := get_tree().get_first_node_in_group("island_manager")
 	if mgr:

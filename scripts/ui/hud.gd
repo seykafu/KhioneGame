@@ -279,7 +279,10 @@ func _current_objective_text() -> String:
 			return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
 		if not GameState.get_flag("island2_complete"):
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
-		return "The Eaton Centre sleeps again, lighter by one flock. (Island 3 coming soon)"
+		var mgr := get_tree().get_first_node_in_group("island_manager")
+		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
+			return "A crescent of sleeping bungalows, and a low howl between gusts. Snow keeps its secrets… for now."
+		return "Snow on the wind, and somewhere north a low howl between gusts. The Calgary crescent waits. (travel from the pause menu)"
 	if GameState.get_flag("set_sail_started"):
 		return ""
 	if not GameState.get_flag("letter_read"):

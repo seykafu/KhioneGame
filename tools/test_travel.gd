@@ -31,7 +31,7 @@ func _run() -> void:
 
 	# Walk into the mall: the robot confronts and Khione learns to hiss.
 	assert(not GameState.knows_vocal("hiss"))
-	player.global_position = Vector3(0, 1.0, 11.0)
+	player.global_position = Vector3(0, 1.0, 15.0)
 	player.set("velocity", Vector3.ZERO)
 	for i in 6:
 		await get_tree().physics_frame

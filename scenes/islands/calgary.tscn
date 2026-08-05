@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/islands/calgary.gd" id="1_cal"]
+
+[node name="Calgary" type="Node3D"]
+script = ExtResource("1_cal")
