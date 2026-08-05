@@ -24,6 +24,10 @@ const SOUNDS := {
 	"hiss": "res://assets/audio/hiss.wav",
 	"robot_whir": "res://assets/audio/robot_whir.wav",
 	"robot_flee": "res://assets/audio/robot_flee.wav",
+	"bell_ding": "res://assets/audio/bell_ding.wav",
+	"howl": "res://assets/audio/howl.wav",
+	"bark": "res://assets/audio/bark.wav",
+	"whimper": "res://assets/audio/whimper.wav",
 }
 const POOL_SIZE := 10
 
@@ -41,10 +45,14 @@ func _ready() -> void:
 		_pool.append(p)
 
 func play(sound: String, pitch := 1.0, jitter := 0.0, vol_db := 0.0) -> void:
-	if not SOUNDS.has(sound):
+	# Fall back to the file on disk for names missing from the registry, so
+	# a new sound can never fail silently again.
+	var path: String = SOUNDS.get(sound, "res://assets/audio/%s.wav" % sound)
+	if not ResourceLoader.exists(path):
+		push_warning("Sfx: no sound named '%s'" % sound)
 		return
 	var p := _free_player()
-	p.stream = load(SOUNDS[sound])
+	p.stream = load(path)
 	p.pitch_scale = pitch * (1.0 + _rng.randf_range(-jitter, jitter))
 	p.volume_db = vol_db
 	p.play()
