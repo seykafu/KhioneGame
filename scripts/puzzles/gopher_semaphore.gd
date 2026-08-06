@@ -12,6 +12,7 @@ var _order: Array[int] = []       # mound indices, in map order
 var _progress := 0
 var _mounds: Array[Vector3] = []
 var _map_ui: CanvasLayer
+var _map_open_frame := -1  # the E that opens the map must not also close it
 var _materials := {}
 
 class MapPlate:
@@ -25,6 +26,8 @@ class MapPlate:
 		owner_puzzle.show_map()
 
 func _ready() -> void:
+	# Stays responsive while the map pauses the tree, so E can close it.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	var island := get_parent()
 	_mounds = island.get("_gopher_mounds")
 	# Map order: a fixed shuffle that stays honest between sessions.
@@ -55,26 +58,29 @@ func _ready() -> void:
 func show_map() -> void:
 	GameState.set_flag("gopher_map_seen")
 	if _map_ui:
-		_map_ui.queue_free()
+		_close_map()
 	_map_ui = CanvasLayer.new()
-	_map_ui.layer = 6
+	_map_ui.layer = 15  # above the arrival fade, which pausing would freeze
 	add_child(_map_ui)
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel",
 			preload("res://scripts/ui/hud.gd").parchment_style())
 	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.offset_left = -190.0
-	panel.offset_top = -170.0
-	panel.offset_right = 190.0
-	panel.offset_bottom = 170.0
+	panel.offset_left = -200.0
+	panel.offset_top = -175.0
+	panel.offset_right = 200.0
+	panel.offset_bottom = 175.0
 	_map_ui.add_child(panel)
 	var holder := Control.new()
-	holder.custom_minimum_size = Vector2(360, 300)
+	holder.custom_minimum_size = Vector2(376, 326)
 	panel.add_child(holder)
 	var caption := Label.new()
 	caption.text = "gofer town — secret nock order!!"
-	caption.position = Vector2(40, 14)
-	caption.add_theme_font_size_override("font_size", 17)
+	caption.position = Vector2(20, 10)
+	caption.size = Vector2(336, 30)
+	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.add_theme_font_size_override("font_size", 16)
 	caption.add_theme_color_override("font_color", Color(0.7, 0.3, 0.25))
 	holder.add_child(caption)
 	# The mound field, drawn to scale in crayon.
@@ -89,8 +95,8 @@ func show_map() -> void:
 		max_z = maxf(max_z, m.z)
 	for rank in _order.size():
 		var m := _mounds[_order[rank]]
-		var px := 50.0 + 260.0 * (m.x - min_x) / maxf(max_x - min_x, 0.01)
-		var py := 60.0 + 200.0 * (m.z - min_z) / maxf(max_z - min_z, 0.01)
+		var px := 56.0 + 240.0 * (m.x - min_x) / maxf(max_x - min_x, 0.01)
+		var py := 62.0 + 190.0 * (m.z - min_z) / maxf(max_z - min_z, 0.01)
 		var dot := ColorRect.new()
 		dot.color = Color(0.55, 0.42, 0.28)
 		dot.position = Vector2(px - 7, py - 7)
@@ -103,26 +109,35 @@ func show_map() -> void:
 		num.add_theme_color_override("font_color", Color(0.25, 0.35, 0.6))
 		holder.add_child(num)
 	var hint := Label.new()
-	hint.text = "(the paper smells of grass and crayons — E to fold it back)"
-	hint.position = Vector2(28, 268)
+	hint.text = "(smells of crayons — E folds it back)"
+	hint.position = Vector2(20, 288)
+	hint.size = Vector2(336, 30)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_font_size_override("font_size", 13)
 	hint.add_theme_color_override("font_color", Color(0.5, 0.42, 0.3))
 	holder.add_child(hint)
-	var close := func(event: InputEvent) -> void:
-		if event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel"):
-			if _map_ui:
-				_map_ui.queue_free()
-				_map_ui = null
-	panel.gui_input.connect(close)
-	# Also close from anywhere (the panel may never grab focus).
-	var timer := Timer.new()
-	timer.wait_time = 0.1
-	timer.autostart = true
-	_map_ui.add_child(timer)
-	timer.timeout.connect(func() -> void:
-		if _map_ui and (Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_cancel")):
-			_map_ui.queue_free()
-			_map_ui = null)
+	# The map pauses the world, like the letter: one press of E closes it.
+	_map_open_frame = Engine.get_process_frames()
+	get_tree().paused = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	Sfx.play("paper_open", 1.0, 0.05, -8.0)
+
+func _close_map() -> void:
+	if _map_ui == null:
+		return
+	_map_ui.queue_free()
+	_map_ui = null
+	get_tree().paused = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	Sfx.play("paper_close", 1.0, 0.05, -10.0)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _map_ui == null or Engine.get_process_frames() == _map_open_frame:
+		return
+	if event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel"):
+		_close_map()
+		get_viewport().set_input_as_handled()
 
 func _on_vocal(kind: String) -> void:
 	if kind != "meow" or GameState.get_flag("gopher_semaphore_done"):

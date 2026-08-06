@@ -48,6 +48,11 @@ func _run() -> void:
 			if mgr:
 				var d: Array = dests[travel]
 				mgr.travel_to(d[0], d[1], travel, d[2])
+	if OS.get_environment("KH_GOPHERMAP") == "1":
+		await get_tree().create_timer(6.0).timeout
+		var sem := get_tree().root.find_child("GopherSemaphore", true, false)
+		if sem:
+			sem.show_map()
 	if OS.get_environment("KH_RAFT") == "1":
 		await get_tree().create_timer(1.0).timeout
 		var sundial := get_tree().root.find_child("SundialReef", true, false)
