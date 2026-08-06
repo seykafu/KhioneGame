@@ -417,7 +417,8 @@ func _build_lagoon_flora() -> void:
 		var pad := MeshInstance3D.new()
 		pad.mesh = _cyl(rng.randf_range(0.28, 0.45), rng.randf_range(0.3, 0.47), 0.03)
 		pad.material_override = _mat(Color(0.24, 0.46, 0.26))
-		pad.position = Vector3(LAGOON_CENTER.x + cos(a) * LAGOON_RADII.x * r, -0.095,
+		# Clearly above the pond surface (top -0.08): coplanar faces z-fight.
+		pad.position = Vector3(LAGOON_CENTER.x + cos(a) * LAGOON_RADII.x * r, -0.05,
 				LAGOON_CENTER.y + sin(a) * LAGOON_RADII.y * r)
 		add_child(pad)
 		if i % 3 == 0:
