@@ -602,27 +602,30 @@ func _build_dog_park() -> void:
 	# open for strangers, the one great cottonwood, and the memorial stone.
 	var post_col := PARK_GREEN
 	for def: Array in [
-		[Vector3(14.0, 0.05, 0.06), Vector3(0, 1.0, -31.0)],
-		[Vector3(0.06, 0.05, 8.0), Vector3(-7.0, 1.0, -27.0)],
-		[Vector3(0.06, 0.05, 8.0), Vector3(7.0, 1.0, -27.0)],
-		[Vector3(5.2, 0.05, 0.06), Vector3(-4.4, 1.0, -23.0)],
-		[Vector3(5.2, 0.05, 0.06), Vector3(4.4, 1.0, -23.0)],
+		[Vector3(14.0, 0.05, 0.06), Vector3(0, 1.3, -31.0)],
+		[Vector3(0.06, 0.05, 8.0), Vector3(-7.0, 1.3, -27.0)],
+		[Vector3(0.06, 0.05, 8.0), Vector3(7.0, 1.3, -27.0)],
+		# South rails run right up to the gate posts: no cat-sized gap.
+		[Vector3(6.1, 0.05, 0.06), Vector3(-3.95, 1.3, -23.0)],
+		[Vector3(6.1, 0.05, 0.06), Vector3(3.95, 1.3, -23.0)],
 	]:
 		# Top rail plus a translucent "mesh" panel below it.
 		_add_box(def[0], def[1] as Vector3, post_col)
 		var panel_size: Vector3 = def[0]
-		panel_size.y = 0.95
-		var panel := _add_box(panel_size, (def[1] as Vector3) - Vector3(0, 0.5, 0),
+		panel_size.y = 1.2
+		var panel := _add_box(panel_size, (def[1] as Vector3) - Vector3(0, 0.63, 0),
 				Color(0.55, 0.6, 0.58, 0.35))
 		panel.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for px in [-7.0, -3.5, 0.0, 3.5, 7.0]:
-		_add_box(Vector3(0.09, 1.15, 0.09), Vector3(px, 0.92, -31.0), post_col)
-		_add_box(Vector3(0.09, 1.15, 0.09), Vector3(px, 0.92, -23.0), post_col)
+		_add_box(Vector3(0.09, 1.45, 0.09), Vector3(px, 1.07, -31.0), post_col)
+		if absf(px) > 1.2:  # the gate owns the middle of the south run
+			_add_box(Vector3(0.09, 1.45, 0.09), Vector3(px, 1.07, -23.0), post_col)
 	for pz in [-26.0, -29.0]:
-		_add_box(Vector3(0.09, 1.15, 0.09), Vector3(-7.0, 0.92, pz), post_col)
-		_add_box(Vector3(0.09, 1.15, 0.09), Vector3(7.0, 0.92, pz), post_col)
-	# The gate, closed, with its arch and a sun-bleached notice board.
-	var gate := _add_box(Vector3(1.7, 1.1, 0.08), Vector3(0, 0.9, -23.0), post_col.darkened(0.1))
+		_add_box(Vector3(0.09, 1.45, 0.09), Vector3(-7.0, 1.07, pz), post_col)
+		_add_box(Vector3(0.09, 1.45, 0.09), Vector3(7.0, 1.07, pz), post_col)
+	# The gate, closed, with its arch and a sun-bleached notice board. It
+	# fills post-to-post and reaches low: no crawling under, no slipping by.
+	var gate := _add_box(Vector3(1.78, 1.5, 0.08), Vector3(0, 0.85, -23.0), post_col.darkened(0.1))
 	gate.name = "MeadowGate"
 	for gx in [-0.95, 0.95]:
 		_add_box(Vector3(0.14, 2.2, 0.14), Vector3(gx, 1.35, -23.0), post_col)

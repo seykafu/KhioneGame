@@ -57,6 +57,8 @@ func bell_interact() -> void:
 		_flash("The bell rings bright and clear. Somewhere, an old routine smiles.", 3.0)
 		return
 	if not GameState.get_flag("bell_fixed"):
+		# A clapperless bell still answers the paw: a dead little clunk.
+		Sfx.play("coconut_thunk", 1.7, 0.05, -12.0)
 		if Inventory.has_item("brass_clapper"):
 			Inventory.remove_item("brass_clapper")
 			GameState.set_flag("bell_fixed")

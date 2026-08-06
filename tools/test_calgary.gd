@@ -43,6 +43,16 @@ func _run() -> void:
 	assert(isl.get_node_or_null("MemorialStone") != null, "memorial stone missing")
 	print("meadow landmarks: OK")
 
+	# The south fence line must be solid wall-to-gate: no cat-sized gaps
+	# beside the gate, and the gate itself blocks until the key opens it.
+	var space := player.get_world_3d().direct_space_state
+	for x in [1.3, -1.3, 0.0]:
+		var ray := PhysicsRayQueryParameters3D.create(
+				Vector3(x, 0.6, -21.5), Vector3(x, 0.6, -24.5))
+		var hit := space.intersect_ray(ray)
+		assert(not hit.is_empty(), "the fence line at x=%s should be solid" % x)
+	print("fence seals: OK")
+
 	# Jumping ahead must silence earlier islands' objective chains.
 	var objective: String = main.get_node("HUD")._current_objective_text()
 	assert(objective.find("glass mall") == -1, "the mall hint must not leak onto island 3")
