@@ -47,11 +47,12 @@ func _run() -> void:
 	# beside the gate, and the gate itself blocks until the key opens it.
 	var space := player.get_world_3d().direct_space_state
 	for x in [1.3, -1.3, 0.0]:
-		var ray := PhysicsRayQueryParameters3D.create(
-				Vector3(x, 0.6, -21.5), Vector3(x, 0.6, -24.5))
-		var hit := space.intersect_ray(ray)
-		assert(not hit.is_empty(), "the fence line at x=%s should be solid" % x)
-	print("fence seals: OK")
+		for y in [0.6, 1.7]:  # walk height AND above her best jump apex (1.41m)
+			var ray := PhysicsRayQueryParameters3D.create(
+					Vector3(x, y, -21.5), Vector3(x, y, -24.5))
+			var hit := space.intersect_ray(ray)
+			assert(not hit.is_empty(), "the fence at x=%s y=%s should be solid" % [x, y])
+	print("fence seals (low and high): OK")
 
 	# Jumping ahead must silence earlier islands' objective chains.
 	var objective: String = main.get_node("HUD")._current_objective_text()
