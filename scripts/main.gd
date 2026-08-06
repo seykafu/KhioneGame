@@ -41,6 +41,11 @@ func _setup_clouds() -> void:
 func travel_to(scene_path: String, spawn: Vector3, track: String, display_name: String) -> void:
 	if current_island:
 		current_island.queue_free()
+	# Every island starts from the same neutral daylight; islands that want
+	# their own light grade (Calgary gold, the Eaton sunset) set it in _ready.
+	$Sun.rotation_degrees = Vector3(-50, 30, 0)
+	$Sun.light_color = Color(1, 0.96, 0.88)
+	$Sun.light_energy = 1.2
 	var island: Node3D = load(scene_path).instantiate()
 	add_child(island)
 	current_island = island

@@ -38,9 +38,11 @@ void fragment() {
 	float theta = atan(world_pos.z, world_pos.x);
 	float coast = coast_radius(theta);
 
-	// Lawn with big soft sun patches.
+	// Lawn with big soft sun patches; higher ground dries golden.
 	vec3 col = mix(lawn_color, lawn_alt, smoothstep(0.35, 0.65, n));
 	col *= 0.95 + 0.1 * n2;
+	float dry = smoothstep(0.55, 1.05, world_pos.y);
+	col = mix(col, vec3(0.62, 0.66, 0.34), dry * 0.6);
 
 	// Gravel: the path ring (open to the south), the dock spur, and a spur
 	// to the off-leash meadow in the north.

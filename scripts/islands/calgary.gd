@@ -27,19 +27,25 @@ func _ready() -> void:
 	_build_island()
 	_build_water()
 	_build_lagoon()
+	_build_lagoon_flora()
 	_build_peace_bridge()
 	_build_skyline()
+	_build_rockies()
 	_build_dock()
+	_build_riverbank()
 	_build_dog_park()
 	_build_bandstand()
 	_build_ice_cream_cart()
 	_build_furnishings()
+	_build_park_extras()
 	_scatter_trees()
 	_scatter_grass_blades()
 	_build_fluff()
 	_spawn_ducks()
 	_spawn_gophers()
 	_spawn_butterflies()
+	_spawn_bees()
+	_golden_hour()
 	_add_ambient_loop("res://assets/audio/park_birds.wav", Vector3(0, 3.0, -4), -10.0, 70.0)
 	_add_ambient_loop("res://assets/audio/brook.wav", Vector3(-5.5, 0.3, 3.5), -14.0, 12.0)
 	var breeze := Node3D.new()
@@ -85,6 +91,15 @@ func _terrain_height(x: float, z: float) -> float:
 	var lag := Vector2(x, z) - LAGOON_CENTER
 	var lag_d := Vector2(lag.x / LAGOON_RADII.x, lag.y / LAGOON_RADII.y).length()
 	h -= 0.68 * (1.0 - smoothstep(0.55, 1.0, lag_d))
+	# Rolling swells around the fringe and a picnic knoll, kept away from
+	# the flat heart of the park, the dock corridor, and the meadow: every
+	# riddle prop stays on level ground.
+	var fringe := smoothstep(26.0, 30.0, d) * (1.0 - smoothstep(coast - 7.0, coast - 4.0, d))
+	if z < -19.0 or (absf(x) < 5.0 and z > 8.0):
+		fringe = 0.0
+	h += fringe * 0.38 * (0.5 + 0.5 * sin(x * 0.17 + 1.3) * sin(z * 0.15 + 2.1))
+	var knoll := Vector2(x - 27.0, z - 6.0).length()
+	h += 0.85 * (1.0 - smoothstep(3.0, 8.0, knoll))
 	return h
 
 func _build_island() -> void:
@@ -283,7 +298,9 @@ func _build_skyline() -> void:
 	for def: Array in [
 		[Vector3(-24, 0, 8), Vector3(7, 26, 7)], [Vector3(-10, 0, -4), Vector3(8, 34, 8)],
 		[Vector3(6, 0, 6), Vector3(6, 22, 6)], [Vector3(30, 0, -2), Vector3(9, 30, 9)],
-		[Vector3(44, 0, 10), Vector3(6, 18, 6)],
+		[Vector3(44, 0, 10), Vector3(6, 18, 6)], [Vector3(-46, 0, 4), Vector3(6, 16, 6)],
+		[Vector3(12, 0, -16), Vector3(7, 40, 7)], [Vector3(24, 0, 14), Vector3(5, 24, 5)],
+		[Vector3(54, 0, 2), Vector3(8, 26, 8)], [Vector3(-18, 0, 18), Vector3(5, 20, 5)],
 	]:
 		var t := MeshInstance3D.new()
 		var box := BoxMesh.new()
@@ -292,6 +309,25 @@ func _build_skyline() -> void:
 		t.material_override = glass
 		t.position = base + (def[0] as Vector3) + Vector3(0, (def[1] as Vector3).y / 2.0 - 1.0, 0)
 		add_child(t)
+	# The Bow: the crescent tower, three glassy slabs in a gentle arc.
+	for k in 3:
+		var slab := MeshInstance3D.new()
+		var sb := BoxMesh.new()
+		sb.size = Vector3(9.0, 37.0, 4.0)
+		slab.mesh = sb
+		slab.material_override = glass
+		slab.position = base + Vector3(34 + (k - 1) * 7.5, 17.5, -12 - absf(k - 1) * 2.5)
+		slab.rotation.y = (k - 1) * 0.3
+		add_child(slab)
+	# Brick lowrises along the near bank: the warm front row.
+	for k in 4:
+		var brick := MeshInstance3D.new()
+		var bb := BoxMesh.new()
+		bb.size = Vector3(9.0, 5.0 + (k % 2) * 3.0, 7.0)
+		brick.mesh = bb
+		brick.material_override = _mat(Color(0.6, 0.4, 0.32))
+		brick.position = base + Vector3(-30 + k * 16.0, bb.size.y / 2.0 - 1.0, 22)
+		add_child(brick)
 	# The Calgary Tower: shaft, observation pod, spire.
 	_add_mesh(_cyl(1.6, 2.4, 30.0), base + Vector3(16, 14.0, 2), Color(0.72, 0.7, 0.68), false)
 	_add_mesh(_cyl(3.6, 3.0, 3.6), base + Vector3(16, 31.0, 2), Color(0.75, 0.3, 0.24), false)
@@ -303,6 +339,239 @@ func _build_skyline() -> void:
 		var roof := _add_box(Vector3(13.0, 0.5, 6.2), base + Vector3(-38, 4.6, 16 + s * 3.4),
 				Color(0.85, 0.84, 0.8), false)
 		roof.rotation.x = s * 0.3
+
+## Calgary keeps late-golden light all afternoon; travel_to resets the sun
+## before each island, so this stays local to Prince's Island.
+func _golden_hour() -> void:
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	if mgr == null:
+		return
+	var sun: DirectionalLight3D = mgr.get_node_or_null("Sun")
+	if sun:
+		sun.light_color = Color(1.0, 0.9, 0.74)
+		sun.light_energy = 1.25
+		sun.rotation_degrees = Vector3(-38.0, 42.0, 0.0)
+
+## The Rockies on the western horizon: two hazy layers of peaks with snow.
+func _build_rockies() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 403
+	for layer: Array in [
+		[300.0, 8, Color(0.64, 0.7, 0.83), 30.0, 48.0],
+		[262.0, 6, Color(0.52, 0.6, 0.76), 20.0, 34.0],
+	]:
+		var radius: float = layer[0]
+		var count: int = layer[1]
+		var tint: Color = layer[2]
+		for i in count:
+			var a := lerpf(PI * 0.68, PI * 1.32, i / float(count - 1)) \
+					+ rng.randf_range(-0.03, 0.03)
+			var base := Vector3(cos(a) * radius, 0, sin(a) * radius)
+			var w := rng.randf_range(34.0, 60.0)
+			var hgt := rng.randf_range(layer[3], layer[4])
+			var peak := MeshInstance3D.new()
+			var prism := PrismMesh.new()
+			prism.size = Vector3(w, hgt, 14.0)
+			peak.mesh = prism
+			peak.material_override = _mat(tint)
+			peak.position = base + Vector3(0, hgt / 2.0 - 3.0, 0)
+			peak.rotation.y = -a + PI / 2.0
+			add_child(peak)
+			var cap := MeshInstance3D.new()
+			var cap_prism := PrismMesh.new()
+			cap_prism.size = Vector3(w * 0.32, hgt * 0.3, 14.5)
+			cap.mesh = cap_prism
+			cap.material_override = _mat(Color(0.94, 0.96, 1.0))
+			cap.position = base + Vector3(0, hgt * 0.85 - 3.0, 0)
+			cap.rotation.y = peak.rotation.y
+			add_child(cap)
+
+## Cattail stands and lily pads dress the lagoon without touching the
+## regatta's route or the bridge line.
+func _build_lagoon_flora() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 515
+	for k in 8:
+		var a := TAU * k / 8.0 + 0.25
+		if absf(absf(wrapf(a, -PI, PI)) - PI / 2.0) < 0.45:
+			continue  # keep the bridge line and narrows clear
+		var rim := Vector3(LAGOON_CENTER.x + cos(a) * LAGOON_RADII.x * 1.02,
+				0, LAGOON_CENTER.y + sin(a) * LAGOON_RADII.y * 1.02)
+		rim.y = _terrain_height(rim.x, rim.z)
+		for s in rng.randi_range(4, 7):
+			var off := Vector3(rng.randf_range(-0.6, 0.6), 0, rng.randf_range(-0.6, 0.6))
+			var stem_h := rng.randf_range(0.6, 1.0)
+			_add_mesh(_cyl(0.015, 0.02, stem_h), rim + off + Vector3(0, stem_h / 2.0, 0),
+					Color(0.44, 0.56, 0.3), false)
+			var head := MeshInstance3D.new()
+			var cap := CapsuleMesh.new()
+			cap.radius = 0.035
+			cap.height = 0.22
+			head.mesh = cap
+			head.material_override = _mat(Color(0.42, 0.28, 0.18))
+			head.position = rim + off + Vector3(0, stem_h + 0.08, 0)
+			add_child(head)
+	for i in 7:
+		var a := rng.randf_range(0.0, TAU)
+		var r := rng.randf_range(0.25, 0.72)
+		var pad := MeshInstance3D.new()
+		pad.mesh = _cyl(rng.randf_range(0.28, 0.45), rng.randf_range(0.3, 0.47), 0.03)
+		pad.material_override = _mat(Color(0.24, 0.46, 0.26))
+		pad.position = Vector3(LAGOON_CENTER.x + cos(a) * LAGOON_RADII.x * r, -0.095,
+				LAGOON_CENTER.y + sin(a) * LAGOON_RADII.y * r)
+		add_child(pad)
+		if i % 3 == 0:
+			var bloom := MeshInstance3D.new()
+			var bs := SphereMesh.new()
+			bs.radius = 0.09
+			bs.height = 0.14
+			bloom.mesh = bs
+			bloom.material_override = _mat(Color(0.95, 0.6, 0.75))
+			bloom.position = pad.position + Vector3(0.1, 0.08, 0.05)
+			add_child(bloom)
+
+## The riverbank: driftwood, gravel bars, far canoeists circling on the
+## current, and one hot-air balloon over the valley.
+func _build_riverbank() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 616
+	for i in 6:
+		var a := rng.randf_range(0.0, TAU)
+		if absf(wrapf(a - PI / 2.0, -PI, PI)) < 0.5:
+			continue  # not on the dock channel
+		var r := _coast_radius(a) - rng.randf_range(1.2, 2.8)
+		var log_pos := Vector3(cos(a) * r, 0.16, sin(a) * r)
+		var log := _add_mesh(_cyl(rng.randf_range(0.09, 0.13), rng.randf_range(0.12, 0.17),
+				rng.randf_range(1.6, 2.8)), log_pos, Color(0.56, 0.48, 0.4))
+		log.rotation.z = PI / 2.0
+		log.rotation.y = rng.randf_range(0.0, TAU)
+	for i in 3:
+		var a := rng.randf_range(PI * 0.8, PI * 1.6)
+		var r := _coast_radius(a) + rng.randf_range(3.0, 7.0)
+		var bar := MeshInstance3D.new()
+		var bs := SphereMesh.new()
+		bs.radius = rng.randf_range(2.0, 3.4)
+		bs.height = 0.7
+		bar.mesh = bs
+		bar.material_override = _mat(Color(0.72, 0.68, 0.6))
+		bar.position = Vector3(cos(a) * r, -0.32, sin(a) * r)
+		bar.scale = Vector3(1.4, 1.0, 1.0)
+		bar.rotation.y = -a
+		add_child(bar)
+	# Two far canoes riding the river current around the island.
+	for def: Array in [[54.0, 240.0, Color(0.7, 0.35, 0.25)], [59.0, 320.0, Color(0.3, 0.5, 0.62)]]:
+		var pivot := Node3D.new()
+		add_child(pivot)
+		var canoe := MeshInstance3D.new()
+		var cb := CapsuleMesh.new()
+		cb.radius = 0.4
+		cb.height = 2.8
+		canoe.mesh = cb
+		canoe.material_override = _mat(def[2])
+		canoe.rotation.x = PI / 2.0
+		canoe.scale = Vector3(1.0, 0.5, 1.0)
+		canoe.position = Vector3(def[0], WATER_SURFACE_Y + 0.14, 0)
+		pivot.add_child(canoe)
+		var paddler := MeshInstance3D.new()
+		var ps := SphereMesh.new()
+		ps.radius = 0.22
+		ps.height = 0.44
+		paddler.mesh = ps
+		paddler.material_override = _mat(Color(0.85, 0.7, 0.4))
+		paddler.position = Vector3(def[0], WATER_SURFACE_Y + 0.45, 0)
+		pivot.add_child(paddler)
+		var spin := pivot.create_tween().set_loops()
+		spin.tween_property(pivot, "rotation:y", TAU, def[1]).from(0.0)
+	var balloon := Node3D.new()
+	var envl := MeshInstance3D.new()
+	var es := SphereMesh.new()
+	es.radius = 3.6
+	es.height = 8.0
+	envl.mesh = es
+	envl.material_override = _mat(Color(0.85, 0.35, 0.3))
+	envl.position = Vector3(0, 4.0, 0)
+	balloon.add_child(envl)
+	var band := MeshInstance3D.new()
+	band.mesh = _cyl(3.35, 3.35, 1.6)
+	band.material_override = _mat(Color(0.95, 0.9, 0.75))
+	band.position = Vector3(0, 4.0, 0)
+	balloon.add_child(band)
+	var basket := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(1.0, 0.8, 1.0)
+	basket.mesh = bb
+	basket.material_override = _mat(Color(0.5, 0.38, 0.24))
+	basket.position = Vector3(0, -0.6, 0)
+	balloon.add_child(basket)
+	balloon.position = Vector3(58, 26, -78)
+	add_child(balloon)
+	var drift := balloon.create_tween().set_loops()
+	drift.tween_property(balloon, "position", Vector3(38, 29, -60), 46.0) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	drift.tween_property(balloon, "position", Vector3(58, 26, -78), 52.0) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+## Lamp posts, the park's entrance sign, a picnic left mid-afternoon, bins.
+func _build_park_extras() -> void:
+	for a: float in [2.5, 3.3, 4.1, 4.9, 5.7, 0.2]:
+		var p := Vector3(cos(a) * 14.0, 0.35, sin(a) * 14.0)
+		_add_mesh(_cyl(0.05, 0.08, 2.8), p + Vector3(0, 1.4, 0), PARK_GREEN)
+		var head := MeshInstance3D.new()
+		head.mesh = _cyl(0.2, 0.28, 0.22)
+		var hm := StandardMaterial3D.new()
+		hm.albedo_color = Color(1.0, 0.9, 0.7)
+		hm.emission_enabled = true
+		hm.emission = Color(1.0, 0.88, 0.62)
+		hm.emission_energy_multiplier = 1.5
+		head.material_override = hm
+		head.position = p + Vector3(0, 2.9, 0)
+		add_child(head)
+	# The entrance sign by the plaza: two posts, a board, a little roof.
+	var sign_pos := Vector3(-3.6, 0.35, 17.0)
+	for sx in [-1.0, 1.0]:
+		_add_box(Vector3(0.14, 1.6, 0.14), sign_pos + Vector3(sx * 1.0, 0.8, 0), WOOD.darkened(0.15))
+	_add_box(Vector3(2.4, 0.9, 0.1), sign_pos + Vector3(0, 1.35, 0), WOOD)
+	_add_box(Vector3(1.9, 0.16, 0.04), sign_pos + Vector3(0, 1.55, 0.06), Color(0.9, 0.85, 0.72), false)
+	_add_box(Vector3(1.2, 0.1, 0.04), sign_pos + Vector3(0, 1.28, 0.06), Color(0.9, 0.85, 0.72), false)
+	var sign_roof := _add_box(Vector3(2.7, 0.08, 0.5), sign_pos + Vector3(0, 1.92, 0), WOOD.darkened(0.25), false)
+	sign_roof.rotation.x = 0.12
+	# Somebody's picnic, abandoned to the afternoon.
+	var blanket_pos := Vector3(15.5, 0.37, 9.5)
+	_add_box(Vector3(1.7, 0.03, 1.3), blanket_pos, Color(0.8, 0.32, 0.3), false)
+	for k in 3:
+		_add_box(Vector3(0.06, 0.032, 1.3), blanket_pos + Vector3(-0.55 + k * 0.55, 0.002, 0),
+				Color(0.95, 0.92, 0.88), false)
+		_add_box(Vector3(1.7, 0.032, 0.06), blanket_pos + Vector3(0, 0.002, -0.4 + k * 0.4),
+				Color(0.95, 0.92, 0.88), false)
+	_add_box(Vector3(0.5, 0.35, 0.32), blanket_pos + Vector3(0.45, 0.19, -0.3), Color(0.62, 0.48, 0.3))
+	_add_box(Vector3(0.52, 0.06, 0.34), blanket_pos + Vector3(0.45, 0.4, -0.3), Color(0.5, 0.38, 0.24), false)
+	var frisbee := _add_mesh(_cyl(0.26, 0.22, 0.05), Vector3(13.8, 0.38, 8.0), Color(0.3, 0.75, 0.85), false)
+	frisbee.rotation.z = 0.1
+	for pos: Vector3 in [Vector3(4.2, 0.35, 12.5), Vector3(14.5, 0.35, -3.5)]:
+		_add_mesh(_cyl(0.28, 0.24, 0.7), pos + Vector3(0, 0.35, 0), PARK_GREEN)
+		_add_mesh(_cyl(0.3, 0.3, 0.05), pos + Vector3(0, 0.73, 0), Color(0.25, 0.26, 0.3), false)
+
+func _spawn_bees() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 717
+	for bed: Vector3 in [Vector3(-3.2, 0, 17), Vector3(9, 0, -13), Vector3(-14, 0, 9)]:
+		for b in 2:
+			var bee := MeshInstance3D.new()
+			var bs := SphereMesh.new()
+			bs.radius = 0.045
+			bs.height = 0.08
+			bee.mesh = bs
+			bee.material_override = _mat(Color(0.9, 0.75, 0.2))
+			var home := bed + Vector3(rng.randf_range(-0.5, 0.5), 1.0, rng.randf_range(-0.3, 0.3))
+			bee.position = home
+			add_child(bee)
+			var buzz := bee.create_tween().set_loops()
+			for k in 4:
+				var wp := home + Vector3(rng.randf_range(-0.6, 0.6),
+						rng.randf_range(-0.35, 0.25), rng.randf_range(-0.6, 0.6))
+				buzz.tween_property(bee, "position", wp, rng.randf_range(0.5, 0.9)) \
+						.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			buzz.tween_property(bee, "position", home, 0.7).set_trans(Tween.TRANS_SINE)
 
 # --- landing, meadow, park furniture ---
 
@@ -494,22 +763,138 @@ func _scatter_trees() -> void:
 			_cottonwood(Vector3(p.x, h, p.z), rng.randf_range(0.9, 1.6))
 		else:
 			_spruce(Vector3(p.x, h, p.z), rng.randf_range(0.8, 1.3))
+	# Aspen groves on the knoll's flank and by the west shore.
+	for grove: Vector3 in [Vector3(30.0, 0, -3.0), Vector3(-28.0, 0, -13.0)]:
+		for i in 6:
+			var p := grove + Vector3(rng.randf_range(-3.5, 3.5), 0, rng.randf_range(-3.0, 3.0))
+			var h := _terrain_height(p.x, p.z)
+			if h < 0.3:
+				continue
+			_aspen(Vector3(p.x, h, p.z), rng.randf_range(0.9, 1.4))
+	# Lilacs behind a few benches, wild roses along the path.
+	for lp: Vector3 in [Vector3(-16.5, 0, -12.0), Vector3(5.0, 0, -19.5), Vector3(-20.0, 0, 6.0)]:
+		var lh := _terrain_height(lp.x, lp.z)
+		if lh >= 0.3:
+			_lilac(Vector3(lp.x, lh, lp.z))
+	for rp: Vector3 in [Vector3(12.5, 0, 12.8), Vector3(-9.0, 0, 13.5),
+			Vector3(19.0, 0, -8.5), Vector3(-18.5, 0, -4.0)]:
+		var rh := _terrain_height(rp.x, rp.z)
+		if rh >= 0.3:
+			_wild_roses(Vector3(rp.x, rh, rp.z))
 
 func _cottonwood(pos: Vector3, s: float) -> void:
 	var trunk := _add_mesh(_cyl(0.16 * s, 0.24 * s, 2.1 * s), pos + Vector3(0, 1.05 * s, 0), Color(0.45, 0.4, 0.34))
 	var _keep := trunk
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(absf(pos.x * 13.0 + pos.z * 29.0)) + 7
+	# Visible boughs reaching into the canopy.
+	for b in 2:
+		var bough := MeshInstance3D.new()
+		bough.mesh = _cyl(0.05 * s, 0.09 * s, 1.1 * s)
+		bough.material_override = _mat(Color(0.45, 0.4, 0.34))
+		bough.position = pos + Vector3(0, 1.9 * s, 0)
+		bough.rotation.z = rng.randf_range(0.5, 0.8) * (1 if b == 0 else -1)
+		bough.rotation.y = rng.randf_range(0.0, TAU)
+		add_child(bough)
 	for def: Array in [[Vector3(0, 2.6, 0), 1.35], [Vector3(0.8, 2.2, 0.4), 0.95],
-			[Vector3(-0.7, 2.3, -0.35), 0.9], [Vector3(0.1, 3.1, -0.2), 0.85]]:
+			[Vector3(-0.7, 2.3, -0.35), 0.9], [Vector3(0.1, 3.1, -0.2), 0.85],
+			[Vector3(0.5, 2.9, 0.5), 0.7]]:
 		var blob := MeshInstance3D.new()
 		var bs := SphereMesh.new()
 		bs.radius = (def[1] as float) * s
 		bs.height = (def[1] as float) * 1.7 * s
 		blob.mesh = bs
-		blob.material_override = _mat(Color(0.3, 0.52, 0.26).lightened(rng.randf_range(0.0, 0.12)))
+		blob.material_override = _mat(Color(0.3, 0.52, 0.26).lightened(rng.randf_range(0.0, 0.14)))
 		blob.position = pos + (def[0] as Vector3) * s
 		add_child(blob)
+	# The big trees shed fluff into the breeze.
+	if s >= 1.5:
+		var shed := CPUParticles3D.new()
+		shed.amount = 16
+		shed.lifetime = 7.0
+		shed.preprocess = 7.0
+		shed.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		shed.emission_sphere_radius = 1.4 * s
+		shed.position = pos + Vector3(0, 2.7 * s, 0)
+		shed.direction = Vector3(1, -0.1, 0.3)
+		shed.spread = 25.0
+		shed.gravity = Vector3(0.5, -0.05, 0.15)
+		shed.initial_velocity_min = 0.2
+		shed.initial_velocity_max = 0.5
+		var mote := QuadMesh.new()
+		mote.size = Vector2(0.06, 0.06)
+		var mm := StandardMaterial3D.new()
+		mm.albedo_color = Color(0.98, 0.98, 0.95, 0.85)
+		mm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+		mote.material = mm
+		shed.mesh = mote
+		add_child(shed)
+
+func _aspen(pos: Vector3, s: float) -> void:
+	# White bark, black flecks, small pale crown: prairie river-valley trees.
+	_add_mesh(_cyl(0.05 * s, 0.07 * s, 2.4 * s), pos + Vector3(0, 1.2 * s, 0), Color(0.9, 0.9, 0.86))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(absf(pos.x * 7.0 + pos.z * 11.0)) + 3
+	for f in 4:
+		var fleck := _add_box(Vector3(0.05 * s, 0.04 * s, 0.02),
+				pos + Vector3(rng.randf_range(-0.04, 0.04) * s, rng.randf_range(0.4, 1.9) * s, 0.05 * s),
+				Color(0.2, 0.2, 0.2), false)
+		fleck.rotation.y = rng.randf_range(0.0, TAU)
+	for def: Array in [[Vector3(0, 2.7, 0), 0.62], [Vector3(0.25, 3.1, 0.15), 0.48]]:
+		var crown := MeshInstance3D.new()
+		var cs := SphereMesh.new()
+		cs.radius = (def[1] as float) * s
+		cs.height = (def[1] as float) * 2.0 * s
+		crown.mesh = cs
+		crown.material_override = _mat(Color(0.55, 0.72, 0.38))
+		crown.position = pos + (def[0] as Vector3) * s
+		add_child(crown)
+
+func _lilac(pos: Vector3) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(absf(pos.x * 5.0 + pos.z * 17.0)) + 1
+	for b in 3:
+		var blob := MeshInstance3D.new()
+		var bs := SphereMesh.new()
+		bs.radius = rng.randf_range(0.35, 0.55)
+		bs.height = bs.radius * 1.8
+		blob.mesh = bs
+		blob.material_override = _mat(Color(0.62, 0.5, 0.75).lightened(rng.randf_range(0.0, 0.1)))
+		blob.position = pos + Vector3(rng.randf_range(-0.35, 0.35), 0.45 + b * 0.18,
+				rng.randf_range(-0.35, 0.35))
+		add_child(blob)
+	var base := MeshInstance3D.new()
+	var bs2 := SphereMesh.new()
+	bs2.radius = 0.55
+	bs2.height = 0.8
+	base.mesh = bs2
+	base.material_override = _mat(Color(0.3, 0.48, 0.28))
+	base.position = pos + Vector3(0, 0.3, 0)
+	add_child(base)
+
+func _wild_roses(pos: Vector3) -> void:
+	var bush := MeshInstance3D.new()
+	var bs := SphereMesh.new()
+	bs.radius = 0.5
+	bs.height = 0.7
+	bush.mesh = bs
+	bush.material_override = _mat(Color(0.32, 0.5, 0.3))
+	bush.position = pos + Vector3(0, 0.3, 0)
+	add_child(bush)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(absf(pos.x * 3.0 + pos.z * 23.0)) + 9
+	for f in 6:
+		var rose := MeshInstance3D.new()
+		var rs := SphereMesh.new()
+		rs.radius = 0.05
+		rs.height = 0.09
+		rose.mesh = rs
+		rose.material_override = _mat(Color(0.93, 0.5, 0.6))
+		var a := rng.randf_range(0.0, TAU)
+		rose.position = pos + Vector3(cos(a) * 0.42, 0.42 + rng.randf_range(-0.1, 0.15), sin(a) * 0.42)
+		add_child(rose)
 
 func _spruce(pos: Vector3, s: float) -> void:
 	_add_mesh(_cyl(0.1 * s, 0.14 * s, 0.8 * s), pos + Vector3(0, 0.4 * s, 0), Color(0.35, 0.26, 0.2))
@@ -535,7 +920,7 @@ func _scatter_grass_blades() -> void:
 	rng.seed = 777
 	var transforms: Array[Transform3D] = []
 	var attempts := 0
-	while transforms.size() < 11000 and attempts < 70000:
+	while transforms.size() < 15000 and attempts < 90000:
 		attempts += 1
 		var x := rng.randf_range(-42.0, 42.0)
 		var z := rng.randf_range(-42.0, 42.0)
@@ -544,8 +929,8 @@ func _scatter_grass_blades() -> void:
 		if d > _coast_radius(theta) - 5.0:
 			continue
 		var h := _terrain_height(x, z)
-		if h < 0.3 or h > 0.45:
-			continue
+		if h < 0.3 or h > 1.5:
+			continue  # lawns and swells, not the beach or lagoon bed
 		var ang_gap := absf(wrapf(theta - PI / 2.0, -PI, PI))
 		if absf(d - PATH_R) < 2.0 and ang_gap > 0.5:
 			continue  # the path ring
