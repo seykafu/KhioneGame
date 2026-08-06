@@ -22,7 +22,7 @@ House rules, carried from Ahalo:
 - **Small riddles are 5-15 minute wins. The main riddle is a synthesis** that needs at least two small-riddle rewards or lessons to crack.
 - Future hook: the *subtle clue feature* will piggyback on Whisker Sense (a meow near a solvable riddle returns a warmer, closer shimmer). Design every riddle so its clue object can shimmer without giving the answer away.
 
-**The verb ladder:** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Vancouver) → Growl (Pirate Ship) → sound-navigation mastery (Halifax) → vertical mastery (Mont Royal) → wind mastery (Winnipeg) → full synthesis (Ottawa) → remix of everything (Agrea).
+**The verb ladder:** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Winnipeg) → Growl (Pirate Ship) → sound-navigation mastery (Halifax) → vertical mastery (Mont Royal) → wind mastery (Vancouver) → full synthesis (Ottawa) → remix of everything (Agrea).
 
 **The letter, assembled across ten islands.** Full text, known only to us:
 
@@ -35,11 +35,11 @@ Fragment reward order (chosen for emotional shape, not sentence order):
 | 1 Ahalo | "… one final …" |
 | 2 Eaton Centre | "… not supposed to …" |
 | 3 Calgary | "Could I …" *(found the day a dog joins her)* |
-| 4 Vancouver | "… meet you?" |
+| 4 Winnipeg | "… meet you?" |
 | 5 Pirate Ship | "… adventure." |
 | 6 Halifax | "… know that …" |
 | 7 Mont Royal | "I wish …" |
-| 8 Winnipeg | "… be here." |
+| 8 Vancouver | "… be here." |
 | 9 Ottawa | "If you found this …" |
 | 10 Agrea | "Love," and a smudged signature, legible only in the finale |
 
@@ -90,7 +90,7 @@ Oreo artifact: in the pet store window, one dog collar on a stand, tag blank but
 
 ### Small riddles
 
-**The Paper Regatta.** Kids' paper boats are stranded all over the lagoon, becalmed. The Bow breeze comes in readable waves: the cottonwood fluff lifts first, one second of warning (the gust-reading seed that Island 8's blizzards will demand at full price). Fold and release a boat only when the fluff flies, and steer it under the footbridge by opening the lagoon's tiny outflow sluice at the right beat. The winning boat comes back soggy, carrying its cargo: a small brass clapper.
+**The Paper Regatta.** Kids' paper boats are stranded all over the lagoon, becalmed. The Bow breeze comes in readable waves: the cottonwood fluff lifts first, one second of warning (the gust-reading seed that later islands will charge full price for). Fold and release a boat only when the fluff flies, and steer it under the footbridge by opening the lagoon's tiny outflow sluice at the right beat. The winning boat comes back soggy, carrying its cargo: a small brass clapper.
 
 **The Ice Cream Round.** The abandoned ice-cream cart's bell is missing its clapper (see Regatta). The vendor's jingle is painted on the cart's side as note dots. Ring the old round correctly and the routine wakes: sprinklers chuff, the hatch pops, and inside is the vendor's corkboard — dog biscuits in a paper bag, and a spare key on a nail labelled only with a paw drawn in marker. The player does not know why they need either. They will.
 
@@ -112,28 +112,32 @@ Oreo artifact: the memorial stone under the cottonwood, old and sun-warmed, its 
 
 ---
 
-## Island 4 · Granville & Stanley
-*Vancouver in miniature: a market hall of smells, totem poles, a seawall, cherry blossoms on the wind. Teaches: dig, and two-body puzzles.*
+## Island 4 · The Winnipeg Crescent
+*A snowed-in crescent of bungalows under a prairie sky: woodsmoke, laundry lines, a backyard rink, silver squalls rolling through on a clock. First snow, seen through the eyes of a tropical cat and a dog who cannot believe his luck. Teaches: dig, and the duet — she senses what is buried, he digs it out.*
+
+**Learning the duet (opening scene, not a riddle):** Oreo hits the first drift at a dead run and simply vanishes, tail up, snow flying. When Khione meows at a lump in the snow, her Whisker Sense shimmer sinks INTO the drift — and Oreo is already there, digging where she pointed. Lesson installed: *she marks, he digs.* The squall is the island's metronome: stillness, one beat of warning, then flying snow. Read it here cheaply; Island 8 will charge full price.
 
 ### Small riddles
 
-**The Market Scales.** A produce stall's hanging scale holds the stall key on the high pan. Counterweight with produce, but every fruit is a different weight and the pans react live (seesaw's smarter sibling). The clue: the price chalkboard lists price *per pound*, and prices are honest. Cheap = light. Read the chalkboard like a weight table. Aha: economics as physics.
+**The Drift Line.** A laundry line runs pole to pole, its frozen wash torn off and buried along the run by last night's squall. Whisker-pulse the drifts to find each buried shape (a mitten, a scarf, one red sock), Oreo digs them free, and hang them back by the clothespins' paired colors. The neighbour's porch light winks on in thanks, and a thermos of cocoa waits on the stoop. The dig duet, taught end to end.
 
-**The One-Cat Band.** A busker's rig (drum, horn, cymbal) sits abandoned with a tip hat and a chalk rhythm on the pavement. The rhythm needs two players. Khione takes the pads, Oreo takes the drum (bark command times his hit). First true duet puzzle; tips fill the hat: a ferry token.
+**The Backyard Rink.** Boards and all: step on and she slides until she hits something. The walls are snowmen you roll into place — but snow will not pack on the ice itself, and the middle lane needs a bumper. Oreo on a "stay" is the bumper, tail thumping as she ricochets past. The first true two-body solve. Reward: frozen mid-rink, a tin of runner wax.
 
-**The Raccoon Toll.** Raccoons hold the seawall stairs and will not scatter for hiss (raccoons fear nothing). They want payment: shiny things. But paying the toll teaches the real lesson: they retreat exactly to wherever their stash is. Follow, and Oreo digs the stash: everything shiny they have taken all island, including a lens that matters on Island 6. Raccoons: furious, harmless, hilarious.
+**The Mailbox Morse.** Six mailboxes, each with a red flag; every squall scrambles them. From the top of the playground slide the curb numbers read odd and even: flags up for odd, down for even, set in one stillness before the wind undoes it. The postal truck's tape deck clicks open with the route code. Inside: a bag of road salt, and letters that were never delivered.
 
-**The Blossom Current.** Cherry petals stream along the seawall wind. A stone bench mosaic shows a petal path spiralling into a drain grate. Release petals (shake the tree, a jump-slam) only when the wind aligns with the mosaic's spiral, and the petals physically trace the route through the park to the hidden totem clearing. The wind timing is read from the flags on the ferry dock. A riddle where the answer is *watching beauty go by*.
+**The Swing Set Launch.** Pump the swing with timed presses, launch, and land on three roofs — the tracks in the rooftop snow say where. Launching *into* a squall doubles the arc: the wind lesson, planted gently. The roofs hold three shiny finds, including the toboggan's missing runner bolts, and from the highest ridge she sees it: a line of little flags poking from the drifts, running all the way down the crescent to the shore.
 
-### Main riddle · The Totem's Gaze
+### Main riddle · The Longest Slide
 
-Three totem poles in a clearing, each crowned by an animal: Raven, Bear, Orca. Each pole rotates (shoulder-shove, both animals pushing for the heavy one). A weathered park plaque shows the three animals facing their homes: sky-tree, forest, sea.
+The crescent's kids built a legendary toboggan run once: gates, banked turns, the works. It is all still there, under three winters of snow, and its flag-line is visible only from the rooftops.
 
-Phase 1: face Raven to the tallest tree, Bear to the forest gap, Orca to open water.
-Phase 2: nothing happens. The plaque's fourth corner is worn: a sun. It is a *sunset* alignment. At dusk, the animals' carved eyes catch the light and throw three thin beams that cross at one spot of lawn in Stanley Park.
-Phase 3: Oreo digs the crossing point. Buried: a park ranger's strongbox with the Lions Gate winch crank. Turning the winch (both of them on the wheel) lowers the miniature Lions Gate bridge, and they simply *walk* out over the water at sunset, blossoms behind them.
+Phase 1: the start gate is a lump of solid ice at the top of the crescent; the road salt eats it open, and inside the gate the toboggan itself sleeps under a drift. Oreo digs it out. Wax and bolts bring it back to life.
+Phase 2: the run must be reopened the way it was buried: gate by gate. Khione whisker-marks each buried gate along the flag-line, Oreo digs on her mark — the duet at full gallop, squalls filling in behind them, no time wasted.
+Phase 3: the ride. Both of them aboard, one glorious carving run down the whole crescent, through every gate they opened, and clean through the final drift — which bursts into a storm cellar dug into the shore bank. Among the boxed-up summer things: a kite reel with no kite, and pinned beneath it, the fragment: "… meet you?".
 
-Oreo artifact: one totem's lowest carving, weathered but unmistakable under Whisker Sense: a dog, lying down, waiting.
+The sled coasts the last stretch of frozen shore right up to the canoe. Some islands you leave at a walk. Not this one.
+
+Oreo artifact: taped to a box in the storm cellar, a child's crayon drawing of a black-and-white dog, ears up, tongue out, drawn by somebody who loved one once.
 
 ---
 
@@ -217,28 +221,28 @@ Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder hei
 
 ---
 
-## Island 8 · The Winnipeg Crescent
-*A snowed-in crescent of bungalows under prairie wind that never stops: woodsmoke torn sideways, laundry lines snapping, white-outs rolling through in waves. Khione is white on white; Oreo is the dark thing the blizzard cannot hide, and he loves it here. The gust-reading learned on a summer kite in Calgary comes due at full price. Teaches: the wind is a tool.*
-
-*The squall is the island's metronome: every minute or so the light goes cold silver, the snow flies flat, and everything loose sings. Between squalls, stillness. Riddles live in both.*
+## Island 8 · English Bay
+*Vancouver at blossom time: the seawall, a kite beach, totem poles in a clearing, raccoons with opinions, cherry petals riding a wind that never stops coming off the water. The gust-reading planted on Prince's Island and grown in Winnipeg comes due at full price. Teaches: the wind is a tool.*
 
 ### Small riddles
 
-**The Backyard Rink.** A backyard rink, boards and all: once Khione steps on, she slides until she hits something. Classic ice-maze, but the "walls" are snowmen you can build by rolling (push a small snowball; it grows as it rolls, then blocks a lane), and a squall mid-slide shoves her line sideways. Time your runs to the stillness, or use the shove on purpose. Failure: gentle crash into a snowbank, hat of snow. Reward: frozen in the rink's centre, a thermos of cocoa for the fire barrel.
+**The Kite Truants.** Four kites escaped their reels and snagged around the bay. Reaching each is a wind-platforming bite: gusts come in readable waves (the petal-streams lay flat first, one second of warning). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized reel post on the kite beach, and four flying kites become the island's living wind gauge, visible from everywhere. One reel post stands empty, sized for a reel the player has seen before, boxed in a Winnipeg storm cellar.
 
-**The Mailbox Morse.** Six mailboxes on the crescent, each with a red flag, but every squall flips them at random. From the top of the playground slide you can read the house numbers painted on the curb: odd flags up, even flags down. Set all six in one stillness, before the next squall scrambles them, and the postal truck's tape deck clicks open with the route code. Speed-puzzle with a weather clock.
+**The Blossom Current.** Cherry petals stream along the seawall wind. A stone bench mosaic shows a petal path spiralling into a drain grate. Release petals (shake the tree, a jump-slam) only when the wind aligns with the mosaic's spiral, and the petals physically trace the route through the park to the hidden totem clearing. A riddle where the answer is *watching beauty go by*.
 
-**The Swing Set Launch.** The playground swing works: pump momentum with timed presses, then launch. The arc alone reaches nothing, but launching *into* a squall doubles it. Read the warning (laundry lines snap first, one second ahead), release on the gust, and ride the wind to three different roofs. Each roof holds one shiny thing, including a rusted weathervane crank. Wind-platforming, graduated from the kite lull on Prince's Island.
+**The Raccoon Toll.** Raccoons hold the seawall stairs and will not scatter for hiss (raccoons fear nothing). They want payment: shiny things. But paying the toll teaches the real lesson: they retreat exactly to wherever their stash is. Follow, and Oreo digs the stash: everything shiny they have taken all island, including a lens that matters back on Island 6. Raccoons: furious, harmless, hilarious.
 
-**The Icicle Chimes.** The eaves of four bungalows hang with icicles, and every squall strums them like a dulcimer. Most are dull; Oreo's ears find the true ones. Break the dead icicles (a hiss cracks them) so each eave holds only ringing lengths. When all four eaves are tuned, the next squall plays a chord the whole crescent long, and a frozen storm-cellar door on the last backyard groans in sympathy, loose in its frame.
+**The Market Scales.** A produce stall's hanging scale holds the stall key on the high pan. Counterweight with produce — but every fruit is a different weight, the pans react live, and the bay wind shoves the pans on every gust. The price chalkboard lists price *per pound*, and prices are honest: cheap is light. Weigh in the stillness, read the chalkboard like a weight table. Economics as physics, in weather.
 
-### Main riddle · The Chimney Choir
+### Main riddle · The Totem's Gaze
 
-Four chimneys smoke in different rhythms, and the wind owns all of them. A child's drawing taped inside a frosted window shows four houses and musical notes: a melody the player has heard before, hummed by three hollow stones an ocean ago, written by whoever keeps walking one island ahead.
+Three totem poles in a clearing, each crowned by an animal: Raven, Bear, Orca. Each pole rotates (shoulder-shove, both animals pushing for the heavy one), and each pole's carved mouths whistle a note when the wind passes through. A weathered park plaque shows the three animals facing their homes: sky-tree, forest, sea.
 
-Hiss into a chimney and its smoke stutters; the pattern only holds in stillness, and only reads against the sky during a squall (flat smoke draws legible lines; rising smoke is mush). So the choir is conducted across the weather: set each chimney's rhythm in the calm, read the whole score on the gust, correct, repeat. When all four chimneys puff the stone-song in time, the tuned icicles (Chimes) ring the melody back, the storm-cellar door bangs open, and the blizzard — for one held breath — goes utterly still.
+Phase 1: face Raven to the tallest tree, Bear to the forest gap, Orca to open water.
+Phase 2: aligned, the poles catch the next gust and sing three notes together — and the player knows the tune they belong to: the hollow stones' song, an ocean ago, written by whoever keeps walking one island ahead. Hold the alignment through one full gust (the kites give the warning) and the song completes.
+Phase 3: it is sunset now, and the animals' carved eyes catch the light, throwing three thin beams that cross at one spot of lawn. Oreo digs the crossing point: a park ranger's strongbox with the Lions Gate winch crank. Both of them on the wheel, the miniature Lions Gate lowers, and they simply *walk* out over the water at sunset, petals behind them.
 
-In the cellar: the letter fragment, and a shelf of summer things put away against the winter, one of them a kite reel with no kite. Oreo digs the drifted-over toboggan free in five seconds flat, and the two of them ride it down the crescent to the shore. The wind, for once, pushes them exactly where they want to go.
+Oreo artifact: one totem's lowest carving, weathered but unmistakable under Whisker Sense: a dog, lying down, waiting.
 
 Oreo artifact: the circled sheet music's corner bears a doodle: a stick-figure dog and cat on a raft. The player has never told anyone about the raft.
 
@@ -280,11 +284,11 @@ Each mini-district holds a shrine and a remixed, compressed riddle of its island
 1. **Ahalo Shrine:** three stones, but now *five*, and the carving is water-worn: the melody, not the sizes, is the order (sing the letter's phrase).
 2. **Eaton Shrine:** one goose, one lamp, one mirror: land the shadow on the door in one move.
 3. **Calgary Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers the yard.
-4. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
+4. **Winnipeg Shrine:** a shrine under one drift that never melts; she marks, he digs. The roles they learned together, one last time.
 5. **Galleon Shrine:** a ship in a bottle and one wave lever: time one swell to seat it on its stand.
 6. **Halifax Shrine:** a dark fog dome; cross it by ear in total whiteout, following Oreo's bark.
 7. **Mont Royal Shrine:** one lantern, three fireflies, one drum. Minimalist rhythm.
-8. **Winnipeg Shrine:** a single jet fountain and the wind: one note, released on one gust.
+8. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
 9. **Ottawa Shrine:** a five-bell stand, and you know the phrase. You have always known the phrase.
 
 ### Main riddle · The Letter Table
@@ -306,11 +310,11 @@ The door opens on white light and the memory: the park, the storm, the vortex, a
 | 1 Ahalo | Meow | ★ | wonder |
 | 2 Eaton | Hiss | ★★ | playful uncanny |
 | 3 Calgary | Oreo | ★★ | warmth |
-| 4 Vancouver | Dig, duets | ★★★ | golden hour |
+| 4 Winnipeg | Dig, duets | ★★★ | first snow |
 | 5 Pirate Ship | Growl | ★★★ | loud joy |
 | 6 Halifax | Ear-navigation | ★★★★ | hushed |
 | 7 Mont Royal | Vertical patience | ★★★★ | melancholy glow |
-| 8 Winnipeg | Wind | ★★★★ | white-out |
+| 8 Vancouver | Wind | ★★★★ | blossom wind |
 | 9 Ottawa | Synthesis | ★★★★★ | reverent |
 | 10 Agrea | Mastery remix | ★★★ (fast) | catharsis |
 

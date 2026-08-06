@@ -12,6 +12,8 @@ const ISLANDS := [
 		"spawn": Vector3(0, 1.2, 40), "track": "eaton", "display": "The Eaton Centre"},
 	{"label": "Island 3: Prince's Island", "scene": "res://scenes/islands/calgary.tscn",
 		"spawn": Vector3(0, 1.2, 42), "track": "calgary", "display": "Prince's Island"},
+	{"label": "Island 4: The Winnipeg Crescent", "scene": "res://scenes/islands/winnipeg.tscn",
+		"spawn": Vector3(0, 1.2, 42), "track": "winnipeg", "display": "The Winnipeg Crescent"},
 ]
 
 var _open := false
@@ -50,10 +52,12 @@ func _close() -> void:
 ## complete so the riddle tracker and satchel stay coherent.
 func _travel_to_island(isl: Dictionary) -> void:
 	# Jumping ahead grants the flags earlier islands would have set.
-	if isl.track in ["eaton", "calgary"] and not GameState.get_flag("island1_complete"):
+	if isl.track in ["eaton", "calgary", "winnipeg"] and not GameState.get_flag("island1_complete"):
 		GameState.set_flag("island1_complete")
-	if isl.track == "calgary" and not GameState.get_flag("island2_complete"):
+	if isl.track in ["calgary", "winnipeg"] and not GameState.get_flag("island2_complete"):
 		GameState.set_flag("island2_complete")
+	if isl.track == "winnipeg" and not GameState.get_flag("island3_complete"):
+		GameState.set_flag("island3_complete")
 	_close()
 	var mgr := get_tree().get_first_node_in_group("island_manager")
 	if mgr:

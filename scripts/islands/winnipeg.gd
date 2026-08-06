@@ -1,9 +1,10 @@
 extends Node3D
-## Island 8 · The Winnipeg Crescent (shell, saved for the late game).
-## A snowed-in crescent of bungalows under prairie wind that never stops:
-## a frozen playground, a backyard rink, woodsmoke, magpies, and hard
-## silver squalls rolling through on a clock. Wind-mastery riddles land
-## when island 8 is built; this is the living shell.
+## Island 4 · The Winnipeg Crescent — first snow, and the dig duet.
+## A snowed-in crescent of bungalows under a prairie sky: a frozen
+## playground, a backyard rink, woodsmoke, magpies, and silver squalls
+## rolling through on a clock. Riddles (The Drift Line, Backyard Rink,
+## Mailbox Morse, Swing Set Launch, main: The Longest Slide) land in
+## later passes; this is the living shell.
 
 const WATER_SURFACE_Y := -0.4
 const COAST_BASE := 46.0

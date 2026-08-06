@@ -317,9 +317,11 @@ func _current_objective_text() -> String:
 				return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
+		if mgr and mgr.current_island and mgr.current_island.name == "Winnipeg":
+			return "First snow over a sleeping crescent, and a dog who cannot believe his luck. (Island 4 riddles coming soon)"
 		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
 			if GameState.get_flag("island3_complete"):
-				return "Prince's Island hums with summer, two friends in a canoe. Vancouver waits west. (Island 4 coming soon)"
+				return "Prince's Island hums with summer, two friends in a canoe. Winter waits east: Winnipeg. (travel from the pause menu)"
 			if not GameState.get_flag("regatta_done"):
 				return "Paper boats lie becalmed on the lagoon. The cottonwood fluff knows when the breeze comes… and the little weir decides what passes the narrows."
 			if not GameState.get_flag("ice_cream_done"):

@@ -382,7 +382,7 @@ func canoe_interact() -> void:
 	seq.tween_interval(5.5)
 	seq.tween_callback(func() -> void:
 		_departing = false
-		_flash("Prince's Island hums with summer behind them. Vancouver waits beyond the horizon. (Island 4 coming soon)", 6.0))
+		_flash("Prince's Island hums with summer behind them. Somewhere east, winter is waiting.", 6.0))
 
 func _show_fragment() -> void:
 	Sfx.play("paper_open", 1.0, 0.05, -6.0)
