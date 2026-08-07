@@ -42,5 +42,13 @@ func _run() -> void:
 			houses += 1
 	assert(houses >= 6, "six bungalows should ring the crescent")
 	print("crescent landmarks: OK")
+
+	# The DISPLAYED objective must speak about THIS island right after
+	# travel, not the one she just left (the tracker refreshes on travel).
+	var shown: String = main.get_node("HUD")._objective_label.text
+	assert(shown.find("laundry") != -1, "island 4 should open with the drift-line hint on screen")
+	assert(shown.find("turquoise") == -1 and shown.find("howl") == -1,
+			"island 3 text must not stay on screen on island 4")
+	print("objective tracker: OK")
 	print("ALL WINNIPEG SHELL TESTS PASSED")
 	get_tree().quit()

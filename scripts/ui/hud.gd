@@ -415,6 +415,9 @@ func _current_objective_text() -> String:
 
 ## Fades in a "~ Echo Cove ~" style card when entering a named place.
 func show_location(title: String) -> void:
+	# Travel calls this on every island swap: the objective tracker must
+	# re-read the world, or it keeps narrating the island she just left.
+	_update_objective()
 	if _location_tween and _location_tween.is_valid():
 		_location_tween.kill()
 	_location_label.text = "~  %s  ~" % title
