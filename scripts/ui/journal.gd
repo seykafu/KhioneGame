@@ -46,6 +46,16 @@ const RIDDLES := [
 		"text": "A crayon map under a picnic table numbers six burrows. Meows carry underground… pulse the doors in the map's order."},
 	{"flag": "island3_complete", "title": "The Howl in the Off-Leash Meadow", "island": 3,
 		"text": "The paw key opens the gate. The run-line loops tree, bench, stone: walk it backwards. Then cream, biscuits, and one good throw."},
+	{"flag": "drift_line_done", "title": "The Drift Line", "island": 4,
+		"text": "The squall buried the laundry. Meow at the lumps, let him dig, and hang each piece back by its paired clothespin."},
+	{"flag": "rink_done", "title": "The Backyard Rink", "island": 4,
+		"text": "The puck slides until it hits something, and the boards are never right. A dog on a stay is the proudest bumper alive."},
+	{"flag": "mailbox_done", "title": "The Mailbox Morse", "island": 4,
+		"text": "Odd flags up, even flags down, read from the top of the slide. All six in one stillness, before the squall scrambles them."},
+	{"flag": "swing_done", "title": "The Swing Set Launch", "island": 4,
+		"text": "Pump with the rhythm, let go with courage. The rooftops keep bolts, a loonie, and the view that matters."},
+	{"flag": "island4_complete", "title": "The Longest Slide", "island": 4,
+		"text": "Salt the gate, wake the toboggan, and dig the run open along the flag-line: she marks, he digs. Then ride it, all the way to the cellar."},
 ]
 
 const CONTROLS := [
@@ -267,7 +277,8 @@ func _refresh_riddles() -> void:
 		var solved: bool = GameState.get_flag(r.flag) \
 				or (r.get("island", 1) == 1 and GameState.get_flag("island1_complete")) \
 				or (r.get("island", 1) == 2 and GameState.get_flag("island2_complete")) \
-				or (r.get("island", 1) == 3 and GameState.get_flag("island3_complete"))
+				or (r.get("island", 1) == 3 and GameState.get_flag("island3_complete")) \
+				or (r.get("island", 1) == 4 and GameState.get_flag("island4_complete"))
 		var row := VBoxContainer.new()
 		var title := Label.new()
 		title.add_theme_font_size_override("font_size", 17)

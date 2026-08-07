@@ -55,24 +55,32 @@ class CanoePlate:
 		owner_puzzle.canoe_interact()
 
 func _ready() -> void:
-	# Oreo, tangled by the tree.
-	_oreo = Node3D.new()
-	_oreo.name = "Oreo"
-	_oreo.set_script(load("res://scripts/companions/oreo.gd"))
-	get_parent().add_child.call_deferred(_oreo)
-	_setup_oreo.call_deferred()
-	# A meadow bench for the line to wrap.
 	var island := get_parent()
+	# A meadow bench for the line to wrap.
 	if island.has_method("_bench"):
 		island._bench(BENCH, 0.55)
-	_build_ropes()
-	_build_pads()
-	# The gate latch.
-	var latch := GateLatch.new()
-	latch.owner_puzzle = self
-	latch.position = Vector3(0, 1.0, -22.4)
-	_zone(latch, 1.9)
-	add_child(latch)
+	if GameState.get_flag("oreo_joined"):
+		# A return visit: he travels with her now (the manager owns him),
+		# the tangle is history, and the gate stands open.
+		var gate: Node3D = island.get_node_or_null("MeadowGate")
+		if gate and GameState.get_flag("meadow_open"):
+			gate.position += Vector3(-1.5, 0, -0.5)
+			gate.rotation.y = 1.2
+	else:
+		# Oreo, tangled by the tree.
+		_oreo = Node3D.new()
+		_oreo.name = "Oreo"
+		_oreo.set_script(load("res://scripts/companions/oreo.gd"))
+		get_parent().add_child.call_deferred(_oreo)
+		_setup_oreo.call_deferred()
+		_build_ropes()
+		_build_pads()
+		# The gate latch.
+		var latch := GateLatch.new()
+		latch.owner_puzzle = self
+		latch.position = Vector3(0, 1.0, -22.4)
+		_zone(latch, 1.9)
+		add_child(latch)
 	# The canoe shove point.
 	var canoe_plate := CanoePlate.new()
 	canoe_plate.owner_puzzle = self

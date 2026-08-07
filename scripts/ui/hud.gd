@@ -167,6 +167,50 @@ class ItemIcon:
 					c + Vector2(5, -8), c + Vector2(9, -2), c + Vector2(7, 12)]), jug)
 				draw_rect(Rect2(c + Vector2(-8, 0), Vector2(16, 4)), band)
 				draw_arc(c + Vector2(0, -8), 4.0, PI, TAU, 12, Color(0.7, 0.66, 0.6), 2.0, true)
+			"frozen_mitten":
+				var mitt := Color(0.8, 0.3, 0.28)
+				draw_colored_polygon(_ellipse(c + Vector2(0, -2), 8.0, 10.0), mitt)
+				draw_colored_polygon(_ellipse(c + Vector2(-8, 2), 4.0, 5.0, 0.5), mitt)
+				draw_rect(Rect2(c + Vector2(-6, 8), Vector2(12, 5)), Color(0.9, 0.88, 0.85))
+			"frozen_scarf":
+				var scarf := Color(0.35, 0.5, 0.75)
+				draw_rect(Rect2(c + Vector2(-11, -8), Vector2(22, 6)), scarf)
+				draw_rect(Rect2(c + Vector2(2, -8), Vector2(7, 18)), scarf)
+				for k in 3:
+					draw_line(c + Vector2(3 + k * 2.4, 10), c + Vector2(3 + k * 2.4, 14), scarf, 1.6, true)
+			"frozen_sock":
+				var sock := Color(0.8, 0.3, 0.28)
+				draw_rect(Rect2(c + Vector2(-3, -11), Vector2(7, 13)), sock)
+				draw_colored_polygon(_ellipse(c + Vector2(-4, 6), 7.0, 5.0), sock)
+				draw_rect(Rect2(c + Vector2(-3, -12), Vector2(7, 3.4)), Color(0.9, 0.88, 0.85))
+			"cocoa_thermos":
+				var thermos := Color(0.75, 0.35, 0.25)
+				draw_rect(Rect2(c + Vector2(-6, -8), Vector2(12, 19)), thermos)
+				draw_rect(Rect2(c + Vector2(-6, -12), Vector2(12, 5)), Color(0.85, 0.82, 0.78))
+				draw_line(c + Vector2(-3, 2), c + Vector2(3, 2), Color(0.9, 0.85, 0.8), 2.0, true)
+			"runner_wax":
+				var tin := Color(0.85, 0.6, 0.3)
+				draw_circle(c, 10.5, tin)
+				draw_arc(c, 10.5, 0.0, TAU, 28, Color(0.6, 0.42, 0.2), 2.0, true)
+				draw_arc(c, 6.0, 0.0, TAU, 20, Color(0.6, 0.42, 0.2), 1.4, true)
+			"road_salt":
+				var bag := Color(0.6, 0.75, 0.85)
+				draw_colored_polygon(PackedVector2Array([
+					c + Vector2(-8, 12), c + Vector2(-6, -6), c + Vector2(-3, -10),
+					c + Vector2(3, -10), c + Vector2(6, -6), c + Vector2(8, 12)]), bag)
+				for off: Vector2 in [Vector2(-3, 2), Vector2(2, 5), Vector2(0, -1)]:
+					draw_circle(c + off, 1.2, Color(0.95, 0.97, 1.0))
+			"runner_bolts":
+				var steel3 := Color(0.6, 0.62, 0.68)
+				for off: Vector2 in [Vector2(-6, -5), Vector2(6, -5), Vector2(-6, 6), Vector2(6, 6)]:
+					draw_circle(c + off, 3.6, steel3)
+					draw_circle(c + off, 1.3, Color(0.35, 0.36, 0.4))
+			"old_loonie":
+				var gold2 := Color(0.85, 0.72, 0.3)
+				draw_circle(c, 10.5, gold2)
+				draw_arc(c, 10.5, 0.0, TAU, 28, Color(0.62, 0.5, 0.2), 2.0, true)
+				draw_colored_polygon(_ellipse(c + Vector2(0, 1), 4.5, 3.0), Color(0.62, 0.5, 0.2))
+				draw_circle(c + Vector2(3, -3), 1.4, Color(0.62, 0.5, 0.2))
 			_:
 				draw_circle(c, 10.0, Color(0.6, 0.55, 0.45))
 				draw_arc(c, 10.0, 0.0, TAU, 24, Color(0.4, 0.35, 0.28), 2.0, true)
@@ -318,7 +362,19 @@ func _current_objective_text() -> String:
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
 		if mgr and mgr.current_island and mgr.current_island.name == "Winnipeg":
-			return "First snow over a sleeping crescent, and a dog who cannot believe his luck. (Island 4 riddles coming soon)"
+			if GameState.get_flag("island4_complete"):
+				return "The crescent sleeps under brand-new tracks. Somewhere warm, an indoor sea waits. (Island 5 coming soon)"
+			if not GameState.get_flag("drift_line_done"):
+				return "The squall stole the laundry off the line. Meow at the lumps in the drifts… somebody here was born to dig."
+			if not GameState.get_flag("rink_done"):
+				return "An old puck waits on the backyard rink, and the target circle is nowhere near the boards. Snow will not pack on ice. A dog on a stay, though…"
+			if not GameState.get_flag("mailbox_done"):
+				return "Six red flags, and a squall that hates neat rows. The curb numbers only read from the top of the slide: odd up, even down, all in one stillness."
+			if not GameState.get_flag("swing_done"):
+				return "The swing remembers how to fly. Pump with the rhythm, let go with courage, and see what the rooftops keep."
+			if not GameState.get_flag("sled_ready"):
+				return "Salt for the frozen gate at the top of the ridge. Wax and bolts for whatever sleeps under it."
+			return "Six gates under the drifts, marked by little red flags. She marks, he digs. Then: the ride."
 		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
 			if GameState.get_flag("island3_complete"):
 				return "Prince's Island hums with summer, two friends in a canoe. Winter waits east: Winnipeg. (travel from the pause menu)"
@@ -471,6 +527,8 @@ func _show_letter() -> void:
 		extra += "\n\nA scrap that fell from the mall's banner:\n“… not supposed to …”"
 	if GameState.get_flag("letter_fragment_3"):
 		extra += "\n\nA scrap that slipped from a friendly collar:\n“Could I …”"
+	if GameState.get_flag("letter_fragment_4"):
+		extra += "\n\nA scrap pinned under a kite reel with no kite:\n“… meet you?”"
 	letter_text.text = _letter_base + extra
 	letter_panel.visible = true
 	get_tree().paused = true

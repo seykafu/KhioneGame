@@ -11,6 +11,14 @@ const COAST_BASE := 46.0
 const ROAD_R := 16.0
 const HOUSE_R := 21.5
 
+## The toboggan run's spine, ridge to shore. The slide puzzle builds its
+## gates on this; tree scatter keeps the corridor clear.
+const RUN_PATH: Array[Vector2] = [
+	Vector2(-12, -35), Vector2(-12, -32.5), Vector2(-14, -27), Vector2(-15, -21),
+	Vector2(-14, -14), Vector2(-13, -6), Vector2(-11.5, 3), Vector2(-9, 12),
+	Vector2(-6, 20), Vector2(-3, 28), Vector2(-1.5, 34), Vector2(-1, 37),
+]
+
 const SNOW := Color(0.93, 0.95, 0.99)
 const WOOD := Color(0.52, 0.4, 0.3)
 const TRIM := Color(0.9, 0.88, 0.84)
@@ -46,6 +54,55 @@ func _ready() -> void:
 	_add_location_trigger(Vector3(10, 0, 4), 6.0, "The Frozen Playground")
 	_add_location_trigger(Vector3(-10, 0, 2), 6.0, "The Backyard Rink")
 	_add_location_trigger(Vector3(0, 0, -25), 7.0, "Number Eight")
+	_add_location_trigger(Vector3(-13, 1.0, -27), 7.0, "The Top of the Run")
+	for def: Array in [
+		["DriftLine", "res://scripts/puzzles/drift_line.gd"],
+		["RinkMaze", "res://scripts/puzzles/rink_maze.gd"],
+		["MailboxMorse", "res://scripts/puzzles/mailbox_morse.gd"],
+		["SwingLaunch", "res://scripts/puzzles/swing_launch.gd"],
+		["LongestSlide", "res://scripts/puzzles/longest_slide.gd"],
+	]:
+		var puzzle := Node3D.new()
+		puzzle.name = def[0]
+		puzzle.set_script(load(def[1]))
+		add_child(puzzle)
+
+func _near_run(p: Vector2) -> bool:
+	for i in RUN_PATH.size() - 1:
+		var q := Geometry2D.get_closest_point_to_segment(p, RUN_PATH[i], RUN_PATH[i + 1])
+		if p.distance_to(q) < 2.4:
+			return true
+	return false
+
+func is_squalling() -> bool:
+	return _squall_on
+
+## Test hook: pin the weather.
+func force_squall(on: bool) -> void:
+	_squall_on = on
+	GameState.set_flag("prairie_gust", on)
+
+func _add_pickup(pos: Vector3, id: String, disp: String, color: Color) -> void:
+	var a := Area3D.new()
+	a.set_script(load("res://scripts/interaction/item_pickup.gd"))
+	a.set("item_id", id)
+	a.set("display_name", disp)
+	a.position = pos
+	var cs := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 1.2
+	cs.shape = sph
+	a.add_child(cs)
+	a.add_to_group("pickup_" + id)
+	var mi := MeshInstance3D.new()
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.25
+	mesh.height = 0.5
+	mi.mesh = mesh
+	mi.material_override = _mat(color)
+	mi.position = Vector3(0, 0.25, 0)
+	a.add_child(mi)
+	add_child(a)
 
 # --- terrain & water ---
 
@@ -484,6 +541,8 @@ func _scatter_winterings() -> void:
 			continue  # keep the dock path open
 		if p.z < -20.0 and absf(p.x) < 8.0 and p.z > -33.0:
 			continue  # keep yard eight clear
+		if _near_run(Vector2(p.x, p.z)):
+			continue  # the toboggan corridor stays clear
 		var h := _terrain_height(p.x, p.z)
 		if h < 0.25:
 			continue

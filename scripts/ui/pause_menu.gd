@@ -57,7 +57,10 @@ func _travel_to_island(isl: Dictionary) -> void:
 	if isl.track in ["calgary", "winnipeg"] and not GameState.get_flag("island2_complete"):
 		GameState.set_flag("island2_complete")
 	if isl.track == "winnipeg" and not GameState.get_flag("island3_complete"):
-		GameState.set_flag("island3_complete")
+		# Skipping Calgary still means Oreo joined there: the story says so.
+		for f: String in ["island3_complete", "meadow_open", "oreo_untangled",
+				"oreo_fed", "oreo_friend", "oreo_joined"]:
+			GameState.set_flag(f)
 	_close()
 	var mgr := get_tree().get_first_node_in_group("island_manager")
 	if mgr:

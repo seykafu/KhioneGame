@@ -37,6 +37,14 @@ const NAMES := {
 	"paw_key": "Paw-Marked Key",
 	"tennis_ball": "Chewed Tennis Ball",
 	"cream_jug": "Cream Jug",
+	"frozen_mitten": "Frozen Mitten",
+	"frozen_scarf": "Frozen Scarf",
+	"frozen_sock": "One Red Sock",
+	"cocoa_thermos": "Cocoa Thermos",
+	"runner_wax": "Runner Wax",
+	"road_salt": "Road Salt",
+	"runner_bolts": "Runner Bolts",
+	"old_loonie": "Old Loonie",
 }
 
 const DESCRIPTIONS := {
@@ -55,6 +63,14 @@ const DESCRIPTIONS := {
 	"paw_key": "A spare key on a nail-worn tag, one paw drawn in marker. It knows exactly which gate it opens.",
 	"tennis_ball": "Chewed soft, one blue thread in the felt. Buried long ago by somebody who meant to come back for it.",
 	"cream_jug": "Cold cream, kept perfect in glacier water. A picnicker's loss is a friendship's beginning.",
+	"frozen_mitten": "Stiff as plywood and exactly mitten-shaped. Its clothespin was red.",
+	"frozen_scarf": "A scarf frozen mid-flutter. Its clothespin was blue.",
+	"frozen_sock": "One red sock, solid as a brick. Its clothespin was yellow. Its twin is a mystery for the ages.",
+	"cocoa_thermos": "Still warm, somehow. Winnipeg hospitality does not freeze.",
+	"runner_wax": "A flat tin of runner wax, kept safe under the rink ice. Smells like every fast winter ever.",
+	"road_salt": "A bag of road salt from the postal truck. Ice, meet your negotiator.",
+	"runner_bolts": "Four runner bolts, rooftop-shiny. Some kid meant to fix the toboggan in spring.",
+	"old_loonie": "A loonie old enough to remember being lucky. Roof money is the luckiest money.",
 }
 
 var max_slots: int = 5

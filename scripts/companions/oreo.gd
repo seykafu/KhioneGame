@@ -9,7 +9,7 @@ const CATCH_UP_DIST := 1.7
 const RUN_SPEED := 4.8
 
 var following := false
-var _island: Node3D
+var _mgr: Node = null
 var _tail: Node3D
 var _body: MeshInstance3D
 var _ear_l: Node3D
@@ -19,11 +19,14 @@ var _run_phase := 0.0
 var _cur_speed := 0.0     # eased, so strides build and settle smoothly
 var _chasing := false     # hysteresis so he doesn't stutter at the follow edge
 var _hopping := false
+var _stay := false        # rink "stay": he sits where she marked and holds
+var _digging := false
+var _dig_target: Node = null
 var _move_target := Vector3.INF  # scripted move (fetch, canoe) overrides follow
 
 func _ready() -> void:
 	add_to_group("oreo")
-	_island = get_parent()
+	_mgr = get_tree().get_first_node_in_group("island_manager")
 	_build_dog()
 	GameState.vocal_used.connect(_on_vocal)
 	var wag := _tail.create_tween().set_loops()
@@ -258,18 +261,77 @@ func move_to(target: Vector3) -> void:
 func arrived() -> bool:
 	return _move_target == Vector3.INF
 
+## Rink "stay": trot to the spot and hold it like the proudest bumper alive.
+func stay_at(pos: Vector3) -> void:
+	_stay = true
+	_dig_target = null
+	move_to(pos)
+
+func resume() -> void:
+	_stay = false
+
 func _on_vocal(kind: String) -> void:
 	if kind != "meow" or not GameState.get_flag("oreo_joined"):
 		return
 	var player: Node3D = get_tree().get_first_node_in_group("player")
-	if player and player.global_position.distance_to(global_position) < 25.0:
-		Sfx.play("bark", randf_range(0.95, 1.1), 0.02, -6.0)
+	if player == null:
+		return
+	# The duet first: she marks a buried thing, he digs it. Nearest
+	# diggable to HER, within whisker range — and distance from HIM is no
+	# obstacle; there is digging to be done.
+	if _dig_target == null and not _digging:
+		var nearest: Node = null
+		var nearest_d := 4.5
+		for d in get_tree().get_nodes_in_group("diggable"):
+			var dist: float = player.global_position.distance_to(d.global_position)
+			if dist < nearest_d and d.buried:
+				nearest_d = dist
+				nearest = d
+		if nearest:
+			nearest.mark()
+			_dig_target = nearest
+			_stay = false
+			Sfx.play("bark", 1.15, 0.02, -8.0)
+			var work: Vector3 = nearest.global_position + Vector3(0.7, 0, 0.3)
+			if global_position.distance_to(work) > 20.0:
+				global_position = work + Vector3(2.0, 0, 2.0)  # he was, somehow, already close
+			move_to(work)
+			return
+	if player.global_position.distance_to(global_position) > 25.0:
+		return
+	Sfx.play("bark", randf_range(0.95, 1.1), 0.02, -6.0)
+	hop()
+
+func _do_dig() -> void:
+	if _dig_target == null or _digging:
+		return
+	_digging = true
+	var target: Node3D = _dig_target
+	rotation.y = atan2(target.global_position.x - global_position.x,
+			target.global_position.z - global_position.z)
+	# Paws down, snow flying: three quick scrabbles.
+	var t := create_tween()
+	for i in 3:
+		t.tween_callback(func() -> void: Sfx.play("paw_sand", 1.4, 0.1, -10.0))
+		t.tween_property(_body, "rotation:x", PI / 2.0 + 0.22, 0.14)
+		t.tween_property(_body, "rotation:x", PI / 2.0, 0.14)
+	t.tween_callback(func() -> void:
+		if is_instance_valid(target):
+			target.dig_open()
+		Sfx.play("bark", 1.05, 0.02, -8.0)
 		hop()
+		_digging = false
+		_dig_target = null)
 
 func _process(delta: float) -> void:
+	if _digging:
+		_settle_legs_only(delta)
+		return
 	var target := Vector3.INF
 	if _move_target != Vector3.INF:
 		target = _move_target
+	elif _stay:
+		pass  # holding his spot, tail going
 	elif following:
 		var player: Node3D = get_tree().get_first_node_in_group("player")
 		if player:
@@ -293,6 +355,8 @@ func _process(delta: float) -> void:
 	if flat.length() < 0.25:
 		if _move_target != Vector3.INF:
 			_move_target = Vector3.INF
+			if _dig_target != null:
+				_do_dig()
 		_settle(delta)
 		return
 	# Far behind? Border collies do not do "far behind."
@@ -323,18 +387,24 @@ func _settle(delta: float) -> void:
 	# At rest: legs straighten under the hips, the body levels, and he
 	# eases down onto the grass.
 	_cur_speed = lerpf(_cur_speed, 0.0, minf(6.0 * delta, 1.0))
-	for hip in _hips:
-		hip.rotation.x = lerpf(hip.rotation.x, 0.0, minf(12.0 * delta, 1.0))
+	_settle_legs_only(delta)
 	_body.rotation.z = lerpf(_body.rotation.z, 0.0, minf(10.0 * delta, 1.0))
 	_tail.rotation.x = lerpf(_tail.rotation.x, 0.0, minf(6.0 * delta, 1.0))
 	if not _hopping:
 		var ground := maxf(_ground_at(global_position), 0.0)
 		global_position.y = lerpf(global_position.y, ground, minf(10.0 * delta, 1.0))
 
+func _settle_legs_only(delta: float) -> void:
+	for hip in _hips:
+		hip.rotation.x = lerpf(hip.rotation.x, 0.0, minf(12.0 * delta, 1.0))
+
 func _ground_at(pos: Vector3) -> float:
-	if _island and _island.has_method("_terrain_height"):
-		return _island._terrain_height(pos.x, pos.z)
-	return 0.35
+	# The current island owns the ground; Oreo survives island swaps as a
+	# child of the manager, so resolve it live.
+	var isl: Node = _mgr.current_island if (_mgr and "current_island" in _mgr) else get_parent()
+	if isl and isl.has_method("_terrain_height"):
+		return isl._terrain_height(pos.x, pos.z)
+	return 0.38
 
 func _m(color: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()

@@ -55,10 +55,29 @@ func travel_to(scene_path: String, spawn: Vector3, track: String, display_name: 
 		player.set("velocity", Vector3.ZERO)
 		player.set_spawn(spawn)
 	Music.play(track, 3.0)
+	_sync_oreo(spawn)
 	_arrival_fade()
 	var hud := get_node_or_null("HUD")
 	if hud:
 		hud.show_location(display_name)
+
+## Once Oreo has joined, he travels too: adopted as a child of the manager
+## so island swaps never free him, and teleported to every new dock.
+func _sync_oreo(spawn: Vector3) -> void:
+	if not GameState.get_flag("oreo_joined"):
+		return
+	var oreo: Node3D = get_tree().get_first_node_in_group("oreo")
+	if oreo == null or not is_instance_valid(oreo):
+		oreo = Node3D.new()
+		oreo.name = "Oreo"
+		oreo.set_script(load("res://scripts/companions/oreo.gd"))
+		add_child(oreo)
+	elif oreo.get_parent() != self:
+		oreo.reparent(self)
+	oreo.set("following", true)
+	oreo.set("_stay", false)
+	oreo.set("_move_target", Vector3.INF)
+	oreo.global_position = spawn + Vector3(1.3, 0, 1.0)
 
 func _arrival_fade() -> void:
 	var layer := CanvasLayer.new()
