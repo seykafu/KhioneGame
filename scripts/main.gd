@@ -3,11 +3,21 @@ extends Node3D
 ## current island when Khione travels between them.
 
 var current_island: Node3D
+var _sky_defaults := {}
 
 func _ready() -> void:
 	add_to_group("island_manager")
 	current_island = $Ahalo
 	$Sun.rotation_degrees = Vector3(-50, 30, 0)
+	var sky_mat := ($WorldEnvironment.environment as Environment).sky.sky_material as ProceduralSkyMaterial
+	if sky_mat:
+		_sky_defaults = {
+			"sky_top_color": sky_mat.sky_top_color,
+			"sky_horizon_color": sky_mat.sky_horizon_color,
+			"ground_horizon_color": sky_mat.ground_horizon_color,
+			"ground_bottom_color": sky_mat.ground_bottom_color,
+			"sky_cover_modulate": sky_mat.sky_cover_modulate,
+		}
 	Sfx.play_ambient("ocean_loop", -16.0)
 	_schedule_gull()
 	# Ask the OS for keyboard focus; launches from scripts can open unfocused.
@@ -42,10 +52,14 @@ func travel_to(scene_path: String, spawn: Vector3, track: String, display_name: 
 	if current_island:
 		current_island.queue_free()
 	# Every island starts from the same neutral daylight; islands that want
-	# their own light grade (Calgary gold, the Eaton sunset) set it in _ready.
+	# their own grade (Calgary gold, Winnipeg blue hour) set it in _ready.
 	$Sun.rotation_degrees = Vector3(-50, 30, 0)
 	$Sun.light_color = Color(1, 0.96, 0.88)
 	$Sun.light_energy = 1.2
+	var sky_mat := ($WorldEnvironment.environment as Environment).sky.sky_material as ProceduralSkyMaterial
+	if sky_mat and not _sky_defaults.is_empty():
+		for prop: String in _sky_defaults:
+			sky_mat.set(prop, _sky_defaults[prop])
 	var island: Node3D = load(scene_path).instantiate()
 	add_child(island)
 	current_island = island

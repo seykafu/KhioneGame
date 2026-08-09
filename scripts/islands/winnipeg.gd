@@ -55,6 +55,16 @@ func _ready() -> void:
 	_add_location_trigger(Vector3(-10, 0, 2), 6.0, "The Backyard Rink")
 	_add_location_trigger(Vector3(0, 0, -25), 7.0, "Number Eight")
 	_add_location_trigger(Vector3(-13, 1.0, -27), 7.0, "The Top of the Run")
+	_add_location_trigger(Vector3(38, 0, -28), 9.0, "The Fishing Shacks")
+	_blue_hour()
+	_build_aurora()
+	_build_skyline()
+	_build_frozen_bay()
+	_build_string_lights()
+	_build_buried_cars()
+	_build_rink_gear()
+	_spawn_jackrabbit()
+	_train_horn_loop()
 	for def: Array in [
 		["DriftLine", "res://scripts/puzzles/drift_line.gd"],
 		["RinkMaze", "res://scripts/puzzles/rink_maze.gd"],
@@ -66,6 +76,422 @@ func _ready() -> void:
 		puzzle.name = def[0]
 		puzzle.set_script(load(def[1]))
 		add_child(puzzle)
+
+## Winnipeg lives at blue hour: low cold sun, deep twilight sky, and every
+## warm window and string light earning its keep. travel_to resets both
+## sun and sky between islands, so the grade stays local.
+func _blue_hour() -> void:
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	if mgr == null:
+		return
+	var sun: DirectionalLight3D = mgr.get_node_or_null("Sun")
+	if sun:
+		sun.light_color = Color(0.8, 0.86, 1.05)
+		sun.light_energy = 0.95
+		sun.rotation_degrees = Vector3(-22.0, 55.0, 0.0)
+	var env_node: Node = mgr.get_node_or_null("WorldEnvironment")
+	if env_node:
+		var sky_mat := (env_node.environment as Environment).sky.sky_material as ProceduralSkyMaterial
+		if sky_mat:
+			sky_mat.sky_top_color = Color(0.12, 0.16, 0.32)
+			sky_mat.sky_horizon_color = Color(0.58, 0.46, 0.55)
+			sky_mat.ground_horizon_color = Color(0.44, 0.4, 0.5)
+			sky_mat.ground_bottom_color = Color(0.16, 0.17, 0.26)
+			sky_mat.sky_cover_modulate = Color(0.55, 0.55, 0.7, 0.35)
+
+func _build_aurora() -> void:
+	# Three overlapping curtains over the northern sky, drifting slowly.
+	var noise := FastNoiseLite.new()
+	noise.seed = 77
+	noise.frequency = 0.05
+	noise.fractal_octaves = 3
+	var tex := NoiseTexture2D.new()
+	tex.noise = noise
+	tex.seamless = true
+	tex.width = 512
+	tex.height = 128
+	for def: Array in [
+		[Vector3(-40, 52, -200), 250.0, 55.0, 0.15, 0.022, 0.65],
+		[Vector3(50, 60, -215), 210.0, 48.0, -0.2, 0.016, 0.5],
+		[Vector3(-100, 46, -175), 160.0, 40.0, 0.45, 0.028, 0.4],
+	]:
+		var curtain := MeshInstance3D.new()
+		var quad := QuadMesh.new()
+		quad.size = Vector2(def[1], def[2])
+		curtain.mesh = quad
+		var m := ShaderMaterial.new()
+		m.shader = load("res://shaders/aurora.gdshader")
+		m.set_shader_parameter("band_noise", tex)
+		m.set_shader_parameter("speed", def[4])
+		m.set_shader_parameter("strength", def[5])
+		curtain.material_override = m
+		curtain.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		curtain.position = def[0]
+		var to_center: Vector3 = -(def[0] as Vector3)
+		curtain.rotation.y = atan2(to_center.x, to_center.z) + (def[3] as float) * 0.3
+		add_child(curtain)
+
+func _build_skyline() -> void:
+	# Downtown across the frozen river: modest towers, the Museum for Human
+	# Rights with its lit spire, and the Legislature's dome with a small
+	# golden someone on top.
+	var base := Vector3(150.0, 0.0, 130.0)
+	var glass := StandardMaterial3D.new()
+	glass.albedo_color = Color(0.35, 0.42, 0.55)
+	glass.emission_enabled = true
+	glass.emission = Color(0.95, 0.85, 0.6)
+	glass.emission_energy_multiplier = 0.35
+	for def: Array in [
+		[Vector3(-20, 0, 6), Vector3(7, 24, 7)], [Vector3(-8, 0, -4), Vector3(8, 30, 8)],
+		[Vector3(6, 0, 4), Vector3(6, 20, 6)], [Vector3(18, 0, -6), Vector3(7, 26, 7)],
+		[Vector3(32, 0, 4), Vector3(6, 16, 6)], [Vector3(-34, 0, 2), Vector3(5, 14, 5)],
+	]:
+		var t := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = def[1]
+		t.mesh = box
+		t.material_override = glass
+		t.position = base + (def[0] as Vector3) + Vector3(0, (def[1] as Vector3).y / 2.0 - 1.0, 0)
+		add_child(t)
+	# The museum: a mound of tilted glass planes and the Tower of Hope.
+	var cmhr_base := base + Vector3(46, 0, 14)
+	for k in 4:
+		var pane := MeshInstance3D.new()
+		var pb := BoxMesh.new()
+		pb.size = Vector3(10.0 - k * 1.6, 7.0 + k * 2.4, 6.0 - k * 0.8)
+		pane.mesh = pb
+		pane.material_override = glass
+		pane.position = cmhr_base + Vector3(k * 1.1, pb.size.y / 2.0 - 1.0, -k * 0.6)
+		pane.rotation.y = 0.3 + k * 0.22
+		add_child(pane)
+	var spire := MeshInstance3D.new()
+	spire.mesh = _cyl(0.35, 0.8, 14.0)
+	var sm := StandardMaterial3D.new()
+	sm.albedo_color = Color(0.85, 0.9, 0.95)
+	sm.emission_enabled = true
+	sm.emission = Color(0.9, 0.95, 1.0)
+	sm.emission_energy_multiplier = 0.9
+	spire.material_override = sm
+	spire.position = cmhr_base + Vector3(3.5, 20.0, -1.5)
+	add_child(spire)
+	# The Legislature: colonnade block, dome, Golden Boy.
+	var leg_base := base + Vector3(-52, 0, 12)
+	_add_box(Vector3(12, 7, 8), leg_base + Vector3(0, 2.5, 0), Color(0.55, 0.52, 0.48), false)
+	_add_mesh(_cyl(2.6, 3.2, 4.0), leg_base + Vector3(0, 8.0, 0), Color(0.45, 0.5, 0.45), false)
+	var dome := MeshInstance3D.new()
+	var ds := SphereMesh.new()
+	ds.radius = 2.6
+	ds.height = 3.4
+	dome.mesh = ds
+	dome.material_override = _mat(Color(0.35, 0.5, 0.45))
+	dome.position = leg_base + Vector3(0, 10.8, 0)
+	add_child(dome)
+	var boy := MeshInstance3D.new()
+	var bs := CapsuleMesh.new()
+	bs.radius = 0.35
+	bs.height = 1.6
+	boy.mesh = bs
+	var gold := StandardMaterial3D.new()
+	gold.albedo_color = Color(1.0, 0.85, 0.35)
+	gold.emission_enabled = true
+	gold.emission = Color(1.0, 0.8, 0.3)
+	gold.emission_energy_multiplier = 1.2
+	boy.material_override = gold
+	boy.position = leg_base + Vector3(0, 13.3, 0)
+	add_child(boy)
+
+func _build_frozen_bay() -> void:
+	# The north-east bay froze solid: walkable ice sheets off the shore,
+	# ice-fishing shacks, augered holes, and tip-up flags.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 204
+	for def: Array in [
+		[Vector3(36, 0, -30), 10.0], [Vector3(44, 0, -18), 9.0], [Vector3(30, 0, -38), 7.5],
+	]:
+		var sheet := MeshInstance3D.new()
+		sheet.mesh = _cyl(def[1], def[1], 0.25)
+		var im := StandardMaterial3D.new()
+		im.albedo_color = Color(0.82, 0.89, 0.95)
+		im.roughness = 0.12
+		im.metallic = 0.05
+		sheet.material_override = im
+		sheet.position = (def[0] as Vector3) + Vector3(0, -0.28, 0)
+		add_child(sheet)
+		sheet.create_trimesh_collision()
+	for def: Array in [
+		[Vector3(36, -0.16, -30), Color(0.75, 0.35, 0.3), 0.4],
+		[Vector3(43, -0.16, -20), Color(0.35, 0.55, 0.65), -0.3],
+		[Vector3(31, -0.16, -36), Color(0.7, 0.6, 0.3), 1.1],
+	]:
+		var shack := Node3D.new()
+		shack.position = def[0]
+		shack.rotation.y = def[2]
+		add_child(shack)
+		var body := MeshInstance3D.new()
+		var bb := BoxMesh.new()
+		bb.size = Vector3(1.6, 1.7, 1.9)
+		body.mesh = bb
+		body.material_override = _mat(def[1])
+		body.position = Vector3(0, 0.85, 0)
+		shack.add_child(body)
+		body.create_trimesh_collision()
+		var roof := MeshInstance3D.new()
+		var prism := PrismMesh.new()
+		prism.size = Vector3(1.8, 0.6, 2.1)
+		roof.mesh = prism
+		roof.material_override = _mat((def[1] as Color).darkened(0.35))
+		roof.position = Vector3(0, 2.0, 0)
+		shack.add_child(roof)
+		var cap := MeshInstance3D.new()
+		var cb := BoxMesh.new()
+		cb.size = Vector3(1.85, 0.1, 1.1)
+		cap.mesh = cb
+		cap.material_override = _mat(SNOW)
+		cap.position = Vector3(0, 2.28, 0.5)
+		cap.rotation.x = -0.5
+		shack.add_child(cap)
+		var pipe := MeshInstance3D.new()
+		pipe.mesh = _cyl(0.07, 0.07, 0.7)
+		pipe.material_override = _mat(Color(0.25, 0.25, 0.28))
+		pipe.position = Vector3(0.5, 2.4, -0.4)
+		shack.add_child(pipe)
+		var window := MeshInstance3D.new()
+		var wb := BoxMesh.new()
+		wb.size = Vector3(0.5, 0.4, 0.06)
+		window.mesh = wb
+		var wm := StandardMaterial3D.new()
+		wm.albedo_color = Color(1.0, 0.85, 0.55)
+		wm.emission_enabled = true
+		wm.emission = Color(1.0, 0.8, 0.5)
+		wm.emission_energy_multiplier = 1.0
+		window.material_override = wm
+		window.position = Vector3(0, 1.1, 0.98)
+		shack.add_child(window)
+	# Augered holes and tip-up flags on the open ice.
+	for i in 5:
+		var p := Vector3(rng.randf_range(28.0, 46.0), -0.14, rng.randf_range(-38.0, -18.0))
+		var hole := _add_mesh(_cyl(0.22, 0.22, 0.04), p, Color(0.1, 0.16, 0.24), false)
+		hole.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if i % 2 == 0:
+			_add_mesh(_cyl(0.02, 0.02, 0.8), p + Vector3(0.3, 0.4, 0), Color(0.7, 0.65, 0.55), false)
+			_add_box(Vector3(0.03, 0.12, 0.2), p + Vector3(0.3, 0.85, 0.1), Color(0.9, 0.3, 0.25), false)
+
+func _build_string_lights() -> void:
+	# Holiday strings sag between the crescent houses and ring the rink.
+	var bulb_colors := [Color(1.0, 0.4, 0.35), Color(0.4, 0.85, 0.5), Color(1.0, 0.8, 0.4),
+			Color(0.45, 0.6, 1.0), Color(0.9, 0.5, 0.9)]
+	for i in HOUSE_ANGLES.size() - 1:
+		var a1: float = HOUSE_ANGLES[i]
+		var a2: float = HOUSE_ANGLES[i + 1]
+		var p1 := Vector3(cos(a1) * HOUSE_R, 0, sin(a1) * HOUSE_R)
+		var p2 := Vector3(cos(a2) * HOUSE_R, 0, sin(a2) * HOUSE_R)
+		p1.y = _terrain_height(p1.x, p1.z) + 3.1
+		p2.y = _terrain_height(p2.x, p2.z) + 3.1
+		_light_string(p1, p2, bulb_colors)
+	# Around the rink: two poles and a double run.
+	var pole_a := Vector3(-13.8, 0.35, -0.9)
+	var pole_b := Vector3(-6.2, 0.35, 4.9)
+	for pole: Vector3 in [pole_a, pole_b]:
+		_add_mesh(_cyl(0.05, 0.07, 2.6), pole + Vector3(0, 1.3, 0), Color(0.35, 0.3, 0.26))
+	_light_string(pole_a + Vector3(0, 2.5, 0), pole_b + Vector3(0, 2.5, 0), bulb_colors)
+
+func _light_string(from: Vector3, to: Vector3, bulb_colors: Array) -> void:
+	var segments := 10
+	var prev := from
+	for k in range(1, segments + 1):
+		var t := k / float(segments)
+		var p := from.lerp(to, t)
+		p.y -= sin(t * PI) * 0.55  # the sag
+		var cable := MeshInstance3D.new()
+		cable.mesh = _cyl(0.012, 0.012, prev.distance_to(p))
+		cable.material_override = _mat(Color(0.2, 0.2, 0.22))
+		cable.position = (prev + p) / 2.0
+		var dir := (p - prev).normalized()
+		var axis := Vector3.UP.cross(dir)
+		if axis.length() > 0.001:
+			cable.rotate(axis.normalized(), Vector3.UP.angle_to(dir))
+		add_child(cable)
+		if k < segments:
+			var bulb := MeshInstance3D.new()
+			var bs := SphereMesh.new()
+			bs.radius = 0.05
+			bs.height = 0.1
+			bulb.mesh = bs
+			var color: Color = bulb_colors[k % bulb_colors.size()]
+			var bm := StandardMaterial3D.new()
+			bm.albedo_color = color
+			bm.emission_enabled = true
+			bm.emission = color
+			bm.emission_energy_multiplier = 1.6
+			bulb.material_override = bm
+			bulb.position = p + Vector3(0, -0.06, 0)
+			add_child(bulb)
+		prev = p
+
+func _build_buried_cars() -> void:
+	# Cars that have not moved since November, wearing thick snow duvets.
+	for def: Array in [
+		[Vector3(18.5, 0.35, 8.0), 0.9, Color(0.45, 0.3, 0.3)],
+		[Vector3(-19.0, 0.35, 9.5), -0.7, Color(0.3, 0.4, 0.5)],
+	]:
+		var car := Node3D.new()
+		car.position = def[0]
+		car.rotation.y = def[1]
+		add_child(car)
+		var body := MeshInstance3D.new()
+		var bb := BoxMesh.new()
+		bb.size = Vector3(1.7, 0.55, 3.4)
+		body.mesh = bb
+		body.material_override = _mat(def[2])
+		body.position = Vector3(0, 0.55, 0)
+		car.add_child(body)
+		body.create_trimesh_collision()
+		var cabin := MeshInstance3D.new()
+		var cb := BoxMesh.new()
+		cb.size = Vector3(1.5, 0.5, 1.7)
+		cabin.mesh = cb
+		cabin.material_override = _mat((def[2] as Color).darkened(0.25))
+		cabin.position = Vector3(0, 1.05, -0.2)
+		car.add_child(cabin)
+		var duvet := MeshInstance3D.new()
+		var dsz := BoxMesh.new()
+		dsz.size = Vector3(1.75, 0.22, 3.45)
+		duvet.mesh = dsz
+		duvet.material_override = _mat(SNOW)
+		duvet.position = Vector3(0, 0.95, 0)
+		car.add_child(duvet)
+		var cabin_snow := MeshInstance3D.new()
+		var csz := BoxMesh.new()
+		csz.size = Vector3(1.55, 0.18, 1.75)
+		cabin_snow.mesh = csz
+		cabin_snow.material_override = _mat(SNOW)
+		cabin_snow.position = Vector3(0, 1.38, -0.2)
+		car.add_child(cabin_snow)
+		for s: Array in [[-0.75, 1.1], [0.75, 1.1], [-0.75, -1.1], [0.75, -1.1]]:
+			var wheel := MeshInstance3D.new()
+			wheel.mesh = _cyl(0.3, 0.3, 0.2)
+			wheel.material_override = _mat(Color(0.15, 0.15, 0.17))
+			wheel.rotation.z = PI / 2.0
+			wheel.position = Vector3(s[0], 0.3, s[1])
+			car.add_child(wheel)
+
+func _build_rink_gear() -> void:
+	# Hockey nets at both ends, sticks against the boards.
+	for def: Array in [[Vector3(-13.0, 0.4, 2.0), PI / 2.0], [Vector3(-7.0, 0.4, 2.0), -PI / 2.0]]:
+		var net := Node3D.new()
+		net.position = def[0]
+		net.rotation.y = def[1]
+		add_child(net)
+		var frame_col := Color(0.8, 0.25, 0.2)
+		for part: Array in [
+			[Vector3(0.06, 0.75, 0.06), Vector3(-0.6, 0.37, 0)],
+			[Vector3(0.06, 0.75, 0.06), Vector3(0.6, 0.37, 0)],
+			[Vector3(1.26, 0.06, 0.06), Vector3(0, 0.75, 0)],
+		]:
+			var bar := MeshInstance3D.new()
+			var bb := BoxMesh.new()
+			bb.size = part[0]
+			bar.mesh = bb
+			bar.material_override = _mat(frame_col)
+			bar.position = part[1]
+			net.add_child(bar)
+		var mesh_panel := MeshInstance3D.new()
+		var mb := BoxMesh.new()
+		mb.size = Vector3(1.2, 0.7, 0.5)
+		mesh_panel.mesh = mb
+		var mm := StandardMaterial3D.new()
+		mm.albedo_color = Color(0.9, 0.9, 0.9, 0.25)
+		mm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mesh_panel.material_override = mm
+		mesh_panel.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mesh_panel.position = Vector3(0, 0.37, -0.25)
+		net.add_child(mesh_panel)
+	for i in 2:
+		var stick := _add_box(Vector3(0.05, 1.3, 0.05), Vector3(-6.4, 0.9, 4.0 + i * 0.3), Color(0.6, 0.48, 0.32), false)
+		stick.rotation.z = 0.4
+		var blade := _add_box(Vector3(0.05, 0.3, 0.12), Vector3(-6.15, 0.35, 4.0 + i * 0.3), Color(0.6, 0.48, 0.32), false)
+		blade.rotation.z = 1.2
+
+func _spawn_jackrabbit() -> void:
+	# A white prairie hare: nibbles, notices, and is somewhere else.
+	var rabbit := Node3D.new()
+	var body := MeshInstance3D.new()
+	var bs := SphereMesh.new()
+	bs.radius = 0.16
+	bs.height = 0.28
+	body.mesh = bs
+	body.scale = Vector3(1.0, 1.0, 1.5)
+	body.material_override = _mat(Color(0.96, 0.96, 0.98))
+	body.position.y = 0.16
+	rabbit.add_child(body)
+	var head := MeshInstance3D.new()
+	var hs := SphereMesh.new()
+	hs.radius = 0.09
+	hs.height = 0.16
+	head.mesh = hs
+	head.material_override = _mat(Color(0.96, 0.96, 0.98))
+	head.position = Vector3(0, 0.3, 0.2)
+	rabbit.add_child(head)
+	for s in [-0.04, 0.04]:
+		var ear := MeshInstance3D.new()
+		var es := CapsuleMesh.new()
+		es.radius = 0.025
+		es.height = 0.2
+		ear.mesh = es
+		ear.material_override = _mat(Color(0.9, 0.88, 0.9))
+		ear.position = Vector3(s, 0.46, 0.17)
+		ear.rotation.x = -0.15
+		rabbit.add_child(ear)
+	rabbit.position = Vector3(24.0, 0.35, 18.0)
+	add_child(rabbit)
+	_rabbit_brain(rabbit)
+
+func _rabbit_brain(rabbit: Node3D) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 505
+	var loop := func() -> void:
+		while is_inside_tree():
+			await get_tree().create_timer(0.35).timeout
+			if not is_inside_tree() or not is_instance_valid(rabbit):
+				return
+			var player: Node3D = get_tree().get_first_node_in_group("player")
+			if player and player.global_position.distance_to(rabbit.global_position) < 5.0:
+				# Three bounds to somewhere safer, then back to nibbling.
+				var away := (rabbit.global_position - player.global_position).normalized()
+				away.y = 0
+				var t := rabbit.create_tween()
+				for hop in 3:
+					var to := rabbit.position + away.rotated(Vector3.UP, rng.randf_range(-0.5, 0.5)) \
+							* rng.randf_range(2.2, 3.2)
+					to.x = clampf(to.x, -34.0, 34.0)
+					to.z = clampf(to.z, -34.0, 34.0)
+					to.y = _terrain_height(to.x, to.z)
+					var mid := (rabbit.position + to) / 2.0 + Vector3(0, 0.8, 0)
+					t.tween_property(rabbit, "position", mid, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+					t.tween_property(rabbit, "position", to, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+				await t.finished
+				await get_tree().create_timer(1.5).timeout
+	loop.call()
+
+func _train_horn_loop() -> void:
+	# Somewhere south, a freight crosses the night. Winnipeg keeps time by it.
+	var horn := AudioStreamPlayer3D.new()
+	horn.stream = load("res://assets/audio/train_horn.wav")
+	horn.position = Vector3(30, 3.0, 90)
+	horn.volume_db = -8.0
+	horn.max_distance = 220.0
+	horn.bus = "SFX"
+	add_child(horn)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 909
+	var loop := func() -> void:
+		while is_inside_tree():
+			await get_tree().create_timer(rng.randf_range(95.0, 170.0)).timeout
+			if not is_inside_tree():
+				return
+			horn.pitch_scale = rng.randf_range(0.94, 1.02)
+			horn.play()
+	loop.call()
 
 func _near_run(p: Vector2) -> bool:
 	for i in RUN_PATH.size() - 1:
@@ -721,9 +1147,10 @@ func _prairie_squall() -> void:
 		if _sun_tween and _sun_tween.is_valid():
 			_sun_tween.kill()
 		_sun_tween = create_tween()
-		_sun_tween.tween_property(sun, "light_color", Color(0.78, 0.86, 1.0), 2.5)
+		_sun_tween.tween_property(sun, "light_color", Color(0.82, 0.9, 1.1), 2.5)
 		_sun_tween.tween_interval(6.0)
-		_sun_tween.tween_property(sun, "light_color", Color(0.92, 0.94, 1.0), 3.0)
+		# Back to the island's blue-hour grade, not daylight.
+		_sun_tween.tween_property(sun, "light_color", Color(0.72, 0.8, 1.0), 3.0)
 	var hud := get_node_or_null("../HUD")
 	if hud and not _visited_locations.has("_squall_seen"):
 		_visited_locations["_squall_seen"] = true

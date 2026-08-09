@@ -94,7 +94,34 @@ func _run() -> void:
 		cam.look_at(Vector3(t[0], t[1], t[2]))
 		cam.current = true
 	await get_tree().create_timer(wait_s).timeout
-	var img := get_viewport().get_texture().get_image()
-	img.save_png(out)
+	# Diagnostics: any high overlay still up at capture time is worth knowing.
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	if mgr:
+		for c in mgr.get_children():
+			if c is CanvasLayer and c.layer >= 10:
+				for r in c.get_children():
+					if r is ColorRect:
+						print("overlay layer=", c.layer, " alpha=%.2f" % r.color.a)
+	print("tree paused=", get_tree().paused)
+	# This Metal driver sometimes returns a pre-tonemap (dark) buffer from
+	# the viewport readback. Grab several frames and keep the brightest.
+	var best: Image = null
+	var best_lum := -1.0
+	for attempt in 5:
+		var img := get_viewport().get_texture().get_image()
+		var probe := img.duplicate()
+		probe.resize(32, 18, Image.INTERPOLATE_NEAREST)
+		var lum := 0.0
+		for y in 18:
+			for x in 32:
+				var c: Color = probe.get_pixel(x, y)
+				lum += c.r + c.g + c.b
+		print("capture attempt ", attempt, " lum=%.1f" % lum)
+		if lum > best_lum:
+			best_lum = lum
+			best = img
+		if attempt < 4:
+			await get_tree().create_timer(0.2).timeout
+	best.save_png(out)
 	print("snapshot saved: ", out)
 	get_tree().quit()
