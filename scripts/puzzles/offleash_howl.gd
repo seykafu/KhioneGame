@@ -364,33 +364,108 @@ func _join() -> void:
 # --- the shove-off ---
 
 func canoe_interact() -> void:
-	if _departing or GameState.get_flag("island3_complete"):
+	if _departing:
 		return
 	if not GameState.get_flag("oreo_joined"):
 		_flash("Beached hard on the gravel. Far too heavy for one small cat.", 3.5)
 		return
 	_departing = true
+	var first := not GameState.get_flag("island3_complete")
 	var island := get_parent()
 	var canoe: Node3D = island.get_node_or_null("Canoe")
-	_oreo.move_to(Vector3(3.2, 0.35, 37.2))
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	var oreo: Node3D = get_tree().get_first_node_in_group("oreo")
+	if canoe == null or player == null or oreo == null:
+		_departing = false
+		return
+	player.set("controls_enabled", false)
+	player.set_physics_process(false)
+	oreo.set("following", false)
+	oreo.call("move_to", Vector3(3.2, 0.35, 37.2))
 	var seq := create_tween()
 	seq.tween_interval(1.6)
 	seq.tween_callback(func() -> void:
 		Sfx.play("bark", 1.0, 0.0, -10.0)
-		if canoe:
-			var shove := create_tween()
-			shove.tween_property(canoe, "position", canoe.position + Vector3(-0.6, -0.35, 4.5), 1.4) \
-					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		var shove := create_tween()
+		shove.tween_property(canoe, "position",
+				Vector3(2.8, WATER_LINE + 0.12, 42.0), 1.5) \
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		shove.parallel().tween_property(canoe, "rotation:y", -PI / 2.0, 1.5)
 		Sfx.play("splash", 1.0, 0.05, -8.0))
-	seq.tween_interval(1.8)
+	seq.tween_interval(1.7)
 	seq.tween_callback(func() -> void:
-		_show_fragment()
-		GameState.set_flag("letter_fragment_3")
-		GameState.set_flag("island3_complete"))
-	seq.tween_interval(5.5)
-	seq.tween_callback(func() -> void:
+		_set_sail(first, canoe, player, oreo))
+
+const WATER_LINE := -0.4
+
+## The two of them board, and paddle out east over the Bow together. The
+## first sail carries the fragment; every later one is simply the way to
+## Winnipeg.
+func _set_sail(first: bool, canoe: Node3D, player: Node3D, oreo: Node3D) -> void:
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.current = true
+	# Board: she takes the stern, he takes the bow. Obviously.
+	var board := create_tween()
+	board.set_parallel(true)
+	board.tween_property(player, "global_position",
+			canoe.global_position + Vector3(0, 0.55, -0.5), 0.8) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	board.tween_property(oreo, "global_position",
+			canoe.global_position + Vector3(0, 0.5, 0.9), 0.8) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	board.chain().tween_callback(func() -> void:
+		Sfx.play("bark", 1.1, 0.0, -10.0)
+		if first:
+			_show_fragment()
+			GameState.set_flag("letter_fragment_3")
+			GameState.set_flag("island3_complete")
+		else:
+			_flash("East again. The water remembers them.", 3.5)
+		_paddle_out(canoe, player, oreo, cam))
+
+func _paddle_out(canoe: Node3D, player: Node3D, oreo: Node3D, cam: Camera3D) -> void:
+	var route: Array[Vector3] = [
+		canoe.global_position,
+		Vector3(3.5, WATER_LINE + 0.12, 52.0),
+		Vector3(6.0, WATER_LINE + 0.12, 64.0),
+		Vector3(11.0, WATER_LINE + 0.12, 78.0),
+	]
+	# Paddle strokes keep the rhythm the whole way out.
+	var strokes := create_tween().set_loops(6)
+	strokes.tween_interval(1.35)
+	strokes.tween_callback(func() -> void:
+		Sfx.play("swim_stroke", 0.85, 0.08, -10.0))
+	var sail := create_tween()
+	var step := func(u: float) -> void:
+		var f := u * (route.size() - 1)
+		var i := clampi(int(f), 0, route.size() - 2)
+		var p := route[i].lerp(route[i + 1], f - i)
+		var nxt := route[mini(i + 2, route.size() - 1)]
+		var dir := (nxt - p).normalized()
+		var bob := sin(u * 26.0) * 0.05
+		canoe.global_position = p + Vector3(0, bob, 0)
+		canoe.rotation = Vector3(0, atan2(-dir.z, dir.x), PI / 2.0)
+		player.global_position = p + Vector3(0, 0.55 + bob, 0) - dir * 0.5
+		player.rotation.y = atan2(dir.x, dir.z)
+		oreo.global_position = p + Vector3(0, 0.5 + bob, 0) + dir * 0.9
+		oreo.rotation.y = atan2(dir.x, dir.z)
+		cam.global_position = p - dir * 6.5 + Vector3(-1.5, 2.4, 0)
+		cam.look_at(p + dir * 3.0)
+	sail.tween_method(step, 0.0, 1.0, 9.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	sail.tween_callback(func() -> void:
+		# Hand back control an instant before the crossing: travel resets
+		# positions, spawns them on the Winnipeg dock, and fades in.
+		player.set_physics_process(true)
+		player.set("controls_enabled", true)
+		var pcam: Camera3D = player.get("rig").get_node("SpringArm/Camera")
+		pcam.current = true
+		oreo.set("following", true)
 		_departing = false
-		_flash("Prince's Island hums with summer behind them. Somewhere east, winter is waiting.", 6.0))
+		var mgr := get_tree().get_first_node_in_group("island_manager")
+		if mgr:
+			mgr.travel_to("res://scenes/islands/winnipeg.tscn", Vector3(0, 1.2, 42.0),
+					"winnipeg", "The Winnipeg Crescent"))
 
 func _show_fragment() -> void:
 	Sfx.play("paper_open", 1.0, 0.05, -6.0)

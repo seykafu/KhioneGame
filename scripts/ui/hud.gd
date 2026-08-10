@@ -377,7 +377,7 @@ func _current_objective_text() -> String:
 			return "Six gates under the drifts, marked by little red flags. She marks, he digs. Then: the ride."
 		if mgr and mgr.current_island and mgr.current_island.name == "Calgary":
 			if GameState.get_flag("island3_complete"):
-				return "Prince's Island hums with summer, two friends in a canoe. Winter waits east: Winnipeg. (travel from the pause menu)"
+				return "Prince's Island hums with summer. The canoe by the gravel bar knows the way east, whenever they are ready."
 			if not GameState.get_flag("regatta_done"):
 				return "Paper boats lie becalmed on the lagoon. The cottonwood fluff knows when the breeze comes… and the little weir decides what passes the narrows."
 			if not GameState.get_flag("ice_cream_done"):

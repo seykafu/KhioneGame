@@ -13,7 +13,10 @@ const RING_WINDOW := 6.0
 var _rings := 0
 var _window_left := 0.0
 var _hatch: MeshInstance3D
+var _bell_speaker: AudioStreamPlayer3D
 var _materials := {}
+
+const BELL_POS := Vector3(3.45, 1.95, 14.2)  # the little brass dome, world space
 
 class BellPlate:
 	extends Interactable
@@ -35,6 +38,14 @@ func _ready() -> void:
 	# The hatch on the cart's front, shut tight.
 	_hatch = _box(Vector3(0.9, 0.6, 0.06), CART_POS + Vector3(0, 0.62, 0.49), Color(0.8, 0.78, 0.74))
 	_hatch.create_trimesh_collision()
+	# The bell gets its own voice, right where it hangs: unmissable.
+	_bell_speaker = AudioStreamPlayer3D.new()
+	_bell_speaker.stream = load("res://assets/audio/bell_ding.wav")
+	_bell_speaker.position = BELL_POS
+	_bell_speaker.volume_db = 2.0
+	_bell_speaker.max_distance = 40.0
+	_bell_speaker.bus = "SFX"
+	add_child(_bell_speaker)
 	var plate := BellPlate.new()
 	plate.owner_puzzle = self
 	plate.position = CART_POS + Vector3(0.45, 1.6, 0.2)
@@ -45,6 +56,29 @@ func _ready() -> void:
 	plate.add_child(cs)
 	add_child(plate)
 
+func _ring(pitch: float) -> void:
+	_bell_speaker.pitch_scale = pitch
+	_bell_speaker.play()
+	Sfx.play("bell_ding", pitch, 0.02, -10.0)  # doubled globally, so it always lands
+	# A visible ring of sound leaving the bell.
+	var ripple := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.14
+	torus.outer_radius = 0.18
+	ripple.mesh = torus
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(1.0, 0.9, 0.5, 0.7)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ripple.material_override = m
+	ripple.position = BELL_POS
+	add_child(ripple)
+	var t := ripple.create_tween()
+	t.set_parallel(true)
+	t.tween_property(ripple, "scale", Vector3(4.0, 4.0, 4.0), 0.55)
+	t.tween_property(m, "albedo_color:a", 0.0, 0.55)
+	t.chain().tween_callback(ripple.queue_free)
+
 func _process(delta: float) -> void:
 	if _window_left > 0.0:
 		_window_left -= delta
@@ -53,7 +87,7 @@ func _process(delta: float) -> void:
 
 func bell_interact() -> void:
 	if GameState.get_flag("ice_cream_done"):
-		Sfx.play("bell_ding", 1.0, 0.03, -8.0)
+		_ring(1.0)
 		_flash("The bell rings bright and clear. Somewhere, an old routine smiles.", 3.0)
 		return
 	if not GameState.get_flag("bell_fixed"):
@@ -63,14 +97,14 @@ func bell_interact() -> void:
 			Inventory.remove_item("brass_clapper")
 			GameState.set_flag("bell_fixed")
 			Sfx.play("pickup_chime", 1.0, 0.0, -10.0)
-			Sfx.play("bell_ding", 0.9, 0.0, -10.0)
+			_ring(0.9)
 			_flash("The clapper seats with a click. The bell has its voice back… and the cart wears four painted notes.", 4.5)
 			return
 		_flash("A little brass bell, silent. Its clapper is missing, and the lagoon keeps its secrets.", 3.5)
 		return
 	# Ring, and count the round.
 	_rings += 1
-	Sfx.play("bell_ding", 1.0 + 0.04 * _rings, 0.02, -6.0)
+	_ring(1.0 + 0.04 * _rings)
 	if _rings == 1:
 		_window_left = RING_WINDOW
 	elif _rings > RING_TARGET:

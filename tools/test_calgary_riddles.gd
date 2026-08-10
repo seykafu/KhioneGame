@@ -129,12 +129,21 @@ func _run() -> void:
 	assert(oreo.global_position.distance_to(player.global_position) < 8.0, "Oreo should catch up")
 	print("oreo joins + follows: OK")
 
-	# The canoe shove-off.
+	# The shove-off: they board, the fragment slips loose, and then the two
+	# of them actually sail east and land on the Winnipeg dock.
 	howl.canoe_interact()
-	await get_tree().create_timer(5.0).timeout
+	await get_tree().create_timer(8.0).timeout
 	assert(GameState.get_flag("letter_fragment_3"), "fragment 3 should slip loose")
 	assert(GameState.get_flag("island3_complete"), "island 3 should complete")
 	assert(Inventory.max_slots == 8, "satchel should grow to 8 pockets")
 	print("canoe departure: OK")
+	await get_tree().create_timer(9.0).timeout
+	assert(main.current_island != null and main.current_island.name == "Winnipeg",
+			"the sail should land them on island 4")
+	var oreo_after: Node3D = get_tree().get_first_node_in_group("oreo")
+	assert(oreo_after != null and oreo_after.following, "Oreo should arrive following")
+	assert(player.global_position.distance_to(Vector3(0, 1.2, 42.0)) < 4.0,
+			"the player should stand on the Winnipeg dock")
+	print("sail to Winnipeg: OK")
 	print("ALL CALGARY RIDDLE TESTS PASSED")
 	get_tree().quit()
