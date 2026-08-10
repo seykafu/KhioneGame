@@ -402,6 +402,7 @@ const WATER_LINE := -0.4
 ## first sail carries the fragment; every later one is simply the way to
 ## Winnipeg.
 func _set_sail(first: bool, canoe: Node3D, player: Node3D, oreo: Node3D) -> void:
+	oreo.set("scripted", true)
 	var cam := Camera3D.new()
 	add_child(cam)
 	cam.current = true
@@ -460,6 +461,7 @@ func _paddle_out(canoe: Node3D, player: Node3D, oreo: Node3D, cam: Camera3D) -> 
 		player.set("controls_enabled", true)
 		var pcam: Camera3D = player.get("rig").get_node("SpringArm/Camera")
 		pcam.current = true
+		oreo.set("scripted", false)
 		oreo.set("following", true)
 		_departing = false
 		var mgr := get_tree().get_first_node_in_group("island_manager")

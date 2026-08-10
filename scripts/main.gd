@@ -89,6 +89,7 @@ func _sync_oreo(spawn: Vector3) -> void:
 	elif oreo.get_parent() != self:
 		oreo.reparent(self)
 	oreo.set("following", true)
+	oreo.set("scripted", false)
 	oreo.set("_stay", false)
 	oreo.set("_move_target", Vector3.INF)
 	oreo.global_position = spawn + Vector3(1.3, 0, 1.0)

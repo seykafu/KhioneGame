@@ -169,6 +169,7 @@ func _the_ride() -> void:
 	player.set_physics_process(false)
 	if oreo:
 		oreo.set("following", false)
+		oreo.set("scripted", true)
 	# Densify the run into a smooth ride curve.
 	var pts: Array[Vector2] = []
 	for i in _path.size() - 1:
@@ -274,6 +275,7 @@ func _burst_cellar(player: Node3D, oreo: Node3D, cam: Camera3D, spray: Node3D) -
 		pcam.current = true
 		cam.queue_free()
 		if oreo:
+			oreo.set("scripted", false)
 			oreo.set("following", true)
 		_riding = false
 		_flash("The crescent sleeps under brand-new tracks. Somewhere warm, an indoor sea is waiting. (Island 5 coming soon)", 6.0))

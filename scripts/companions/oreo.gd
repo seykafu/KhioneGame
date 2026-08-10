@@ -9,7 +9,10 @@ const CATCH_UP_DIST := 1.7
 const RUN_SPEED := 4.8
 
 var following := false
+var scripted := false   # cinematics (sled, canoe) own his position entirely
 var _mgr: Node = null
+var _swimming := false
+var _stroke_timer := 0.0
 var _tail: Node3D
 var _body: MeshInstance3D
 var _ear_l: Node3D
@@ -324,6 +327,8 @@ func _do_dig() -> void:
 		_dig_target = null)
 
 func _process(delta: float) -> void:
+	if scripted:
+		return
 	if _digging:
 		_settle_legs_only(delta)
 		return
@@ -365,34 +370,88 @@ func _process(delta: float) -> void:
 		global_position.z = target.z
 		return
 	var want_speed := clampf(RUN_SPEED + (flat.length() - 4.0) * 1.2, RUN_SPEED, 11.0)
+	if _swimming:
+		want_speed = minf(want_speed, 2.8)  # dog paddle, not dog sprint
 	_cur_speed = lerpf(_cur_speed, want_speed, minf(6.0 * delta, 1.0))
 	var step := flat.normalized() * minf(_cur_speed * delta, flat.length())
 	global_position.x += step.x
 	global_position.z += step.y
 	rotation.y = lerp_angle(rotation.y, atan2(step.x, step.y), minf(8.0 * delta, 1.0))
-	# The trot: diagonal leg pairs swing opposite ways from the hip, the
-	# body rides a soft double-beat bounce and rocks a little, and it all
-	# eases out again at rest.
-	_run_phase += delta * (6.0 + _cur_speed * 0.6)
-	for i in _hips.size():
-		var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
-		_hips[i].rotation.x = sin(phase) * 0.6
-	_body.rotation.z = sin(_run_phase) * 0.05
-	_tail.rotation.x = -0.12 + sin(_run_phase * 0.5) * 0.08  # tail rides the gait
-	if not _hopping:
-		global_position.y = maxf(_ground_at(global_position), 0.0) \
-				+ pow(absf(sin(_run_phase)), 2.0) * 0.05
+	_update_water_state(delta, true)
+	if _swimming:
+		# The dog paddle: quick shallow strokes, nose up, tail flat astern.
+		_run_phase += delta * 11.0
+		for i in _hips.size():
+			var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
+			_hips[i].rotation.x = 0.35 + sin(phase) * 0.28
+		_body.rotation.z = 0.0
+		_body.rotation.x = PI / 2.0 - 0.1
+		_tail.rotation.x = -0.5
+		if not _hopping:
+			global_position.y = _rest_height() + sin(_run_phase * 0.5) * 0.035
+	else:
+		# The trot: diagonal leg pairs swing opposite ways from the hip,
+		# the body rides a soft double-beat bounce and rocks a little.
+		_run_phase += delta * (6.0 + _cur_speed * 0.6)
+		for i in _hips.size():
+			var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
+			_hips[i].rotation.x = sin(phase) * 0.6
+		_body.rotation.z = sin(_run_phase) * 0.05
+		_body.rotation.x = PI / 2.0
+		_tail.rotation.x = -0.12 + sin(_run_phase * 0.5) * 0.08
+		if not _hopping:
+			global_position.y = _rest_height() + pow(absf(sin(_run_phase)), 2.0) * 0.05
 
 func _settle(delta: float) -> void:
 	# At rest: legs straighten under the hips, the body levels, and he
-	# eases down onto the grass.
+	# eases down onto the grass — or treads water where there is no ground.
 	_cur_speed = lerpf(_cur_speed, 0.0, minf(6.0 * delta, 1.0))
+	_update_water_state(delta, false)
+	if _swimming:
+		_run_phase += delta * 7.0
+		for i in _hips.size():
+			var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
+			_hips[i].rotation.x = 0.3 + sin(phase) * 0.18
+		_body.rotation.x = PI / 2.0 - 0.1
+		if not _hopping:
+			global_position.y = lerpf(global_position.y,
+					_rest_height() + sin(_run_phase * 0.5) * 0.03, minf(8.0 * delta, 1.0))
+		return
 	_settle_legs_only(delta)
 	_body.rotation.z = lerpf(_body.rotation.z, 0.0, minf(10.0 * delta, 1.0))
+	_body.rotation.x = lerp_angle(_body.rotation.x, PI / 2.0, minf(8.0 * delta, 1.0))
 	_tail.rotation.x = lerpf(_tail.rotation.x, 0.0, minf(6.0 * delta, 1.0))
 	if not _hopping:
-		var ground := maxf(_ground_at(global_position), 0.0)
-		global_position.y = lerpf(global_position.y, ground, minf(10.0 * delta, 1.0))
+		global_position.y = lerpf(global_position.y, _rest_height(), minf(10.0 * delta, 1.0))
+
+## Where his feet (or belly) want to be right here: the ground when it is
+## above the waterline, the swim line when it is not.
+func _rest_height() -> float:
+	var ground := _ground_at(global_position)
+	var wl := _water_level()
+	if ground < wl - 0.05:
+		return wl + 0.16  # chest at the surface, nose well clear
+	return ground
+
+func _water_level() -> float:
+	var isl: Node = _mgr.current_island if (_mgr and "current_island" in _mgr) else get_parent()
+	if isl and "WATER_SURFACE_Y" in isl:
+		return isl.WATER_SURFACE_Y
+	return -0.4
+
+func _update_water_state(delta: float, moving: bool) -> void:
+	var was := _swimming
+	_swimming = _ground_at(global_position) < _water_level() - 0.05
+	if _swimming and not was:
+		Sfx.play("splash", 0.9, 0.08, -8.0)
+	elif was and not _swimming:
+		Sfx.play("paw_sand", 1.1, 0.1, -12.0)
+		_stroke_timer = 0.0
+	if _swimming and moving:
+		_stroke_timer -= delta
+		if _stroke_timer <= 0.0:
+			_stroke_timer = 0.85
+			Sfx.play("swim_stroke", 1.1, 0.1, -14.0)
 
 func _settle_legs_only(delta: float) -> void:
 	for hip in _hips:

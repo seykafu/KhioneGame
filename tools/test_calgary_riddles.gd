@@ -129,6 +129,16 @@ func _run() -> void:
 	assert(oreo.global_position.distance_to(player.global_position) < 8.0, "Oreo should catch up")
 	print("oreo joins + follows: OK")
 
+	# He swims: follow her offshore and he settles INTO the water, dog
+	# paddling — never hovering above it at y=0 (the old clamp bug).
+	player.global_position = Vector3(10, -0.1, 60)
+	await get_tree().create_timer(5.0).timeout
+	assert(oreo.global_position.y < -0.05 and oreo.global_position.y > -0.45,
+			"Oreo should swim at the waterline, not float above it (y=%.2f)" % oreo.global_position.y)
+	print("oreo swims: OK")
+	player.global_position = Vector3(2, 1.0, 38)
+	await get_tree().create_timer(3.0).timeout
+
 	# The shove-off: they board, the fragment slips loose, and then the two
 	# of them actually sail east and land on the Winnipeg dock.
 	howl.canoe_interact()
