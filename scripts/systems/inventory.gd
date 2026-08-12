@@ -124,3 +124,17 @@ func reset() -> void:
 	stacks.clear()
 	max_slots = BASE_SLOTS
 	changed.emit()
+
+## Rebuilds the satchel from a save: contents verbatim, pocket count
+## recomputed from the completed-island flags already restored.
+func restore(saved_stacks: Array) -> void:
+	stacks.clear()
+	for s in saved_stacks:
+		if s is Dictionary and s.has("id"):
+			stacks.append({"id": s.id, "count": int(s.get("count", 1))})
+	var completed := 0
+	for f in GameState.flags:
+		if String(f).begins_with("island") and String(f).ends_with("_complete") and GameState.flags[f]:
+			completed += 1
+	max_slots = BASE_SLOTS + completed
+	changed.emit()

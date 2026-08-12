@@ -69,6 +69,7 @@ func travel_to(scene_path: String, spawn: Vector3, track: String, display_name: 
 		player.set("velocity", Vector3.ZERO)
 		player.set_spawn(spawn)
 	Music.play(track, 3.0)
+	GameState.record_island(track)
 	_sync_oreo(spawn)
 	_arrival_fade()
 	var hud := get_node_or_null("HUD")

@@ -57,14 +57,58 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == State.TITLE:
+		# With a save on file: Enter continues the journey, N starts over.
+		if GameState.has_save() and event is InputEventKey and event.pressed \
+				and (event as InputEventKey).physical_keycode == KEY_N:
+			GameState.clear_save()
+			GameState.reset()
+			Inventory.reset()
+			title_prompt.text = "press Enter"
+			Sfx.play("paper_close", 1.0, 0.0, -10.0)
+			return
 		var clicked: bool = event is InputEventMouseButton and event.is_pressed()
 		if clicked or event.is_action_pressed("interact") or event.is_action_pressed("jump") \
 				or event.is_action_pressed("ui_accept"):
-			_start_cinematic()
+			if GameState.has_save():
+				_continue_game()
+			else:
+				_start_cinematic()
 	elif _state == State.CINEMATIC:
 		if event.is_action_pressed("interact") or event.is_action_pressed("jump") \
 				or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_accept"):
 			_skipped = true
+
+## Continue: restore the save and step straight onto the remembered island,
+## no cinematic, no bottle. The letter already knows her name.
+func _continue_game() -> void:
+	if _state != State.TITLE:
+		return
+	var track := GameState.load_save()
+	if track.is_empty():
+		_start_cinematic()
+		return
+	_state = State.DONE
+	_finished = true
+	_kill_tween()
+	ui_layer.visible = false
+	Sfx.play("pickup_chime", 1.0, 0.0, -10.0)
+	if is_instance_valid(cam):
+		cam.queue_free()
+	var registry: Array = preload("res://scripts/ui/pause_menu.gd").ISLANDS
+	var entry: Dictionary = registry[0]
+	for isl: Dictionary in registry:
+		if isl.track == track:
+			entry = isl
+	if is_instance_valid(player):
+		var pcam: Camera3D = player.rig.get_node("SpringArm/Camera")
+		pcam.current = true
+		player.rig.set_process_unhandled_input(true)
+		player.controls_enabled = true
+		player._play_anim("Idle")
+	var hud := get_node("../HUD")
+	hud.visible = true
+	var mgr := get_tree().get_first_node_in_group("island_manager")
+	mgr.travel_to(entry.scene, entry.spawn, entry.track, entry.display)
 
 func _start_cinematic() -> void:
 	if _state != State.TITLE:
@@ -79,6 +123,7 @@ func _start_cinematic() -> void:
 
 ## Used by headless tests to blast through title + cinematic instantly.
 func debug_fast_start() -> void:
+	GameState.autosave_enabled = false  # tools and tests never touch the save
 	_skipped = true
 	if _state == State.TITLE:
 		_state = State.CINEMATIC
@@ -230,6 +275,8 @@ func _build_ui() -> void:
 	title_sub = _title_text("a little cat.  ten islands.  one letter.", 24, -30, 20)
 	title_sub.modulate.a = 0.85
 	title_prompt = _title_text("press Enter", 19, 150, 190)
+	if GameState.has_save():
+		title_prompt.text = "press Enter to continue  ·  N for a new game"
 	var blink := create_tween().set_loops()
 	blink.tween_property(title_prompt, "modulate:a", 0.35, 0.9)
 	blink.tween_property(title_prompt, "modulate:a", 1.0, 0.9)

@@ -67,6 +67,7 @@ func _travel_to_island(isl: Dictionary) -> void:
 		mgr.travel_to(isl.scene, isl.spawn, isl.track, isl.display)
 
 func _restart_island() -> void:
+	GameState.clear_save()
 	GameState.reset()
 	Inventory.reset()
 	get_tree().paused = false
@@ -135,7 +136,7 @@ func _build() -> void:
 
 	vbox.add_child(HSeparator.new())
 	_button(vbox, "Resume", _close)
-	_button(vbox, "Restart Island", _restart_island)
+	_button(vbox, "Restart Journey (erases save)", _restart_island)
 	_button(vbox, "Quit Game", func() -> void: get_tree().quit())
 
 	var hint := Label.new()
