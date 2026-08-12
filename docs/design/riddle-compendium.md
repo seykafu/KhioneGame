@@ -22,9 +22,11 @@ House rules, carried from Ahalo:
 - **Small riddles are 5-15 minute wins. The main riddle is a synthesis** that needs at least two small-riddle rewards or lessons to crack.
 - Future hook: the *subtle clue feature* will piggyback on Whisker Sense (a meow near a solvable riddle returns a warmer, closer shimmer). Design every riddle so its clue object can shimmer without giving the answer away.
 
-**The verb ladder:** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Winnipeg) → Growl (Pirate Ship) → sound-navigation mastery (Halifax) → vertical mastery (Mont Royal) → wind mastery (Vancouver) → full synthesis (Ottawa) → remix of everything (Agrea).
+**The verb ladder (V1, seven islands):** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Winnipeg) → Growl (Pirate Ship) → wind mastery (English Bay) → remix of everything (Agrea).
 
-**The letter, assembled across ten islands.** Full text, known only to us:
+*V1 ships with seven islands. Three more (Halifax, Mont Royal, Ottawa — sound-navigation, vertical patience, synthesis) are fully designed and banked in the Beyond V1 appendix; they slot between English Bay and Agrea when the expansion lands.*
+
+**The letter, assembled across seven islands.** Full text, known only to us:
 
 > *Khione, / If you found this, know that you're not supposed to be here. / Could I meet you? / I wish for just one final adventure. / Love, / Oreo.*
 
@@ -37,11 +39,10 @@ Fragment reward order (chosen for emotional shape, not sentence order):
 | 3 Calgary | "Could I …" *(found the day a dog joins her)* |
 | 4 Winnipeg | "… meet you?" |
 | 5 Pirate Ship | "… adventure." |
-| 6 Halifax | "… know that …" |
-| 7 Mont Royal | "I wish …" |
-| 8 Vancouver | "… be here." |
-| 9 Ottawa | "If you found this …" |
-| 10 Agrea | "Love," and a smudged signature, legible only in the finale |
+| 6 English Bay | "If you found this … know that …" |
+| 7 Agrea | "I wish …", "… be here.", and "Love," with the smudged signature, legible only in the finale |
+
+*(The expansion re-splits the letter across ten islands.)*
 
 ---
 
@@ -115,7 +116,7 @@ Oreo artifact: the memorial stone under the cottonwood, old and sun-warmed, its 
 ## Island 4 · The Winnipeg Crescent
 *A snowed-in crescent of bungalows under a prairie sky: woodsmoke, laundry lines, a backyard rink, silver squalls rolling through on a clock. First snow, seen through the eyes of a tropical cat and a dog who cannot believe his luck. Teaches: dig, and the duet — she senses what is buried, he digs it out.*
 
-**Learning the duet (opening scene, not a riddle):** Oreo hits the first drift at a dead run and simply vanishes, tail up, snow flying. When Khione meows at a lump in the snow, her Whisker Sense shimmer sinks INTO the drift — and Oreo is already there, digging where she pointed. Lesson installed: *she marks, he digs.* The squall is the island's metronome: stillness, one beat of warning, then flying snow. Read it here cheaply; Island 8 will charge full price.
+**Learning the duet (opening scene, not a riddle):** Oreo hits the first drift at a dead run and simply vanishes, tail up, snow flying. When Khione meows at a lump in the snow, her Whisker Sense shimmer sinks INTO the drift — and Oreo is already there, digging where she pointed. Lesson installed: *she marks, he digs.* The squall is the island's metronome: stillness, one beat of warning, then flying snow. Read it here cheaply; Island 6 will charge full price.
 
 ### Small riddles
 
@@ -169,7 +170,95 @@ Oreo artifact: carved into the capstan's wood, old and shallow: tally marks in s
 
 ---
 
-## Island 6 · The Halifax Fog
+## Island 6 · English Bay
+*Vancouver at blossom time: the seawall, a kite beach, totem poles in a clearing, raccoons with opinions, cherry petals riding a wind that never stops coming off the water. The gust-reading planted on Prince's Island and grown in Winnipeg comes due at full price. Teaches: the wind is a tool.*
+
+### Small riddles
+
+**The Kite Truants.** Four kites escaped their reels and snagged around the bay. Reaching each is a wind-platforming bite: gusts come in readable waves (the petal-streams lay flat first, one second of warning). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized reel post on the kite beach, and four flying kites become the island's living wind gauge, visible from everywhere. One reel post stands empty, sized for a reel the player has seen before, boxed in a Winnipeg storm cellar.
+
+**The Blossom Current.** Cherry petals stream along the seawall wind. A stone bench mosaic shows a petal path spiralling into a drain grate. Release petals (shake the tree, a jump-slam) only when the wind aligns with the mosaic's spiral, and the petals physically trace the route through the park to the hidden totem clearing. A riddle where the answer is *watching beauty go by*.
+
+**The Raccoon Toll.** Raccoons hold the seawall stairs and will not scatter for hiss (raccoons fear nothing). They want payment: shiny things. But paying the toll teaches the real lesson: they retreat exactly to wherever their stash is. Follow, and Oreo digs the stash: everything shiny they have taken all island, including a small brass lens the expansion's lighthouse will one day demand. In V1 it is the hoard's crown jewel. Raccoons: furious, harmless, hilarious.
+
+**The Market Scales.** A produce stall's hanging scale holds the stall key on the high pan. Counterweight with produce — but every fruit is a different weight, the pans react live, and the bay wind shoves the pans on every gust. The price chalkboard lists price *per pound*, and prices are honest: cheap is light. Weigh in the stillness, read the chalkboard like a weight table. Economics as physics, in weather.
+
+### Main riddle · The Totem's Gaze
+
+Three totem poles in a clearing, each crowned by an animal: Raven, Bear, Orca. Each pole rotates (shoulder-shove, both animals pushing for the heavy one), and each pole's carved mouths whistle a note when the wind passes through. A weathered park plaque shows the three animals facing their homes: sky-tree, forest, sea.
+
+Phase 1: face Raven to the tallest tree, Bear to the forest gap, Orca to open water.
+Phase 2: aligned, the poles catch the next gust and sing three notes together — and the player knows the tune they belong to: the hollow stones' song, an ocean ago, written by whoever keeps walking one island ahead. Hold the alignment through one full gust (the kites give the warning) and the song completes.
+Phase 3: it is sunset now, and the animals' carved eyes catch the light, throwing three thin beams that cross at one spot of lawn. Oreo digs the crossing point: a park ranger's strongbox with the Lions Gate winch crank. Both of them on the wheel, the miniature Lions Gate lowers, and they simply *walk* out over the water at sunset, petals behind them.
+
+Oreo artifact: one totem's lowest carving, weathered but unmistakable under Whisker Sense: a dog, lying down, waiting.
+
+Oreo artifact: on the back of the weathered park plaque, in pencil, a doodle: a stick-figure dog and cat on a raft. The player has never told anyone about the raft.
+
+---
+
+## Island 7 · Agrea
+*All the journey in one miniature island: the geese, the doghouse, the totems, the galleon, the bridge, ringed around a quiet Vancouver West End block with one particular house. The last island is a memory palace, because that is literally what it is.*
+
+### Small riddles (the Six Shrines)
+
+Each mini-district holds a shrine and a remixed, compressed riddle of its island's main riddle, tuned for mastery (minutes, not hours). Each solved shrine lights one beacon and returns one *memory shard*:
+
+1. **Ahalo Shrine:** three stones, but now *five*, and the carving is water-worn: the melody, not the sizes, is the order (sing the letter's phrase).
+2. **Eaton Shrine:** one goose, one lamp, one mirror: land the shadow on the door in one move.
+3. **Calgary Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers the yard.
+4. **Winnipeg Shrine:** a shrine under one drift that never melts; she marks, he digs. The roles they learned together, one last time.
+5. **Galleon Shrine:** a ship in a bottle and one wave lever: time one swell to seat it on its stand.
+6. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
+
+And before the door itself, no shrine at all: a five-bell stand, and you know the phrase. You have always known the phrase.
+
+### Main riddle · The Letter Table
+
+Before the West End house's door stands a stone reading table with seven empty inlays shaped like torn paper.
+
+Phase 1: six beacons lit, the table rises.
+Phase 2: place the fragments. They do not go in the order you found them; they go in *reading order*, and the player must assemble the sentence a stranger wrote them across seven islands: the game's whole text, physically solved by hand.
+Phase 3: the letter, whole, wants an answer. Khione meows the letter's melody at the door.
+And for the first time in the whole game, before the door opens, something answers first: one bark, joyful, instant, from everywhere at once.
+The door opens on white light and the memory: the park, the storm, the vortex, and the walk back to Ahalo as a human begins. The signature unsmudges in the credits.
+
+---
+
+## Difficulty & pacing at a glance
+
+| Island | New tool | Complexity | Mood |
+|---|---|---|---|
+| 1 Ahalo | Meow | ★ | wonder |
+| 2 Eaton | Hiss | ★★ | playful uncanny |
+| 3 Calgary | Oreo | ★★ | warmth |
+| 4 Winnipeg | Dig, duets | ★★★ | first snow |
+| 5 Pirate Ship | Growl | ★★★ | loud joy |
+| 6 English Bay | Wind | ★★★★ | blossom wind |
+| 7 Agrea | Mastery remix | ★★★ (fast) | catharsis |
+
+Expansion: Halifax (ear-navigation, ★★★★, hushed), Mont Royal (vertical patience, ★★★★, melancholy glow), Ottawa (synthesis, ★★★★★, reverent).
+
+Two soft valleys (3 and 7) are deliberate: the islands where the heart does the work, the puzzles step back.
+
+## Backtracking ledger (tools that reopen old doors)
+
+- Hiss (2) → Ahalo: scatters the gulls guarding a high shelf in Echo Cove (bonus shell).
+- Oreo (3) → Ahalo: digs the den's back wall; Eaton: the pet store door opens for *him*.
+- Growl (5) → Eaton: the security robot bows; its charging bay hides a coin for the fountain mosaic's secret fourth pattern.
+- Lens (6, raccoon stash) → reserved for the expansion's Halifax lighthouse; in V1, treasure with a purpose it does not know yet.
+- The letter's melody (sung by the totems on 6, heard since 1) → replayable at ANY island's "songful" object for a firefly/gull/pigeon flourish and one hidden acorn each. Seven acorns = the squirrels' final, absurd, gift.
+
+## The subtle clue feature (reserved hook)
+
+Whisker Sense already pings interactables. The clue layer, when we build it: near an unsolved riddle, the meow's ripple returns *warm-tinted* from the one object that is that riddle's honest clue (the carving, the plaque, the chalkboard). Never the answer object, always the *clue* object. Three meows in sixty seconds near the same riddle and Oreo additionally trots to the clue and sits. Companions make the best hint systems, because being helped by a friend never feels like losing.
+
+---
+
+## Beyond V1 · The Expansion Islands
+*Everything below the line is finished design, banked for the post-launch expansion. These three islands slot between English Bay and Agrea, add sound-navigation, vertical patience, and synthesis to the ladder, and re-split the letter across ten fragments. Nothing here ships in V1.*
+
+## Expansion Island · The Halifax Fog
 *A harbour town in permanent evening fog. Buoy bells, a dark lighthouse, and one glowing donair shop, open, empty, warm. Teaches: navigation by ear. Whisker Sense's island.*
 
 ### Small riddles
@@ -195,7 +284,7 @@ Oreo artifact: in the keeper's log, pawprints in old ink across one page, as if 
 
 ---
 
-## Island 7 · Mont Royal
+## Expansion Island · Mont Royal
 *One mountain, all autumn. Endless staircases, tam-tam drums, squirrel barons, a chalet, and the great cross at the summit, dark. Teaches: vertical mastery, and patience.*
 
 ### Small riddles
@@ -221,34 +310,7 @@ Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder hei
 
 ---
 
-## Island 8 · English Bay
-*Vancouver at blossom time: the seawall, a kite beach, totem poles in a clearing, raccoons with opinions, cherry petals riding a wind that never stops coming off the water. The gust-reading planted on Prince's Island and grown in Winnipeg comes due at full price. Teaches: the wind is a tool.*
-
-### Small riddles
-
-**The Kite Truants.** Four kites escaped their reels and snagged around the bay. Reaching each is a wind-platforming bite: gusts come in readable waves (the petal-streams lay flat first, one second of warning). Jumping *with* a gust doubles the arc. Each recovered kite returns to a kid-sized reel post on the kite beach, and four flying kites become the island's living wind gauge, visible from everywhere. One reel post stands empty, sized for a reel the player has seen before, boxed in a Winnipeg storm cellar.
-
-**The Blossom Current.** Cherry petals stream along the seawall wind. A stone bench mosaic shows a petal path spiralling into a drain grate. Release petals (shake the tree, a jump-slam) only when the wind aligns with the mosaic's spiral, and the petals physically trace the route through the park to the hidden totem clearing. A riddle where the answer is *watching beauty go by*.
-
-**The Raccoon Toll.** Raccoons hold the seawall stairs and will not scatter for hiss (raccoons fear nothing). They want payment: shiny things. But paying the toll teaches the real lesson: they retreat exactly to wherever their stash is. Follow, and Oreo digs the stash: everything shiny they have taken all island, including a lens that matters back on Island 6. Raccoons: furious, harmless, hilarious.
-
-**The Market Scales.** A produce stall's hanging scale holds the stall key on the high pan. Counterweight with produce — but every fruit is a different weight, the pans react live, and the bay wind shoves the pans on every gust. The price chalkboard lists price *per pound*, and prices are honest: cheap is light. Weigh in the stillness, read the chalkboard like a weight table. Economics as physics, in weather.
-
-### Main riddle · The Totem's Gaze
-
-Three totem poles in a clearing, each crowned by an animal: Raven, Bear, Orca. Each pole rotates (shoulder-shove, both animals pushing for the heavy one), and each pole's carved mouths whistle a note when the wind passes through. A weathered park plaque shows the three animals facing their homes: sky-tree, forest, sea.
-
-Phase 1: face Raven to the tallest tree, Bear to the forest gap, Orca to open water.
-Phase 2: aligned, the poles catch the next gust and sing three notes together — and the player knows the tune they belong to: the hollow stones' song, an ocean ago, written by whoever keeps walking one island ahead. Hold the alignment through one full gust (the kites give the warning) and the song completes.
-Phase 3: it is sunset now, and the animals' carved eyes catch the light, throwing three thin beams that cross at one spot of lawn. Oreo digs the crossing point: a park ranger's strongbox with the Lions Gate winch crank. Both of them on the wheel, the miniature Lions Gate lowers, and they simply *walk* out over the water at sunset, petals behind them.
-
-Oreo artifact: one totem's lowest carving, weathered but unmistakable under Whisker Sense: a dog, lying down, waiting.
-
-Oreo artifact: the circled sheet music's corner bears a doodle: a stick-figure dog and cat on a raft. The player has never told anyone about the raft.
-
----
-
-## Island 9 · The Ottawa Locks
+## Expansion Island · The Ottawa Locks
 *Parliament's silhouette, tulip beds, a canal staircase of eight locks, the Centennial Flame, shawarma steam on every corner. The last classroom. Teaches: everything at once.*
 
 ### Small riddles
@@ -274,60 +336,3 @@ Oreo artifact: the carillon's guest book. One page, years old: no name, just a m
 
 ---
 
-## Island 10 · Agrea
-*All of Canada in one miniature island: the geese, the doghouse, the totems, the galleon, the lighthouse, the cross, the bridge, the locks, ringed around a quiet Vancouver West End block with one particular house. The last island is a memory palace, because that is literally what it is.*
-
-### Small riddles (the Nine Shrines)
-
-Each mini-district holds a shrine and a remixed, compressed riddle of its island's main riddle, tuned for mastery (minutes, not hours). Each solved shrine lights one beacon and returns one *memory shard*:
-
-1. **Ahalo Shrine:** three stones, but now *five*, and the carving is water-worn: the melody, not the sizes, is the order (sing the letter's phrase).
-2. **Eaton Shrine:** one goose, one lamp, one mirror: land the shadow on the door in one move.
-3. **Calgary Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers the yard.
-4. **Winnipeg Shrine:** a shrine under one drift that never melts; she marks, he digs. The roles they learned together, one last time.
-5. **Galleon Shrine:** a ship in a bottle and one wave lever: time one swell to seat it on its stand.
-6. **Halifax Shrine:** a dark fog dome; cross it by ear in total whiteout, following Oreo's bark.
-7. **Mont Royal Shrine:** one lantern, three fireflies, one drum. Minimalist rhythm.
-8. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
-9. **Ottawa Shrine:** a five-bell stand, and you know the phrase. You have always known the phrase.
-
-### Main riddle · The Letter Table
-
-Before the West End house's door stands a stone reading table with ten empty inlays shaped like torn paper.
-
-Phase 1: nine beacons lit, the table rises.
-Phase 2: place the fragments. They do not go in the order you found them; they go in *reading order*, and the player must assemble the sentence a stranger wrote them across ten islands: the game's whole text, physically solved by hand.
-Phase 3: the letter, whole, wants an answer. Khione meows the letter's melody at the door.
-And for the first time in the whole game, before the door opens, something answers first: one bark, joyful, instant, from everywhere at once.
-The door opens on white light and the memory: the park, the storm, the vortex, and the walk back to Ahalo as a human begins. The signature unsmudges in the credits.
-
----
-
-## Difficulty & pacing at a glance
-
-| Island | New tool | Complexity | Mood |
-|---|---|---|---|
-| 1 Ahalo | Meow | ★ | wonder |
-| 2 Eaton | Hiss | ★★ | playful uncanny |
-| 3 Calgary | Oreo | ★★ | warmth |
-| 4 Winnipeg | Dig, duets | ★★★ | first snow |
-| 5 Pirate Ship | Growl | ★★★ | loud joy |
-| 6 Halifax | Ear-navigation | ★★★★ | hushed |
-| 7 Mont Royal | Vertical patience | ★★★★ | melancholy glow |
-| 8 Vancouver | Wind | ★★★★ | blossom wind |
-| 9 Ottawa | Synthesis | ★★★★★ | reverent |
-| 10 Agrea | Mastery remix | ★★★ (fast) | catharsis |
-
-Two soft valleys (3 and 10) are deliberate: the islands where the heart does the work, the puzzles step back.
-
-## Backtracking ledger (tools that reopen old doors)
-
-- Hiss (2) → Ahalo: scatters the gulls guarding a high shelf in Echo Cove (bonus shell).
-- Oreo (3) → Ahalo: digs the den's back wall; Eaton: the pet store door opens for *him*.
-- Growl (5) → Eaton: the security robot bows; its charging bay hides a coin for the fountain mosaic's secret fourth pattern.
-- Lens (4, raccoon stash) → required on 6; players who skipped the raccoons sail back one island, and the game quietly rewards hoarders.
-- The letter's melody (learned 9, heard since 1) → replayable at ANY island's "songful" object for a firefly/gull/pigeon flourish and one hidden acorn each. Ten acorns = the squirrels' final, absurd, gift.
-
-## The subtle clue feature (reserved hook)
-
-Whisker Sense already pings interactables. The clue layer, when we build it: near an unsolved riddle, the meow's ripple returns *warm-tinted* from the one object that is that riddle's honest clue (the carving, the plaque, the chalkboard). Never the answer object, always the *clue* object. Three meows in sixty seconds near the same riddle and Oreo additionally trots to the clue and sits. Companions make the best hint systems, because being helped by a friend never feels like losing.
