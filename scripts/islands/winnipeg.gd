@@ -345,7 +345,22 @@ func _build_buried_cars() -> void:
 		body.material_override = _mat(def[2])
 		body.position = Vector3(0, 0.55, 0)
 		car.add_child(body)
-		body.create_trimesh_collision()
+		# Solid convex colliders (never hollow trimesh): one block from the
+		# ground to the snow duvet covering body AND wheels, one for the
+		# cabin. Nothing walks through a tire, nothing gets trapped inside,
+		# and the hood stays a hoppable ledge.
+		var hull := StaticBody3D.new()
+		car.add_child(hull)
+		for shape_def: Array in [
+			[Vector3(1.75, 1.06, 3.45), Vector3(0, 0.53, 0)],
+			[Vector3(1.55, 0.42, 1.75), Vector3(0, 1.27, -0.2)],
+		]:
+			var cs := CollisionShape3D.new()
+			var box := BoxShape3D.new()
+			box.size = shape_def[0]
+			cs.shape = box
+			cs.position = shape_def[1]
+			hull.add_child(cs)
 		var cabin := MeshInstance3D.new()
 		var cb := BoxMesh.new()
 		cb.size = Vector3(1.5, 0.5, 1.7)

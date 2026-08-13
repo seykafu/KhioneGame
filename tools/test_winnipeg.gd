@@ -50,5 +50,37 @@ func _run() -> void:
 	assert(shown.find("turquoise") == -1 and shown.find("howl") == -1,
 			"island 3 text must not stay on screen on island 4")
 	print("objective tracker: OK")
+
+	# The buried car by the swing lawn must be SOLID: a ray at tire height
+	# from the swing's landing spot has to stop at the hull, never pass
+	# between or through the wheels.
+	var space := player.get_world_3d().direct_space_state
+	var ray := PhysicsRayQueryParameters3D.create(
+			Vector3(16.0, 0.65, 9.0), Vector3(18.5, 0.65, 8.0))
+	var hit := space.intersect_ray(ray)
+	assert(not hit.is_empty(), "tire-height ray must hit the buried car hull")
+	assert((hit.position as Vector3).distance_to(Vector3(18.5, 0.65, 8.0)) > 0.6,
+			"ray must stop at the car's flank, not reach its center")
+	# Hood is a solid ledge you can hop onto.
+	var down := PhysicsRayQueryParameters3D.create(
+			Vector3(18.5, 3.0, 8.0), Vector3(18.5, 0.0, 8.0))
+	var top := space.intersect_ray(down)
+	assert(not top.is_empty() and (top.position as Vector3).y > 0.9,
+			"car roof/hood should hold weight")
+	# The car's interior must be solid VOLUME, not a hollow trimesh shell:
+	# a shape probe inside the body has to overlap the hull. (Hollow
+	# colliders were how Khione got trapped "inside a tire".)
+	var probe := PhysicsShapeQueryParameters3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 0.15
+	probe.shape = sph
+	for spot: Vector3 in [
+		Vector3(18.5, 0.9, 8.0),                       # dead center of the body
+		Vector3(18.5, 0.65, 8.0) + Vector3(0.75, 0, 1.1).rotated(Vector3.UP, 0.9),  # a wheel
+	]:
+		probe.transform = Transform3D(Basis(), spot)
+		assert(space.intersect_shape(probe).size() > 0,
+				"buried car must be solid at %s" % spot)
+	print("buried car solidity: OK")
 	print("ALL WINNIPEG SHELL TESTS PASSED")
 	get_tree().quit()
