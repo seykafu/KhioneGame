@@ -79,10 +79,28 @@ func _run() -> void:
 		Vector3(18.5, 0.65, 8.0) + Vector3(0.75, 0, 1.1).rotated(Vector3.UP, 0.9),  # a wheel
 		Vector3(10.8, 0.77, 7.6),                      # merry-go-round disc core
 		Vector3(3.0, 0.85, 14.0),                      # fire barrel core
+		Vector3(17.0, 1.15, 9.5),                      # postal truck body core
+		Vector3(17.0, 0.32, 9.5) + Vector3(0.8, 0, 1.2).rotated(Vector3.UP, 0.5),  # truck wheel
 	]:
 		probe.transform = Transform3D(Basis(), spot)
 		assert(space.intersect_shape(probe).size() > 0,
-				"buried car must be solid at %s" % spot)
-	print("buried car solidity: OK")
+				"prop must be solid at %s" % spot)
+	print("prop solidity: OK")
+
+	# The swing's one-pump landing spot must be open snow: nothing for the
+	# cat to fall into, stand-up room guaranteed. (She used to land on the
+	# postal truck's bumper and drop through a wheel.)
+	var lawn: Vector3 = load("res://scripts/puzzles/swing_launch.gd").TIER_TARGETS[0]
+	var clear := SphereShape3D.new()
+	clear.radius = 0.5
+	probe.shape = clear
+	probe.transform = Transform3D(Basis(), lawn + Vector3(0, 0.6, 0))
+	assert(space.intersect_shape(probe).is_empty(),
+			"swing lawn landing must be clear of props (at %s)" % lawn)
+	var lawn_ground := PhysicsRayQueryParameters3D.create(
+			lawn + Vector3(0, 1.0, 0), lawn + Vector3(0, -1.0, 0))
+	assert(not space.intersect_ray(lawn_ground).is_empty(),
+			"swing lawn landing must have ground under it")
+	print("swing landing clearance: OK")
 	print("ALL WINNIPEG SHELL TESTS PASSED")
 	get_tree().quit()

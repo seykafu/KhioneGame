@@ -8,7 +8,9 @@ extends Node3D
 
 const SEAT := Vector3(12.2, 1.15, 4.0)
 const TIER_TARGETS := [
-	Vector3(16.0, 0.55, 9.0),      # the lawn, with dignity intact
+	# Lawn spot chosen clear of the postal truck parked at (17, 9.5):
+	# a one-pump flop must land on snow, never on a bumper.
+	Vector3(15.0, 0.55, 12.5),     # the lawn, with dignity intact
 	Vector3(21.2, 4.55, -3.7),     # near roof: runner bolts
 	Vector3(13.9, 4.55, -16.4),    # far roof: the loonie, and the view
 ]

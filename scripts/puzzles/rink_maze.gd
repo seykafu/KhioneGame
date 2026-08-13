@@ -164,5 +164,6 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := false) 
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: trimesh shells are hollow and trap the cat.
+		mi.create_convex_collision()
 	return mi
