@@ -77,6 +77,8 @@ func _run() -> void:
 	for spot: Vector3 in [
 		Vector3(18.5, 0.9, 8.0),                       # dead center of the body
 		Vector3(18.5, 0.65, 8.0) + Vector3(0.75, 0, 1.1).rotated(Vector3.UP, 0.9),  # a wheel
+		Vector3(10.8, 0.77, 7.6),                      # merry-go-round disc core
+		Vector3(3.0, 0.85, 14.0),                      # fire barrel core
 	]:
 		probe.transform = Transform3D(Basis(), spot)
 		assert(space.intersect_shape(probe).size() > 0,

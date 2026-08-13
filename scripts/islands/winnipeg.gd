@@ -217,7 +217,7 @@ func _build_frozen_bay() -> void:
 		sheet.material_override = im
 		sheet.position = (def[0] as Vector3) + Vector3(0, -0.28, 0)
 		add_child(sheet)
-		sheet.create_trimesh_collision()
+		sheet.create_convex_collision()
 	for def: Array in [
 		[Vector3(36, -0.16, -30), Color(0.75, 0.35, 0.3), 0.4],
 		[Vector3(43, -0.16, -20), Color(0.35, 0.55, 0.65), -0.3],
@@ -234,7 +234,7 @@ func _build_frozen_bay() -> void:
 		body.material_override = _mat(def[1])
 		body.position = Vector3(0, 0.85, 0)
 		shack.add_child(body)
-		body.create_trimesh_collision()
+		body.create_convex_collision()
 		var roof := MeshInstance3D.new()
 		var prism := PrismMesh.new()
 		prism.size = Vector3(1.8, 0.6, 2.1)
@@ -710,7 +710,7 @@ func _bungalow(pos: Vector3, facing: float, color: Color, is_eight: bool, smokes
 	body.material_override = _mat(color)
 	body.position = Vector3(0, 1.25, 0)
 	house.add_child(body)
-	body.create_trimesh_collision()
+	body.create_convex_collision()
 	var roof := MeshInstance3D.new()
 	var prism := PrismMesh.new()
 	prism.size = Vector3(6.2, 1.5, 4.8)
@@ -718,7 +718,7 @@ func _bungalow(pos: Vector3, facing: float, color: Color, is_eight: bool, smokes
 	roof.material_override = _mat(color.darkened(0.35))
 	roof.position = Vector3(0, 3.25, 0)
 	house.add_child(roof)
-	roof.create_trimesh_collision()
+	roof.create_convex_collision()
 	# Snow load on both roof slopes.
 	for s in [-1.0, 1.0]:
 		var cap := MeshInstance3D.new()
@@ -837,7 +837,7 @@ func _build_rink() -> void:
 	ice.material_override = im
 	ice.position = origin + Vector3(0, 0.05, 0)
 	add_child(ice)
-	ice.create_trimesh_collision()
+	ice.create_convex_collision()
 	for def: Array in [
 		[Vector3(7.4, 0.5, 0.15), Vector3(0, 0.3, 2.55)], [Vector3(7.4, 0.5, 0.15), Vector3(0, 0.3, -2.55)],
 		[Vector3(0.15, 0.5, 5.2), Vector3(3.65, 0.3, 0)], [Vector3(0.15, 0.5, 5.2), Vector3(-3.65, 0.3, 0)],
@@ -937,7 +937,7 @@ func _build_yard_eight() -> void:
 	dbody.material_override = _mat(Color(0.58, 0.46, 0.36))
 	dbody.position = Vector3(0, 0.5, 0)
 	dh.add_child(dbody)
-	dbody.create_trimesh_collision()
+	dbody.create_convex_collision()
 	var droof := MeshInstance3D.new()
 	var dprism := PrismMesh.new()
 	dprism.size = Vector3(1.7, 0.6, 1.9)
@@ -1251,7 +1251,10 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := true) -
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: trimesh shells are hollow, and anything
+		# that clips inside one (a swing launch, a hard fall) is trapped.
+		# Only the terrain earns a trimesh.
+		mi.create_convex_collision()
 	return mi
 
 func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true) -> MeshInstance3D:
