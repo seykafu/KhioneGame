@@ -83,7 +83,7 @@ func _build_stones() -> void:
 		add_child(stone)
 		var mi := _first_mesh_instance(stone)
 		if mi:
-			mi.create_trimesh_collision()
+			mi.create_convex_collision()  # solid boulder, not a hollow shell
 			var mat := StandardMaterial3D.new()
 			mat.albedo_color = STONE_TINT.darkened(i * 0.07)
 			mat.roughness = 1.0
@@ -132,7 +132,7 @@ func _build_carving() -> void:
 	add_child(slab)
 	var mi := _first_mesh_instance(slab)
 	if mi:
-		mi.create_trimesh_collision()
+		mi.create_convex_collision()  # solid slab, not a hollow shell
 
 	var plate := CarvingPlate.new()
 	plate.owner_puzzle = self

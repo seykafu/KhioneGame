@@ -67,6 +67,23 @@ func _ready() -> void:
 	mound.rotation.z = -0.85
 	mound.position = Vector3(0.25, 0.15, 0)
 	add_child(mound)
+	# Solid mass for the pole and the drift's heart: an iron lamp a cat
+	# can walk through breaks the story harder than any other prop.
+	var body := StaticBody3D.new()
+	var pole_cs := CollisionShape3D.new()
+	var pole_shape := CapsuleShape3D.new()
+	pole_shape.radius = 0.11
+	pole_shape.height = 3.4
+	pole_cs.shape = pole_shape
+	pole_cs.position = Vector3(0, 1.1, 0)  # rides the node's tilt with the pole
+	body.add_child(pole_cs)
+	var mound_cs := CollisionShape3D.new()
+	var mound_shape := SphereShape3D.new()
+	mound_shape.radius = 0.55
+	mound_cs.shape = mound_shape
+	mound_cs.position = Vector3(0.25, 0.15, 0)
+	body.add_child(mound_cs)
+	add_child(body)
 	_flicker()
 
 func _flicker() -> void:

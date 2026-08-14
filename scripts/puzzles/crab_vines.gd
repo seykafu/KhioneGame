@@ -30,7 +30,7 @@ func _ready() -> void:
 	add_child(rock)
 	var mi := _fmi(rock)
 	if mi:
-		mi.create_trimesh_collision()
+		mi.create_convex_collision()  # solid vine rock, not a hollow shell
 
 	for i in 3:
 		var vine := MeshInstance3D.new()

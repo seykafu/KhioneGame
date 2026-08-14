@@ -16,13 +16,26 @@ func _ready() -> void:
 	rock.position = Vector3(-4.2, 0, 1.5)
 	rock.scale = Vector3.ONE * 1.15
 	add_child(rock)
-	_fmi(rock).create_trimesh_collision()
+	_fmi(rock).create_convex_collision()  # solid hop boulder, not a hollow shell
 
 	var bent: Node3D = load("res://assets/nature/tree_palmBend.glb").instantiate()
 	bent.position = Vector3(-2.6, 0, 0.6)
 	bent.scale = Vector3.ONE * 3.4
 	bent.rotation.y = 0.4
 	add_child(bent)
+	# Lower-trunk collider so the bent palm's base reads solid. Kept short
+	# and slim on purpose: the ledge jump route passes just above and beside
+	# it, and must stay clear.
+	var bent_trunk := StaticBody3D.new()
+	var bt_cs := CollisionShape3D.new()
+	var bt_cyl := CylinderShape3D.new()
+	bt_cyl.radius = 0.3
+	bt_cyl.height = 1.0
+	bt_cs.shape = bt_cyl
+	bt_cs.position = Vector3(0, 0.5, 0)
+	bent_trunk.add_child(bt_cs)
+	bent_trunk.position = bent.position
+	add_child(bent_trunk)
 	# Ledges along the bend, each capped with a visible branch stump.
 	_ledge(Vector3(-3.2, 1.05, 0.9), Vector3(1.2, 0.15, 1.2))
 	_ledge(Vector3(-2.2, 2.25, 0.4), Vector3(1.4, 0.15, 1.4))

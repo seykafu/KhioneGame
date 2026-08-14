@@ -26,6 +26,91 @@ func _run() -> void:
 	var finale: Node = main.get_node("Eaton/FlockFinale")
 	var player: Node3D = get_tree().get_first_node_in_group("player")
 	assert(finale != null, "finale missing")
+	var space := player.get_world_3d().direct_space_state
+	var elev_pos: Vector3 = finale.ELEVATOR_POS
+	var cab_top: float = finale.CAB_TOP_Y
+	var banner_pos: Vector3 = finale.BANNER_POS
+	for i in 3:
+		await get_tree().physics_frame
+
+	# --- prop solidity: big set-pieces are solid VOLUME, not hollow shells ---
+	# A shape probe INSIDE each body must overlap its collider. (Hollow
+	# trimesh shells were how Khione got trapped inside props on island 4.)
+	var probe := PhysicsShapeQueryParameters3D.new()
+	var psph := SphereShape3D.new()
+	psph.radius = 0.15
+	probe.shape = psph
+	if player is CollisionObject3D:
+		probe.exclude = [player.get_rid()]
+	for spot: Vector3 in [
+		Vector3(0, 0.72, 0),                  # fountain basin core
+		Vector3(13.0, 0.86, -13.6),           # food-court counter
+		Vector3(-6.5, 0.83, 2.5),             # flower kiosk cart
+		Vector3(-9.0, 0.73, -7.0),            # atrium planter
+		Vector3(3.2, 1.68, 11.0),             # directory stand
+		Vector3(-6.0, 1.5, 8.0),              # wayfinding totem
+		Vector3(-22.5, 2.15, 0.0),            # pet shop body
+		Vector3(17.25, 2.39, 2.25),           # east escalator, mid-run
+		Vector3(18.0, 0.63, 6.5),             # mannequin pedestal
+		Vector3(5.2, 2.0, 0.0),               # mall clock pole
+		Vector3(6.0, 4.64, -13.5),            # drummer's dais on the balcony
+		elev_pos + Vector3(0, 10.56, -1.95),  # roof catwalk
+	]:
+		probe.transform = Transform3D(Basis(), spot)
+		assert(space.intersect_shape(probe).size() > 0,
+				"prop must be solid at %s" % spot)
+	print("prop solidity: OK")
+
+	# --- cinematic corridors are prop-free ---
+	# The elevator ride and the banner glide move the player by tween (or
+	# carry her with physics constrained to the cab), so any solid body in
+	# those corridors would be visibly clipped through. Terrain (concave
+	# collider) is exempt, and so are the cab and its doors: the cab is
+	# SUPPOSED to contain the player.
+	var offenders: Array[String] = []
+	var corr := PhysicsShapeQueryParameters3D.new()
+	var csph := SphereShape3D.new()
+	csph.radius = 0.3
+	corr.shape = csph
+	var exempt: Array[RID] = []
+	if player is CollisionObject3D:
+		exempt.append(player.get_rid())
+	exempt.append((finale._cab as CollisionObject3D).get_rid())
+	for door: PhysicsBody3D in finale._doors:
+		exempt.append(door.get_rid())
+	corr.exclude = exempt
+	var is_terrain := func(collider: Object) -> bool:
+		for c in (collider as Node).get_children():
+			if c is CollisionShape3D and c.shape is ConcavePolygonShape3D:
+				return true
+		return false
+	var sweep := func(pos: Vector3, label: String) -> void:
+		corr.transform = Transform3D(Basis(), pos)
+		for shp: Dictionary in space.intersect_shape(corr):
+			var col: Object = shp.collider
+			if col is CharacterBody3D:
+				continue  # Khione or a companion wandering by
+			if not is_terrain.call(col):
+				offenders.append("%s: %s at %s" % [label, (col as Node).name, pos])
+	# The elevator ride: a vertical column sampled at rider height over the
+	# cab's whole travel (the cab is parked at the ground, so the upper
+	# column is bare and any stray solid shows up).
+	for k in 41:
+		var t := k / 40.0
+		sweep.call(elev_pos + Vector3(0, cab_top * t + 1.2, 0), "elevator ride")
+	# The banner glide, sampled clear of the mount hop (like the swing
+	# mounts on island 4): roof edge, out over the plaza, down to the dock.
+	var p1: Vector3 = banner_pos + Vector3(0, 0.6, 0.8)
+	var p2 := Vector3(0.0, 6.5, 30.0)
+	var p3 := Vector3(0.0, 1.05, 38.5)
+	for k in 25:
+		sweep.call(p1.lerp(p2, k / 24.0), "glide (roof to plaza)")
+	for k in range(1, 25):
+		sweep.call(p2.lerp(p3, k / 24.0), "glide (plaza to dock)")
+	for o in offenders:
+		print("CORRIDOR OFFENDER — ", o)
+	assert(offenders.is_empty(), "cinematic corridors must be free of props")
+	print("cinematic corridors: OK")
 
 	# Crank gate.
 	finale.use_crank()
@@ -45,7 +130,6 @@ func _run() -> void:
 	print("sunset + shadow flock: OK")
 
 	# Elevator gate. First: with the doors shut, the doorway must be a wall.
-	var space := player.get_world_3d().direct_space_state
 	var ray := PhysicsRayQueryParameters3D.create(
 			finale.ELEVATOR_POS + Vector3(0.3, 1.2, -3.4),
 			finale.ELEVATOR_POS + Vector3(0.3, 1.2, 0))

@@ -37,7 +37,9 @@ func _ready() -> void:
 				Color(0.25, 0.3, 0.5))
 	# The hatch on the cart's front, shut tight.
 	_hatch = _box(Vector3(0.9, 0.6, 0.06), CART_POS + Vector3(0, 0.62, 0.49), Color(0.8, 0.78, 0.74))
-	_hatch.create_trimesh_collision()
+	# Convex, never trimesh (hollow shell); the collider rides the hatch
+	# when the round pops it open.
+	_hatch.create_convex_collision()
 	# The bell gets its own voice, right where it hangs: unmissable.
 	_bell_speaker = AudioStreamPlayer3D.new()
 	_bell_speaker.stream = load("res://assets/audio/bell_ding.wav")
