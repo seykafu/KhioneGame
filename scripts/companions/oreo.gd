@@ -365,6 +365,8 @@ func _process(delta: float) -> void:
 		_settle(delta)
 		return
 	# Far behind? Border collies do not do "far behind."
+	# (This teleport is also the net under _avoid_walls: if a wall ever
+	# boxes him in, falling far enough behind pops him to her side.)
 	if following and _move_target == Vector3.INF and flat.length() > 30.0:
 		global_position.x = target.x
 		global_position.z = target.z
@@ -374,6 +376,10 @@ func _process(delta: float) -> void:
 		want_speed = minf(want_speed, 2.8)  # dog paddle, not dog sprint
 	_cur_speed = lerpf(_cur_speed, want_speed, minf(6.0 * delta, 1.0))
 	var step := flat.normalized() * minf(_cur_speed * delta, flat.length())
+	step = _avoid_walls(step)
+	if step.length() < 0.001:
+		_settle(delta)
+		return
 	global_position.x += step.x
 	global_position.z += step.y
 	rotation.y = lerp_angle(rotation.y, atan2(step.x, step.y), minf(8.0 * delta, 1.0))
@@ -401,6 +407,30 @@ func _process(delta: float) -> void:
 		_tail.rotation.x = -0.12 + sin(_run_phase * 0.5) * 0.08
 		if not _hopping:
 			global_position.y = _rest_height() + pow(absf(sin(_run_phase)), 2.0) * 0.05
+
+## He is not a physics body, so he probes ahead himself: a wall in the
+## way turns his step into a slide along it instead of a ghost through
+## it. Walkable slopes (normal.y high) don't count as walls.
+func _avoid_walls(step: Vector2) -> Vector2:
+	if step.length() < 0.001:
+		return step
+	var space := get_world_3d().direct_space_state
+	var from := global_position + Vector3(0, 0.55, 0)
+	var fwd := Vector3(step.x, 0, step.y).normalized()
+	var q := PhysicsRayQueryParameters3D.create(from, from + fwd * 0.7)
+	var player := get_tree().get_first_node_in_group("player")
+	if player is CollisionObject3D:
+		q.exclude = [player.get_rid()]
+	var hit := space.intersect_ray(q)
+	if hit.is_empty():
+		return step
+	if (hit.normal as Vector3).y > 0.55:
+		return step
+	var n := Vector2((hit.normal as Vector3).x, (hit.normal as Vector3).z)
+	if n.length() < 0.01:
+		return step
+	n = n.normalized()
+	return (step - n * step.dot(n)) * 0.9
 
 func _settle(delta: float) -> void:
 	# At rest: legs straighten under the hips, the body levels, and he

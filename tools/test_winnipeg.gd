@@ -102,5 +102,60 @@ func _run() -> void:
 	assert(not space.intersect_ray(lawn_ground).is_empty(),
 			"swing lawn landing must have ground under it")
 	print("swing landing clearance: OK")
+
+	# --- cinematic corridors are prop-free ---
+	# The toboggan ride and all three swing arcs move the characters by
+	# tween, so any solid body inside those corridors would be visibly
+	# clipped through. Terrain is the only concave collider on the island
+	# and is exempt (the paths hug it on purpose).
+	var offenders: Array[String] = []
+	var corr := PhysicsShapeQueryParameters3D.new()
+	var csph := SphereShape3D.new()
+	csph.radius = 0.3
+	corr.shape = csph
+	if player is CollisionObject3D:
+		corr.exclude = [player.get_rid()]
+	var is_terrain := func(collider: Object) -> bool:
+		for c in (collider as Node).get_children():
+			if c is CollisionShape3D and c.shape is ConcavePolygonShape3D:
+				return true
+		return false
+	var sweep := func(pos: Vector3, label: String) -> void:
+		corr.transform = Transform3D(Basis(), pos)
+		for hit2 in space.intersect_shape(corr):
+			var col: Object = hit2.collider
+			if not is_terrain.call(col):
+				offenders.append("%s: %s at %s" % [label, (col as Node).name, pos])
+	# The ride corridor, densified exactly like the ride itself.
+	var rp: Array = isl.RUN_PATH
+	var rpts: Array[Vector2] = []
+	for i in rp.size() - 1:
+		var p0: Vector2 = rp[maxi(i - 1, 0)]
+		var p3: Vector2 = rp[mini(i + 2, rp.size() - 1)]
+		for k in 8:
+			var t := k / 8.0
+			var t2 := t * t
+			var t3 := t2 * t
+			rpts.append(0.5 * ((2.0 * (rp[i] as Vector2)) + (-p0 + (rp[i + 1] as Vector2)) * t
+					+ (2.0 * p0 - 5.0 * (rp[i] as Vector2) + 4.0 * (rp[i + 1] as Vector2) - p3) * t2
+					+ (-p0 + 3.0 * (rp[i] as Vector2) - 3.0 * (rp[i + 1] as Vector2) + p3) * t3))
+	rpts.append(rp[-1])
+	for p in rpts:
+		var h: float = isl._terrain_height(p.x, p.y)
+		sweep.call(Vector3(p.x, maxf(h, 0.1) + 0.95, p.y), "ride")
+	# The three launch arcs, sampled clear of the mount and landing ends.
+	var swing := load("res://scripts/puzzles/swing_launch.gd")
+	var seat_from: Vector3 = swing.SEAT + Vector3(0, 0.35, 0)
+	for target: Vector3 in swing.TIER_TARGETS:
+		var peak := maxf(seat_from.y, target.y) + 2.6
+		for k in range(3, 23):
+			var t := k / 25.0
+			var pos := seat_from.lerp(target, t)
+			pos.y = lerpf(seat_from.y, target.y, t) + sin(t * PI) * (peak - maxf(seat_from.y, target.y))
+			sweep.call(pos, "swing arc to %s" % target)
+	for o in offenders:
+		print("CORRIDOR OFFENDER — ", o)
+	assert(offenders.is_empty(), "cinematic corridors must be free of props")
+	print("cinematic corridors: OK")
 	print("ALL WINNIPEG SHELL TESTS PASSED")
 	get_tree().quit()

@@ -14,9 +14,12 @@ const HOUSE_R := 21.5
 ## The toboggan run's spine, ridge to shore. The slide puzzle builds its
 ## gates on this; tree scatter keeps the corridor clear.
 const RUN_PATH: Array[Vector2] = [
-	Vector2(-12, -35), Vector2(-12, -32.5), Vector2(-14, -27), Vector2(-15, -21),
-	Vector2(-14, -14), Vector2(-13, -6), Vector2(-11.5, 3), Vector2(-9, 12),
-	Vector2(-6, 20), Vector2(-3, 28), Vector2(-1.5, 34), Vector2(-1, 37),
+	# An S-line threaded between the bungalows, then west around the
+	# backyard rink: the ride must never cross a wall or the boards.
+	# tools/test_winnipeg.gd sweeps this whole corridor for props.
+	Vector2(-12, -35), Vector2(-12, -32.5), Vector2(-13, -27), Vector2(-10.5, -21),
+	Vector2(-8.5, -15), Vector2(-10, -8), Vector2(-15, -2), Vector2(-14.5, 4),
+	Vector2(-10, 12), Vector2(-6, 20), Vector2(-3, 28), Vector2(-1.5, 34), Vector2(-1, 37),
 ]
 
 const SNOW := Color(0.93, 0.95, 0.99)
@@ -683,8 +686,9 @@ func _build_crescent() -> void:
 		post.rotation.y = -a
 		var rail := _add_box(Vector3(0.06, 0.1, 1.9), p + Vector3(0, 0.55, 0), TRIM, false)
 		rail.rotation.y = -a + PI / 2.0
-	# Street lamps along the road, warm halos in the snow-light.
-	for a: float in [2.8, 3.7, 4.7, 5.7]:
+	# Street lamps along the road, warm halos in the snow-light. (No lamp
+	# at the crescent's west shoulder: the toboggan run crosses there.)
+	for a: float in [3.7, 4.7, 5.7]:
 		var p := Vector3(cos(a) * 14.2, 0.35, sin(a) * 14.2)
 		_add_mesh(_cyl(0.06, 0.09, 3.0), p + Vector3(0, 1.5, 0), Color(0.2, 0.24, 0.2))
 		var head := MeshInstance3D.new()
@@ -808,7 +812,9 @@ func _build_playground() -> void:
 			var leg := _add_box(Vector3(0.1, 2.6, 0.1), origin + Vector3(3.0 + sx, 1.2, lean * 1.6), STEEL)
 			leg.rotation.x = lean
 	_add_box(Vector3(3.6, 0.1, 0.1), origin + Vector3(3.0, 2.45, 0), STEEL)
-	for sx in [-0.8, 0.8]:
+	# Only the RIGHT swing is static decor; the left one (Khione's) is a
+	# real pendulum rig built by the SwingLaunch puzzle so it can animate.
+	for sx in [0.8]:
 		for cz in [-0.18, 0.18]:
 			_add_box(Vector3(0.03, 1.6, 0.03), origin + Vector3(3.0 + sx, 1.6, cz), Color(0.35, 0.35, 0.38), false)
 		_add_box(Vector3(0.5, 0.06, 0.24), origin + Vector3(3.0 + sx, 0.8, 0), Color(0.2, 0.2, 0.24))
@@ -847,7 +853,8 @@ func _build_rink() -> void:
 	var handle := _add_box(Vector3(0.06, 1.4, 0.06), origin + Vector3(3.8, 0.9, 1.4), WOOD, false)
 	handle.rotation.z = 0.4
 	_add_box(Vector3(0.34, 0.3, 0.04), origin + Vector3(4.08, 0.28, 1.4), STEEL, false)
-	_snowman(origin + Vector3(-4.6, 0, -1.6))
+	# East of the boards, well clear of the toboggan run's corridor.
+	_snowman(origin + Vector3(4.9, 0, -1.8))
 
 # --- dock, yard eight, winter dressing ---
 

@@ -189,6 +189,8 @@ func _the_ride() -> void:
 	Sfx.play("jump_whoosh", 0.7, 0.0, -8.0)
 	var spray := _spray()
 	var ride := create_tween()
+	# rs carries pose between samples: yaw for lean-in, eased roll.
+	var rs := {"yaw": 0.0, "roll": 0.0, "init": false}
 	var step := func(u: float) -> void:
 		var f := u * (pts.size() - 1)
 		var i := clampi(int(f), 0, pts.size() - 2)
@@ -197,14 +199,25 @@ func _the_ride() -> void:
 		var dir3 := Vector3(nxt.x - p.x, 0, nxt.y - p.y).normalized()
 		var h: float = island._terrain_height(p.x, p.y)
 		var pos := Vector3(p.x, maxf(h, 0.1) + 0.45, p.y)
+		# The sled noses down the slope and the riders lean into turns.
+		var h2: float = island._terrain_height(nxt.x, nxt.y)
+		var d2 := Vector2(nxt.x - p.x, nxt.y - p.y).length()
+		var pitch := clampf(atan2(h - h2, maxf(d2, 0.01)), -0.45, 0.45)
+		var yaw := atan2(dir3.x, dir3.z)
+		if not rs.init:
+			rs.init = true
+			rs.yaw = yaw
+		var roll_t := clampf(angle_difference(rs.yaw, yaw) * 5.0, -0.3, 0.3)
+		rs.roll = lerpf(rs.roll, roll_t, 0.2)
+		rs.yaw = yaw
 		player.global_position = pos
-		player.rotation.y = atan2(dir3.x, dir3.z)
+		player.rotation = Vector3(pitch * 0.55, yaw, rs.roll * 0.7)
 		if _toboggan:
 			_toboggan.global_position = pos + Vector3(0, -0.25, 0)
-			_toboggan.rotation.y = player.rotation.y
+			_toboggan.rotation = Vector3(pitch, yaw, rs.roll)
 		if oreo:
 			oreo.global_position = pos - dir3 * 1.0 + Vector3(0, 0.05, 0)
-			oreo.rotation.y = player.rotation.y
+			oreo.rotation = Vector3(pitch * 0.6, yaw, rs.roll * 0.8)
 		spray.global_position = pos + Vector3(0, -0.1, 0)
 		cam.global_position = pos - dir3 * 5.0 + Vector3(0, 2.4, 0)
 		cam.look_at(pos + dir3 * 2.0)
@@ -269,6 +282,11 @@ func _burst_cellar(player: Node3D, oreo: Node3D, cam: Camera3D, spray: Node3D) -
 	beat.tween_interval(5.6)
 	beat.tween_callback(func() -> void:
 		player.global_position = Vector3(0.5, 0.6, 38.0)
+		player.rotation.x = 0.0
+		player.rotation.z = 0.0
+		if oreo:
+			oreo.rotation.x = 0.0
+			oreo.rotation.z = 0.0
 		player.set_physics_process(true)
 		player.set("controls_enabled", true)
 		var pcam: Camera3D = player.get("rig").get_node("SpringArm/Camera")
