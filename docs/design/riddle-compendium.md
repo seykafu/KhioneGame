@@ -143,28 +143,28 @@ Oreo artifact: taped to a box in the storm cellar, a child's crayon drawing of a
 ---
 
 ## Island 5 · The Pirate Ship
-*West Edmonton Mall distilled to a kid's fever dream: an indoor sea, a wave machine, a galleon called the Santa Maria, a mini-golf reef, one loud parrot. Teaches: growl.*
+*The Santa Maria of West Edmonton Mall, run aground an ocean away: the galleon keeled over in a granite Nova Scotia cove, crooked Lunenburg saltboxes above a working wharf, spruce on the headland, lobster traps, dories, a fog bank that never quite lands, and the biggest tides in the world. A seaside mini-golf reef on the rocks. One loud parrot. Teaches: growl.*
 
 **Learning the growl:** the parrot. It perches on the crow's nest mocking every sound Khione makes, meow for meow, hiss for hiss. Oreo, fed up, barks; the parrot flinches. Khione tries to bark. What comes out is her first growl. The parrot respects it. Lesson: *growl is command; big things listen.*
 
 ### Small riddles
 
-**The Wave Clock.** The wave machine runs a fixed loop: three small swells, one big one. Stepping stones to the golf reef only clear the water between big waves. But riding the *big* wave (swim onto it as it passes) beaches you on the high platform instead. The riddle is realizing the obstacle is the elevator. Ahalo's tides, graduated.
+**The Wave Clock.** The cove's tide runs a fixed Fundy loop: three small swells, one big bore. Stepping stones to the golf reef only clear the water between big waves. But riding the *big* bore (swim onto it as it passes) beaches you on the high wharf platform instead. The riddle is realizing the obstacle is the elevator. Ahalo's tides, graduated.
 
 **The Cannonball Nine.** The mini-golf course's nine holes feed, secretly, into the ship's nine cannon breeches (cutaway pipes are visible if you look under the reef). Sink a ball in a hole, load a cannon. The flags on the course match pennants on the ship's rail. Load only the cannons whose pennants match the Jolly Roger's colours, and the broadside knocks the rust off the anchor chain. Wrong loads fire confetti (failure = party).
 
 **The Parrot's Game.** The parrot now likes Khione. It sings a sequence: *meow, growl, hiss, meow.* Repeat it back with the actual vocal keys. Each round adds a note and speeds up. Five rounds wins its "treasure": the captain's whistle, which lets Khione summon Oreo instantly across the level (utility unlocked by play, not menu).
 
-**The Aquarium Key.** An acrylic tunnel runs under the sea. One fish among hundreds is the exact silvery-blue of the stranded fish from Ahalo (a colour the player's eye already knows). It swims a patrol route; follow it from inside the tunnel and it pauses, three times, at the same grate. Behind the grate, visible only from the tunnel's low angle: the drydock spigot wheel.
+**The Sea Cave Key.** A sea cave threads under the wharf's headland, knee-deep at low tide. One fish among hundreds is the exact silvery-blue of the stranded fish from Ahalo (a colour the player's eye already knows). It swims a patrol route; follow it from inside the cave and it pauses, three times, at the same grate. Behind the grate, visible only from the cave's low angle: the drydock spigot wheel.
 
 ### Main riddle · Float the Santa Maria
 
-The galleon sits keeled over in the drained end of the pool, too heavy, too dry, too locked.
+The galleon sits keeled over in the silted drydock at the wharf's end, too heavy, too dry, too locked.
 
 Phase 1: open the spigot (Aquarium Key) to flood the drydock. The ship rights itself but the boarding rope stays ten feet up.
-Phase 2: growl at the wave machine attendant booth: the big brass "MAX SWELL" lever is stuck; a growl-startled pelican drops it. Big wave floods higher; ride the Wave Clock's big swell onto the deck.
+Phase 2: growl at the storm-gate boathouse: the big brass "STORM GATE" lever is stuck; a growl-startled pelican drops it. The bore floods higher; ride the Wave Clock's big swell onto the deck.
 Phase 3: the anchor: cannon broadside (Cannonball Nine) already cracked its rust; now Khione and Oreo turn the capstan together (duet timing from Island 4).
-Phase 4: the sails are golf-course flags stitched by... no time to ask; the parrot takes the wheel-perch. Wave machine to MAX. The Santa Maria surfs the artificial swell straight through the mall's glass wave doors, out onto real ocean. The single loudest exit in the game.
+Phase 4: the sails are golf-course flags stitched by... no time to ask; the parrot takes the wheel-perch. Storm gate open, bore at full height. The Santa Maria surfs it straight out the cove's mouth onto open Atlantic. The single loudest exit in the game.
 
 Oreo artifact: carved into the capstan's wood, old and shallow: tally marks in sets of four with a diagonal fifth, like something counted the days. Beside them, one pawprint.
 

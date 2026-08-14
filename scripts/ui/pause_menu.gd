@@ -14,6 +14,8 @@ const ISLANDS := [
 		"spawn": Vector3(0, 1.2, 42), "track": "calgary", "display": "Prince's Island"},
 	{"label": "Island 4: The Winnipeg Crescent", "scene": "res://scenes/islands/winnipeg.tscn",
 		"spawn": Vector3(0, 1.2, 42), "track": "winnipeg", "display": "The Winnipeg Crescent"},
+	{"label": "Island 5: The Pirate Ship", "scene": "res://scenes/islands/pirate.tscn",
+		"spawn": Vector3(0, 1.2, 42), "track": "pirate", "display": "The Pirate Ship"},
 ]
 
 var _open := false
@@ -52,15 +54,17 @@ func _close() -> void:
 ## complete so the riddle tracker and satchel stay coherent.
 func _travel_to_island(isl: Dictionary) -> void:
 	# Jumping ahead grants the flags earlier islands would have set.
-	if isl.track in ["eaton", "calgary", "winnipeg"] and not GameState.get_flag("island1_complete"):
+	if isl.track in ["eaton", "calgary", "winnipeg", "pirate"] and not GameState.get_flag("island1_complete"):
 		GameState.set_flag("island1_complete")
-	if isl.track in ["calgary", "winnipeg"] and not GameState.get_flag("island2_complete"):
+	if isl.track in ["calgary", "winnipeg", "pirate"] and not GameState.get_flag("island2_complete"):
 		GameState.set_flag("island2_complete")
-	if isl.track == "winnipeg" and not GameState.get_flag("island3_complete"):
+	if isl.track in ["winnipeg", "pirate"] and not GameState.get_flag("island3_complete"):
 		# Skipping Calgary still means Oreo joined there: the story says so.
 		for f: String in ["island3_complete", "meadow_open", "oreo_untangled",
 				"oreo_fed", "oreo_friend", "oreo_joined"]:
 			GameState.set_flag(f)
+	if isl.track == "pirate" and not GameState.get_flag("island4_complete"):
+		GameState.set_flag("island4_complete")
 	_close()
 	var mgr := get_tree().get_first_node_in_group("island_manager")
 	if mgr:

@@ -236,6 +236,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					_whisker_sense()
 				elif kind == "hiss":
 					Sfx.play("hiss", 1.0, 0.06, -6.0)
+				elif kind == "growl":
+					Sfx.play("growl", 1.0, 0.05, -4.0)
 				vocalized.emit(kind)
 				GameState.vocal_used.emit(kind)
 			else:

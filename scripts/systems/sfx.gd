@@ -28,6 +28,14 @@ const SOUNDS := {
 	"howl": "res://assets/audio/howl.wav",
 	"bark": "res://assets/audio/bark.wav",
 	"whimper": "res://assets/audio/whimper.wav",
+	"growl": "res://assets/audio/growl.wav",
+	"parrot_squawk": "res://assets/audio/parrot_squawk.wav",
+	"cannon_boom": "res://assets/audio/cannon_boom.wav",
+	"confetti_pop": "res://assets/audio/confetti_pop.wav",
+	"wave_crash": "res://assets/audio/wave_crash.wav",
+	"whistle_trill": "res://assets/audio/whistle_trill.wav",
+	"capstan_clank": "res://assets/audio/capstan_clank.wav",
+	"ship_groan": "res://assets/audio/ship_groan.wav",
 }
 const POOL_SIZE := 10
 

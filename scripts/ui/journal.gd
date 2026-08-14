@@ -56,6 +56,18 @@ const RIDDLES := [
 		"text": "Pump with the rhythm, let go with courage. The rooftops keep bolts, a loonie, and the view that matters."},
 	{"flag": "island4_complete", "title": "The Longest Slide", "island": 4,
 		"text": "Salt the gate, wake the toboggan, and dig the run open along the flag-line: she marks, he digs. Then ride it, all the way to the cellar."},
+	{"flag": "parrot_respect", "title": "The Parrot's Respect", "island": 5,
+		"text": "It mocked every meow and hiss, pitch-perfect and rude. Oreo barked; it flinched. She tried to bark, and what came out was a GROWL. Big things listen."},
+	{"flag": "rode_the_bore", "title": "The Wave Clock", "island": 5,
+		"text": "Three small swells, one big bore, forever. The stones stand clear between big waves — and the big wave itself carries her to the net loft. The wave is the elevator."},
+	{"flag": "broadside_done", "title": "The Cannonball Nine", "island": 5,
+		"text": "Nine holes feed nine breeches through the cutaway pipes. Load only the Jolly Roger's four colours; wrong guns fire confetti. The true broadside cracked the anchor's rust."},
+	{"flag": "parrot_game_done", "title": "The Parrot's Game", "island": 5,
+		"text": "Watch the beak-light, answer in kind, five rounds and faster every time. Its treasure: the captain's whistle. A meow fetches Oreo from anywhere now."},
+	{"flag": "ship_afloat", "title": "The Sea Cave Key", "island": 5,
+		"text": "One silvery-blue fish — a colour known since Ahalo — kept pausing at the same grate. Behind it, the spigot wheel. The drydock drank the sea, and she rolled upright."},
+	{"flag": "island5_complete", "title": "Float the Santa Maria", "island": 5,
+		"text": "Flood the dock, growl the pelican off the storm gate, ride the tall bore aboard, and turn the capstan together. Then the wheel, the sails, and the loudest exit there is."},
 ]
 
 const CONTROLS := [

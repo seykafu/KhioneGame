@@ -296,7 +296,7 @@ func _burst_cellar(player: Node3D, oreo: Node3D, cam: Camera3D, spray: Node3D) -
 			oreo.set("scripted", false)
 			oreo.set("following", true)
 		_riding = false
-		_flash("The crescent sleeps under brand-new tracks. Somewhere warm, an indoor sea is waiting. (Island 5 coming soon)", 6.0))
+		_flash("The crescent sleeps under brand-new tracks. East, in a foggy Maritime cove, an old galleon is waiting. (travel from the pause menu)", 6.0))
 
 func _show_fragment() -> void:
 	Sfx.play("paper_open", 1.0, 0.05, -6.0)
