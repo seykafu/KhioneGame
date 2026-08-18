@@ -41,7 +41,7 @@ func _run() -> void:
 			"eaton": ["res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 40.0), "The Eaton Centre"],
 			"calgary": ["res://scenes/islands/calgary.tscn", Vector3(0, 1.2, 42.0), "Prince's Island"],
 			"winnipeg": ["res://scenes/islands/winnipeg.tscn", Vector3(0, 1.2, 42.0), "The Winnipeg Crescent"],
-			"pirate": ["res://scenes/islands/pirate.tscn", Vector3(0, 1.2, 42.0), "The Pirate Ship"],
+			"montreal": ["res://scenes/islands/montreal.tscn", Vector3(0, 1.2, 42.0), "Montréal"],
 		}
 		if dests.has(travel):
 			await get_tree().create_timer(0.5).timeout

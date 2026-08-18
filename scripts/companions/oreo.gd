@@ -300,15 +300,7 @@ func _on_vocal(kind: String) -> void:
 				global_position = work + Vector3(2.0, 0, 2.0)  # he was, somehow, already close
 			move_to(work)
 			return
-	var dist := player.global_position.distance_to(global_position)
-	if dist > 25.0:
-		# The captain's whistle (island 5): from then on a meow fetches
-		# him from ANYWHERE — one trill, and he is simply there.
-		if Inventory.has_item("captains_whistle") and following:
-			Sfx.play("whistle_trill", 1.0, 0.03, -10.0)
-			global_position = player.global_position + Vector3(1.5, 0, 1.2)
-			Sfx.play("bark", 1.05, 0.02, -6.0)
-			hop()
+	if player.global_position.distance_to(global_position) > 25.0:
 		return
 	Sfx.play("bark", randf_range(0.95, 1.1), 0.02, -6.0)
 	hop()

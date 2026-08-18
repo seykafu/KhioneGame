@@ -22,9 +22,9 @@ House rules, carried from Ahalo:
 - **Small riddles are 5-15 minute wins. The main riddle is a synthesis** that needs at least two small-riddle rewards or lessons to crack.
 - Future hook: the *subtle clue feature* will piggyback on Whisker Sense (a meow near a solvable riddle returns a warmer, closer shimmer). Design every riddle so its clue object can shimmer without giving the answer away.
 
-**The verb ladder (V1, seven islands):** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Winnipeg) → Growl (Pirate Ship) → wind mastery (English Bay) → remix of everything (Agrea).
+**The verb ladder (V1, seven islands):** Meow (Ahalo) → Hiss (Eaton Centre) → Oreo joins (Calgary) → Dig & team moves (Winnipeg) → Growl (Montréal) → wind mastery (English Bay) → remix of everything (Agrea).
 
-*V1 ships with seven islands. Three more (Halifax, Mont Royal, Ottawa — sound-navigation, vertical patience, synthesis) are fully designed and banked in the Beyond V1 appendix; they slot between English Bay and Agrea when the expansion lands.*
+*V1 ships with seven islands. Three more (Halifax, the Pirate Ship, Ottawa — sound-navigation, loud joy, synthesis) are fully designed and banked in the Beyond V1 appendix; they slot between English Bay and Agrea when the expansion lands.*
 
 **The letter, assembled across seven islands.** Full text, known only to us:
 
@@ -38,7 +38,7 @@ Fragment reward order (chosen for emotional shape, not sentence order):
 | 2 Eaton Centre | "… not supposed to …" |
 | 3 Calgary | "Could I …" *(found the day a dog joins her)* |
 | 4 Winnipeg | "… meet you?" |
-| 5 Pirate Ship | "… adventure." |
+| 5 Montréal | "… adventure." |
 | 6 English Bay | "If you found this … know that …" |
 | 7 Agrea | "I wish …", "… be here.", and "Love," with the smudged signature, legible only in the finale |
 
@@ -142,34 +142,33 @@ Oreo artifact: taped to a box in the storm cellar, a child's crayon drawing of a
 
 ---
 
-## Island 5 · The Pirate Ship
-*The Santa Maria of West Edmonton Mall, run aground an ocean away: the galleon keeled over in a granite Nova Scotia cove, crooked Lunenburg saltboxes above a working wharf, spruce on the headland, lobster traps, dories, a fog bank that never quite lands, and the biggest tides in the world. A seaside mini-golf reef on the rocks. One loud parrot. Teaches: growl.*
+## Island 5 · Montréal
+*Montréal at autumn dusk: the whole mountain in red maple above a downtown of glass and grey stone, the Bell Centre at the mountain's foot with its four bronze legends, Place Ville Marie's beacon sweeping the sky, a bagel oven still warm, orange cones nobody moved, a calèche horse asleep across the mountain road, endless outdoor staircases, tam-tam drums abandoned mid-circle, a chalet with the belvedere view, and the great cross at the summit, dark. Teaches: growl, and vertical patience.*
 
-**Learning the growl:** the parrot. It perches on the crow's nest mocking every sound Khione makes, meow for meow, hiss for hiss. Oreo, fed up, barks; the parrot flinches. Khione tries to bark. What comes out is her first growl. The parrot respects it. Lesson: *growl is command; big things listen.*
+**Learning the growl (opening scene, not a riddle):** a big grey calèche horse stands blinkered across the only road up the mountain. Meow: it does not so much as flick an ear. Hiss: one ear flick, and it plants its hooves harder. Oreo barks; the horse snorts and backs one step. Khione squares up and tries to bark. What comes out is her first *growl*, low and true, and the horse regards her, then steps aside with enormous dignity. Lesson installed: *growl is command; big things listen.*
 
 ### Small riddles
 
-**The Wave Clock.** The cove's tide runs a fixed Fundy loop: three small swells, one big bore. Stepping stones to the golf reef only clear the water between big waves. But riding the *big* bore (swim onto it as it passes) beaches you on the high wharf platform instead. The riddle is realizing the obstacle is the elevator. Ahalo's tides, graduated.
+**The Bagel Standard.** The wood-fired bagel shop at the mountain's foot still has a warm oven and a "12 à la douzaine" sign. Squirrels run this island's economy; they pay in acorns and hoard everything shiny, and they honour contracts to the letter. Baking is an oven mini-game: the bagel on the peel goes pale, then golden, then black — pull it in the golden second and it is yours; miss and it is smoke. One sesame bagel buys passage past the squirrel baron's toll rope on the first staircase. The lesson lands later, at the summit, where the cross has exactly twelve lantern bases and the sign said *à la douzaine*. Twelve or nothing; the toll took one; bake again.
 
-**The Cannonball Nine.** The mini-golf course's nine holes feed, secretly, into the ship's nine cannon breeches (cutaway pipes are visible if you look under the reef). Sink a ball in a hole, load a cannon. The flags on the course match pennants on the ship's rail. Load only the cannons whose pennants match the Jolly Roger's colours, and the broadside knocks the rust off the anchor chain. Wrong loads fire confetti (failure = party).
+**The Three Stars.** The Bell Centre is empty and the ice still glows. The Zamboni sits parked on the centre dot; a hiss sends it fleeing to the corner (machines flee hisses; some lessons stay learned). The great scoreboard cube hangs dark, and it is the biggest thing downtown: from centre ice, a growl wakes it. Goal horn, house lights, and the cube calls the three stars of the game as three retired numbers, one at a time. Five banners lie fallen on the ice at their hoists. Hoist the three stars in the order called and the horn sounds again, the crowd that is not there sings, and the penalty box door swings open on three spare panes of arena glass. Hoist a wrong number and the buzzer drops every banner: the crowd groans (failure = the whole building disagreeing with you).
 
-**The Parrot's Game.** The parrot now likes Khione. It sings a sequence: *meow, growl, hiss, meow.* Repeat it back with the actual vocal keys. Each round adds a note and speeds up. Five rounds wins its "treasure": the captain's whistle, which lets Khione summon Oreo instantly across the level (utility unlocked by play, not menu).
+**The Tam-Tam Circle.** Drums abandoned mid-circle in the glade at the mountain's east foot. Strike a drum and it booms; the mountain answers half a beat later. The riddle: play a rhythm that interlocks with its own echo (call and response with the mountain itself). The chalk on the biggest drum shows the target pattern with rests exactly where the echo lands. Solving summons every squirrel on the mountain to dance, dropping whatever they were carrying: rain of stolen goods, and among them the brass handle of the staircase lever they stole. The pattern is the finale's second key, and the game makes sure your hands know it.
 
-**The Sea Cave Key.** A sea cave threads under the wharf's headland, knee-deep at low tide. One fish among hundreds is the exact silvery-blue of the stranded fish from Ahalo (a colour the player's eye already knows). It swims a patrol route; follow it from inside the cave and it pauses, three times, at the same grate. Behind the grate, visible only from the cave's low angle: the drydock spigot wheel.
+**The Staircase Shuffle.** Montréal's outdoor staircases climb the mountain in flights between landings, but the flights pivot on their landings, and the levers are *linked*: each lever swings its own flight and the next one. From below it is a maze of stairs pointing off cliffs. From the chalet balcony (reachable the long way, once, up the boulder scramble on the west flank; that is also how you skip the squirrel toll) the whole zigzag reads at a glance, exactly two flights wrong. See it, solve it, and the shortcut up the mountain is yours for the rest of the island. Teaches: climb high to *think*, then act.
 
-### Main riddle · Float the Santa Maria
+### Main riddle · Light the Cross
 
-The galleon sits keeled over in the silted drydock at the wharf's end, too heavy, too dry, too locked.
+The summit cross is a lattice of dark lanterns, twelve bases up the post and along the arms, three of them with their glass long gone. No power reaches the summit. But the mountain has fireflies, and fireflies love two things: warmth and rhythm.
 
-Phase 1: open the spigot (Aquarium Key) to flood the drydock. The ship rights itself but the boarding rope stays ten feet up.
-Phase 2: growl at the storm-gate boathouse: the big brass "STORM GATE" lever is stuck; a growl-startled pelican drops it. The bore floods higher; ride the Wave Clock's big swell onto the deck.
-Phase 3: the anchor: cannon broadside (Cannonball Nine) already cracked its rust; now Khione and Oreo turn the capstan together (duet timing from Island 4).
-Phase 4: the sails are golf-course flags stitched by... no time to ask; the parrot takes the wheel-perch. Storm gate open, bore at full height. The Santa Maria surfs it straight out the cove's mouth onto open Atlantic. The single loudest exit in the game.
+Phase 1: fit the three arena panes (Three Stars) so every lantern can hold light at all.
+Phase 2: warm bagels in the twelve lantern bases (Bagel Standard): heat that draws the fireflies upslope as the sky goes to dusk and the city lights come on below.
+Phase 3: the swarm circles the cross but will not settle. Fireflies blink in rhythm; they settle only into rhythm. On the summit drum, Khione plays the tam-tam pattern and Oreo barks the echoes (the duet, one more time), and the whole swarm pulses in sync and pours into the lanterns, tier by tier, lighting the cross like a slow vertical sunrise over the city.
+The lit cross reveals what its shadow was always for: it falls across the west slope onto the old funicular's hidden gate. Ride down through the glowing autumn woods to the river.
 
-Oreo artifact: carved into the capstan's wood, old and shallow: tally marks in sets of four with a diagonal fifth, like something counted the days. Beside them, one pawprint.
+Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder height, a tally: marks in sets of four with a diagonal fifth, like something counted the days. Fresh enough to still smell of pine.
 
 ---
-
 ## Island 6 · English Bay
 *Vancouver at blossom time: the seawall, a kite beach, totem poles in a clearing, raccoons with opinions, cherry petals riding a wind that never stops coming off the water. The gust-reading planted on Prince's Island and grown in Winnipeg comes due at full price. Teaches: the wind is a tool.*
 
@@ -198,7 +197,7 @@ Oreo artifact: on the back of the weathered park plaque, in pencil, a doodle: a 
 ---
 
 ## Island 7 · Agrea
-*All the journey in one miniature island: the geese, the doghouse, the totems, the galleon, the bridge, ringed around a quiet Vancouver West End block with one particular house. The last island is a memory palace, because that is literally what it is.*
+*All the journey in one miniature island: the geese, the doghouse, the totems, the cross, the bridge, ringed around a quiet Vancouver West End block with one particular house. The last island is a memory palace, because that is literally what it is.*
 
 ### Small riddles (the Six Shrines)
 
@@ -208,7 +207,7 @@ Each mini-district holds a shrine and a remixed, compressed riddle of its island
 2. **Eaton Shrine:** one goose, one lamp, one mirror: land the shadow on the door in one move.
 3. **Calgary Shrine:** a leash-knot around the shrine itself; Oreo unties it while Khione walks the reverse path. Roles swapped from Island 3. He remembers the yard.
 4. **Winnipeg Shrine:** a shrine under one drift that never melts; she marks, he digs. The roles they learned together, one last time.
-5. **Galleon Shrine:** a ship in a bottle and one wave lever: time one swell to seat it on its stand.
+5. **Montréal Shrine:** one lantern, three fireflies, one drum. Minimalist rhythm.
 6. **Totem Shrine:** four animals now, the fourth is a cat; where does the cat face? (Toward the house. It always faced the house.)
 
 And before the door itself, no shrine at all: a five-bell stand, and you know the phrase. You have always known the phrase.
@@ -233,11 +232,11 @@ The door opens on white light and the memory: the park, the storm, the vortex, a
 | 2 Eaton | Hiss | ★★ | playful uncanny |
 | 3 Calgary | Oreo | ★★ | warmth |
 | 4 Winnipeg | Dig, duets | ★★★ | first snow |
-| 5 Pirate Ship | Growl | ★★★ | loud joy |
+| 5 Montréal | Growl, vertical patience | ★★★ | amber dusk |
 | 6 English Bay | Wind | ★★★★ | blossom wind |
 | 7 Agrea | Mastery remix | ★★★ (fast) | catharsis |
 
-Expansion: Halifax (ear-navigation, ★★★★, hushed), Mont Royal (vertical patience, ★★★★, melancholy glow), Ottawa (synthesis, ★★★★★, reverent).
+Expansion: Halifax (ear-navigation, ★★★★, hushed), the Pirate Ship (loud joy, ★★★, growl at full volume), Ottawa (synthesis, ★★★★★, reverent).
 
 Two soft valleys (3 and 7) are deliberate: the islands where the heart does the work, the puzzles step back.
 
@@ -256,7 +255,10 @@ Whisker Sense already pings interactables. The clue layer, when we build it: nea
 ---
 
 ## Beyond V1 · The Expansion Islands
-*Everything below the line is finished design, banked for the post-launch expansion. These three islands slot between English Bay and Agrea, add sound-navigation, vertical patience, and synthesis to the ladder, and re-split the letter across ten fragments. Nothing here ships in V1.*
+*Everything below the line is finished design, banked for the post-launch expansion. These three islands slot between English Bay and Agrea, add sound-navigation, loud joy, and synthesis to the ladder, and re-split the letter across ten fragments. Nothing here ships in V1.*
+
+
+*Spare riddle, banked from the Montréal design:* **The Pointing Trees.** Autumn stripped the maples; leaf piles heap below. Oreo wants to dig them ALL, and will, comically, unless directed. Each bare tree's longest branch points at exactly one pile (silhouette puzzle against the sunset sky). Only trees with a woodpecker hole point true; a woodpecker hammers only on the true ones, audible with Whisker Sense. Under the true piles: whatever a later island needs buried.
 
 ## Expansion Island · The Halifax Fog
 *A harbour town in permanent evening fog. Buoy bells, a dark lighthouse, and one glowing donair shop, open, empty, warm. Teaches: navigation by ear. Whisker Sense's island.*
@@ -284,29 +286,31 @@ Oreo artifact: in the keeper's log, pawprints in old ink across one page, as if 
 
 ---
 
-## Expansion Island · Mont Royal
-*One mountain, all autumn. Endless staircases, tam-tam drums, squirrel barons, a chalet, and the great cross at the summit, dark. Teaches: vertical mastery, and patience.*
+## Expansion Island · The Pirate Ship
+*Banked for the expansion. The Santa Maria of West Edmonton Mall, run aground an ocean away: the galleon keeled over in a granite Nova Scotia cove, crooked Lunenburg saltboxes above a working wharf, spruce on the headland, lobster traps, dories, a fog bank that never quite lands, and the biggest tides in the world. A seaside mini-golf reef on the rocks. One loud parrot. Teaches: loud joy (growl arrives on Montréal in V1; here it is re-tested at full volume).*
+
+**The parrot (growl re-test):** the parrot. It perches on the crow's nest mocking every sound Khione makes, meow for meow, hiss for hiss. Oreo, fed up, barks; the parrot flinches. Khione growls. The parrot respects it, instantly. Lesson re-taught: *growl is command; big things listen.*
 
 ### Small riddles
 
-**The Bagel Standard.** The wood-fired bagel shop at the mountain's foot still has a warm oven and a "12 à la douzaine" sign. Squirrels run this island's economy; they pay in acorns and hoard everything shiny. One sesame bagel buys safe passage; a *dozen* buys the answer to anything, per the sign. Baking a dozen is an oven mini-game (timing, wood, flip). The squirrels honour contracts to the letter, which is the joke and the lesson: later, when you need the funicular key, no bagel works, because the sign says *à la douzaine*. Twelve or nothing.
+**The Wave Clock.** The cove's tide runs a fixed Fundy loop: three small swells, one big bore. Stepping stones to the golf reef only clear the water between big waves. But riding the *big* bore (swim onto it as it passes) beaches you on the high wharf platform instead. The riddle is realizing the obstacle is the elevator. Ahalo's tides, graduated.
 
-**The Tam-Tam Circle.** Drums abandoned mid-circle on the hillside. Jump on a drum, it booms; the mountain echoes back a half-beat late. The riddle: play a rhythm that interlocks with its own echo (call and response with the mountain itself). The chalk on the biggest drum shows the target pattern with rests exactly where the echo lands. Solving summons every squirrel on the mountain to dance, dropping whatever they were carrying. Rain of stolen goods.
+**The Cannonball Nine.** The mini-golf course's nine holes feed, secretly, into the ship's nine cannon breeches (cutaway pipes are visible if you look under the reef). Sink a ball in a hole, load a cannon. The flags on the course match pennants on the ship's rail. Load only the cannons whose pennants match the Jolly Roger's colours, and the broadside knocks the rust off the anchor chain. Wrong loads fire confetti (failure = party).
 
-**The Staircase Shuffle.** Montreal's famous outdoor staircases, but the flights between landings pivot. Levers rotate them like clock hands. From below it is a maze; from the chalet balcony (reachable by the long way, once) the staircases visibly form a broken zigzag with exactly two flights wrong. See it once, fix it forever: the shortcut up the mountain is yours for the rest of the island. Teaches: climb high to *think*, then act.
+**The Parrot's Game.** The parrot now likes Khione. It sings a sequence: *meow, growl, hiss, meow.* Repeat it back with the actual vocal keys. Each round adds a note and speeds up. Five rounds wins its "treasure": the captain's whistle, which lets Khione summon Oreo instantly across the level (utility unlocked by play, not menu).
 
-**The Pointing Trees.** Autumn stripped the maples; leaf piles heap below. Oreo wants to dig them ALL, and will, comically, unless directed. Each bare tree's longest branch points at exactly one pile (silhouette puzzle against the sunset sky). Only trees with a woodpecker hole point true, says nothing; shows: a woodpecker hammers only on the true ones, audible with Whisker Sense. Under the true piles: three lantern-glass panes for the summit.
+**The Sea Cave Key.** A sea cave threads under the wharf's headland, knee-deep at low tide. One fish among hundreds is the exact silvery-blue of the stranded fish from Ahalo (a colour the player's eye already knows). It swims a patrol route; follow it from inside the cave and it pauses, three times, at the same grate. Behind the grate, visible only from the cave's low angle: the drydock spigot wheel.
 
-### Main riddle · Light the Cross
+### Main riddle · Float the Santa Maria
 
-The summit cross is a lattice of dark lanterns. No power reaches the summit. But the mountain has fireflies, and fireflies love two things: warmth and rhythm.
+The galleon sits keeled over in the silted drydock at the wharf's end, too heavy, too dry, too locked.
 
-Phase 1: fit the lantern panes (Pointing Trees) so lanterns can hold light at all.
-Phase 2: bake one final batch (Bagel Standard): warm bagels in the lantern bases, heat that draws fireflies upslope at dusk.
-Phase 3: the swarm circles the cross but will not settle. Fireflies blink in rhythm; they settle only into rhythm. Below, on the tam-tams, Khione and Oreo play the interlocking echo-pattern, and the whole swarm pulses in sync and pours into the lanterns, tier by tier, lighting the cross like a slow vertical sunrise.
-The lit cross reveals what its shadow was always for: it falls across the far slope onto the hidden funicular gate. Ride down through the glowing autumn woods.
+Phase 1: open the spigot (Aquarium Key) to flood the drydock. The ship rights itself but the boarding rope stays ten feet up.
+Phase 2: growl at the storm-gate boathouse: the big brass "STORM GATE" lever is stuck; a growl-startled pelican drops it. The bore floods higher; ride the Wave Clock's big swell onto the deck.
+Phase 3: the anchor: cannon broadside (Cannonball Nine) already cracked its rust; now Khione and Oreo turn the capstan together (duet timing from Winnipeg).
+Phase 4: the sails are golf-course flags stitched by... no time to ask; the parrot takes the wheel-perch. Storm gate open, bore at full height. The Santa Maria surfs it straight out the cove's mouth onto open Atlantic. The single loudest exit in the game.
 
-Oreo artifact: scratched into the chalet's doorframe at exactly dog-shoulder height, a tally: the same four-and-diagonal marks from the Santa Maria's capstan. Fresher.
+Oreo artifact: carved into the capstan's wood, old and shallow: tally marks in sets of four with a diagonal fifth, like something counted the days. Beside them, one pawprint.
 
 ---
 

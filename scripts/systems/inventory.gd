@@ -45,9 +45,9 @@ const NAMES := {
 	"road_salt": "Road Salt",
 	"runner_bolts": "Runner Bolts",
 	"old_loonie": "Old Loonie",
-	"golf_balls": "Bag of Range Balls",
-	"spigot_wheel": "Spigot Wheel",
-	"captains_whistle": "Captain's Whistle",
+	"bagel": "Sesame Bagel",
+	"arena_pane": "Arena Glass Pane",
+	"lever_handle": "Brass Lever Handle",
 }
 
 const DESCRIPTIONS := {
@@ -74,9 +74,9 @@ const DESCRIPTIONS := {
 	"road_salt": "A bag of road salt from the postal truck. Ice, meet your negotiator.",
 	"runner_bolts": "Four runner bolts, rooftop-shiny. Some kid meant to fix the toboggan in spring.",
 	"old_loonie": "A loonie old enough to remember being lucky. Roof money is the luckiest money.",
-	"golf_balls": "A canvas bag of range balls from the net loft. Nine holes somewhere are hungry for them.",
-	"spigot_wheel": "A brass wheel from behind the sea-cave grate, fish-approved. Some dry dock is parched for it.",
-	"captains_whistle": "The parrot's treasure, won fair and square. One meow now carries across a whole island, and a certain dog always hears it.",
+	"bagel": "Wood-fired, sesame, still warm. Squirrels accept these as legal tender, strictly by the count.",
+	"arena_pane": "A spare pane of arena glass from the penalty box. Clear as a held breath, and exactly lantern-sized.",
+	"lever_handle": "The brass handle a squirrel stole off a staircase lever. It rained down with the rest of the loot.",
 }
 
 var max_slots: int = 5

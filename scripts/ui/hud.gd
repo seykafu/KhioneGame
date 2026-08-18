@@ -361,24 +361,22 @@ func _current_objective_text() -> String:
 				return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
-		if mgr and mgr.current_island and mgr.current_island.name == "Pirate":
+		if mgr and mgr.current_island and mgr.current_island.name == "Montreal":
 			if GameState.get_flag("island5_complete"):
-				return "The cove is quiet; the Santa Maria rides beyond the mouth, pointed west. English Bay is out there. (Island 6 coming soon)"
+				return "The cross burns warm over the city, and the funicular hums in its shed. West, a bay full of blossom wind is waiting. (Island 6 coming soon)"
 			if not GameState.knows_vocal("growl"):
-				return "A parrot on the galleon's crow's nest mocks every sound she makes. Her friend's big voice does not get mocked… maybe hers can learn its shape."
-			if not GameState.get_flag("rode_the_bore"):
-				return "Three small swells, then the big bore. The stones only stand clear between big waves… but maybe the big wave is not the obstacle."
-			if not GameState.get_flag("broadside_done"):
-				return "Nine golf holes feed nine cannon breeches; the pipes under the shelf lip do not lie. The Jolly Roger wears exactly four colours."
-			if not GameState.get_flag("ship_afloat"):
-				return "The drydock's spigot is missing its wheel. In the sea cave, one silvery-blue fish keeps stopping at the same rusted grate."
-			if not GameState.get_flag("storm_gate_open"):
-				return "A pelican naps on the boathouse lever marked STORM GATE. It fears nothing. Almost nothing."
-			if not GameState.get_flag("boarded_ship"):
-				return "The deck rides ten feet up, and no rope hangs low. The storm bore stands a whole tier taller now… the wave is the elevator."
-			if not GameState.get_flag("anchor_up"):
-				return "The capstan wants four paws and eight, pushed on the clank. The broadside already cracked the rust."
-			return "The wheel is waiting. The parrot has opinions about who steers."
+				return "A calèche horse sleeps across the mountain road and nothing she says moves it. Her friend's big voice does. Maybe hers can learn its shape."
+			if not GameState.get_flag("three_stars_done"):
+				return "The Bell Centre is empty and its ice still glows. Something parked on the centre dot fears a hiss… and the great dark cube above it is the biggest thing downtown."
+			if not GameState.get_flag("tamtam_done"):
+				return "Drums lie abandoned in the glade at the mountain's east foot. The mountain answers every beat, half a beat late. The chalk on the biggest drum leaves room for that."
+			if not GameState.get_flag("stairs_fixed"):
+				return "The staircases pivot, and every lever swings two flights. From the chalet balcony the whole zigzag reads at a glance… the long way up is the boulder scramble on the west flank."
+			if not GameState.get_flag("panes_fitted"):
+				return "Three lanterns on the summit cross have no glass. The Bell Centre's penalty box keeps spares."
+			if not GameState.get_flag("bagels_placed"):
+				return "Twelve lantern bases, twelve warm bagels: the oven at the mountain's foot bakes them in the golden second. The sign said à la douzaine, and squirrels count."
+			return "The fireflies circle but will not settle. They love warmth… and rhythm. The summit drum remembers the tam-tam pattern, and so does a certain dog."
 		if mgr and mgr.current_island and mgr.current_island.name == "Winnipeg":
 			if GameState.get_flag("island4_complete"):
 				return "The crescent sleeps under brand-new tracks. East, in a foggy Maritime cove, an old galleon is waiting. (travel from the pause menu)"
