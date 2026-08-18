@@ -13,7 +13,8 @@ func _run() -> void:
 	for i in 20:
 		await get_tree().process_frame
 	for def in [["res://scenes/islands/calgary.tscn", "calgary", "Prince's Island"],
-			["res://scenes/islands/winnipeg.tscn", "winnipeg", "The Winnipeg Crescent"]]:
+			["res://scenes/islands/winnipeg.tscn", "winnipeg", "The Winnipeg Crescent"],
+			["res://scenes/islands/montreal.tscn", "montreal", "Montréal"]]:
 		main.travel_to(def[0], Vector3(0, 1.2, 42.0), def[1], def[2])
 		await get_tree().create_timer(3.0).timeout
 		assert(Music._current_track == def[1], "%s should be the current track" % def[1])
