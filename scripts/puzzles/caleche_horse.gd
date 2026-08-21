@@ -9,8 +9,26 @@ extends Node3D
 var _horse: Node3D
 var _hull: StaticBody3D
 var _ear: Node3D
+var _body: MeshInstance3D
+var _tail_node: MeshInstance3D
+var _idle_t := 0.0
 var _tries := 0
 var _demonstrated := false
+
+func _process(delta: float) -> void:
+	if _horse == null:
+		return
+	# Idle life: slow breathing, a tail swish, the occasional ear flick.
+	_idle_t += delta
+	if _body:
+		var breath := 1.0 + 0.02 * sin(_idle_t * 1.4)
+		_body.scale = Vector3(breath, 1.0, breath)
+	if _tail_node:
+		_tail_node.rotation.z = 0.25 * sin(_idle_t * 0.9) * (1.0 + 0.4 * sin(_idle_t * 0.23))
+	if _ear and fmod(_idle_t, 6.5) < delta:
+		var t := create_tween()
+		t.tween_property(_ear, "rotation:z", 0.6, 0.1)
+		t.tween_property(_ear, "rotation:z", 0.0, 0.25)
 
 func _ready() -> void:
 	var island := get_parent()
@@ -20,15 +38,15 @@ func _ready() -> void:
 	_horse.rotation.y = PI / 2.0   # standing across the road
 	add_child(_horse)
 	var grey := Color(0.55, 0.55, 0.58)
-	var body := MeshInstance3D.new()
+	_body = MeshInstance3D.new()
 	var bm := CapsuleMesh.new()
 	bm.radius = 0.5
 	bm.height = 2.2
-	body.mesh = bm
-	body.material_override = _mat(grey)
-	body.rotation.x = PI / 2.0
-	body.position = Vector3(0, 1.3, 0)
-	_horse.add_child(body)
+	_body.mesh = bm
+	_body.material_override = _mat(grey)
+	_body.rotation.x = PI / 2.0
+	_body.position = Vector3(0, 1.3, 0)
+	_horse.add_child(_body)
 	for lp: Vector2 in [Vector2(-0.3, 0.7), Vector2(0.3, 0.7), Vector2(-0.3, -0.7), Vector2(0.3, -0.7)]:
 		var leg := MeshInstance3D.new()
 		leg.mesh = _cyl(0.09, 0.1, 1.0)
@@ -66,12 +84,12 @@ func _ready() -> void:
 	ear_mesh.material_override = _mat(grey.darkened(0.1))
 	ear_mesh.position = Vector3(0, 0.12, 0)
 	_ear.add_child(ear_mesh)
-	var tail := MeshInstance3D.new()
-	tail.mesh = _cyl(0.04, 0.1, 0.9)
-	tail.material_override = _mat(Color(0.3, 0.3, 0.32))
-	tail.position = Vector3(0, 1.1, -1.35)
-	tail.rotation.x = 0.4
-	_horse.add_child(tail)
+	_tail_node = MeshInstance3D.new()
+	_tail_node.mesh = _cyl(0.04, 0.1, 0.9)
+	_tail_node.material_override = _mat(Color(0.3, 0.3, 0.32))
+	_tail_node.position = Vector3(0, 1.1, -1.35)
+	_tail_node.rotation.x = 0.4
+	_horse.add_child(_tail_node)
 	# The calèche behind: a black carriage with two big wheels.
 	var cart := Node3D.new()
 	cart.position = Vector3(0, 0, -2.6)
