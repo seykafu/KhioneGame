@@ -470,10 +470,20 @@ func _build_mountain_dressing() -> void:
 		b.position = def[0]
 		b.rotation.y = def[1]
 		add_child(b)
-		_child_box(b, Vector3(1.8, 0.08, 0.5), Vector3(0, 0.45, 0), WOOD, true)
-		_child_box(b, Vector3(1.8, 0.4, 0.06), Vector3(0, 0.75, -0.25), WOOD, true)
+		_child_box(b, Vector3(1.8, 0.08, 0.5), Vector3(0, 0.45, 0), WOOD, false)
+		_child_box(b, Vector3(1.8, 0.4, 0.06), Vector3(0, 0.75, -0.25), WOOD, false)
 		for sx: float in [-0.75, 0.75]:
 			_child_box(b, Vector3(0.1, 0.45, 0.45), Vector3(sx, 0.22, 0), IRON, false)
+		# One solid hull for the whole bench: seat, back, and the gaps a
+		# small cat or a probing dog would otherwise slip through.
+		var hull := StaticBody3D.new()
+		b.add_child(hull)
+		var cs := CollisionShape3D.new()
+		var bx := BoxShape3D.new()
+		bx.size = Vector3(1.8, 0.95, 0.56)
+		cs.shape = bx
+		cs.position = Vector3(0, 0.48, -0.03)
+		hull.add_child(cs)
 
 func _build_chalet() -> void:
 	chalet = Node3D.new()
@@ -731,6 +741,15 @@ func _build_quay_dressing() -> void:
 		coil.material_override = _mat(Color(0.68, 0.58, 0.4))
 		coil.position = p + Vector3(0.5, 0.4, 0.2)
 		add_child(coil)
+		var coil_body := StaticBody3D.new()
+		var ccs := CollisionShape3D.new()
+		var ccyl := CylinderShape3D.new()
+		ccyl.radius = 0.32
+		ccyl.height = 0.2
+		ccs.shape = ccyl
+		coil_body.position = coil.position
+		coil_body.add_child(ccs)
+		add_child(coil_body)
 	# A moored river ferry east of the dock, nodding at its lines.
 	var ferry := Node3D.new()
 	ferry.name = "Ferry"

@@ -143,6 +143,7 @@ func _ready() -> void:
 		newel.material_override = _mat(Color(0.4, 0.32, 0.26))
 		newel.position = Vector3(s, 0.55, 0)
 		_toll_body.add_child(newel)
+		newel.create_convex_collision()
 	var baron := Node3D.new()
 	baron.position = Vector3(0.9, 1.1, 0)
 	_toll_body.add_child(baron)

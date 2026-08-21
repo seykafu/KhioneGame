@@ -10,7 +10,7 @@ var _horse: Node3D
 var _hull: StaticBody3D
 var _ear: Node3D
 var _body: MeshInstance3D
-var _tail_node: MeshInstance3D
+var _tail_node: Node3D
 var _idle_t := 0.0
 var _tries := 0
 var _demonstrated := false
@@ -21,8 +21,8 @@ func _process(delta: float) -> void:
 	# Idle life: slow breathing, a tail swish, the occasional ear flick.
 	_idle_t += delta
 	if _body:
-		var breath := 1.0 + 0.02 * sin(_idle_t * 1.4)
-		_body.scale = Vector3(breath, 1.0, breath)
+		var breath := 1.0 + 0.025 * sin(_idle_t * 1.4)
+		_body.scale = Vector3(breath, breath, 1.0)
 	if _tail_node:
 		_tail_node.rotation.z = 0.25 * sin(_idle_t * 0.9) * (1.0 + 0.4 * sin(_idle_t * 0.23))
 	if _ear and fmod(_idle_t, 6.5) < delta:
@@ -37,59 +37,241 @@ func _ready() -> void:
 	_horse.position = island.HORSE_POS
 	_horse.rotation.y = PI / 2.0   # standing across the road
 	add_child(_horse)
-	var grey := Color(0.55, 0.55, 0.58)
+	# A proper horse: dapple-grey coat, dark points, harness leather.
+	var grey := Color(0.62, 0.62, 0.66)
+	var dark := Color(0.32, 0.32, 0.36)
+	var charcoal := Color(0.18, 0.18, 0.22)
+	var leather := Color(0.24, 0.18, 0.14)
+	# Barrel (the breathing part), chest, hindquarters, withers.
 	_body = MeshInstance3D.new()
 	var bm := CapsuleMesh.new()
-	bm.radius = 0.5
-	bm.height = 2.2
+	bm.radius = 0.44
+	bm.height = 1.5
 	_body.mesh = bm
 	_body.material_override = _mat(grey)
 	_body.rotation.x = PI / 2.0
-	_body.position = Vector3(0, 1.3, 0)
+	_body.position = Vector3(0, 1.32, -0.12)
 	_horse.add_child(_body)
-	for lp: Vector2 in [Vector2(-0.3, 0.7), Vector2(0.3, 0.7), Vector2(-0.3, -0.7), Vector2(0.3, -0.7)]:
-		var leg := MeshInstance3D.new()
-		leg.mesh = _cyl(0.09, 0.1, 1.0)
-		leg.material_override = _mat(grey.darkened(0.15))
-		leg.position = Vector3(lp.x, 0.5, lp.y)
-		_horse.add_child(leg)
+	var chest := MeshInstance3D.new()
+	var chm := SphereMesh.new()
+	chm.radius = 0.38
+	chest.mesh = chm
+	chest.material_override = _mat(grey)
+	chest.position = Vector3(0, 1.26, 0.6)
+	_horse.add_child(chest)
+	var rump := MeshInstance3D.new()
+	var rm := SphereMesh.new()
+	rm.radius = 0.42
+	rump.mesh = rm
+	rump.material_override = _mat(grey)
+	rump.position = Vector3(0, 1.38, -0.82)
+	rump.scale = Vector3(1.0, 1.05, 1.1)
+	_horse.add_child(rump)
+	var withers := MeshInstance3D.new()
+	var wm := SphereMesh.new()
+	wm.radius = 0.24
+	withers.mesh = wm
+	withers.material_override = _mat(grey)
+	withers.position = Vector3(0, 1.66, 0.38)
+	_horse.add_child(withers)
+	# Dapples: a few lighter patches along the barrel.
+	for dp: Vector3 in [Vector3(0.3, 1.45, -0.3), Vector3(-0.32, 1.4, 0.1), Vector3(0.28, 1.5, -0.7), Vector3(-0.3, 1.52, -0.5)]:
+		var spot := MeshInstance3D.new()
+		var spm := SphereMesh.new()
+		spm.radius = 0.11
+		spot.mesh = spm
+		spot.material_override = _mat(Color(0.72, 0.72, 0.76))
+		spot.position = dp
+		spot.scale = Vector3(1.0, 0.6, 1.0)
+		_horse.add_child(spot)
+	# The neck, arched forward and up, with a mane along its ridge.
 	var neck := MeshInstance3D.new()
-	neck.mesh = _cyl(0.22, 0.3, 1.0)
+	var nm := CapsuleMesh.new()
+	nm.radius = 0.21
+	nm.height = 1.1
+	neck.mesh = nm
 	neck.material_override = _mat(grey)
-	neck.position = Vector3(0, 1.9, 1.15)
-	neck.rotation.x = -0.6
+	neck.position = Vector3(0, 1.98, 0.82)
+	neck.rotation.x = -0.72
 	_horse.add_child(neck)
-	var head := MeshInstance3D.new()
-	var hm := BoxMesh.new()
-	hm.size = Vector3(0.36, 0.4, 0.8)
-	head.mesh = hm
-	head.material_override = _mat(grey)
-	head.position = Vector3(0, 2.25, 1.65)
-	head.rotation.x = 0.35
+	for k in 5:
+		var tuft := MeshInstance3D.new()
+		var tm := BoxMesh.new()
+		tm.size = Vector3(0.07, 0.2, 0.16)
+		tuft.mesh = tm
+		tuft.material_override = _mat(charcoal)
+		tuft.position = Vector3(0.0, 1.86 + k * 0.16, 0.56 + k * 0.14)
+		tuft.rotation.x = -0.72
+		tuft.rotation.z = 0.08 * (1 if k % 2 == 0 else -1)
+		_horse.add_child(tuft)
+	# The head: skull, long face, muzzle, nostrils, both eyes, forelock.
+	var head := Node3D.new()
+	head.name = "Head"
+	head.position = Vector3(0, 2.5, 1.3)
 	_horse.add_child(head)
-	# Blinkers, and the one ear that will flick.
+	var skull := MeshInstance3D.new()
+	var skm := SphereMesh.new()
+	skm.radius = 0.17
+	skull.mesh = skm
+	skull.material_override = _mat(grey)
+	head.add_child(skull)
+	var face := MeshInstance3D.new()
+	var fm := CapsuleMesh.new()
+	fm.radius = 0.115
+	fm.height = 0.58
+	face.mesh = fm
+	face.material_override = _mat(grey)
+	face.position = Vector3(0, -0.18, 0.18)
+	face.rotation.x = -0.5
+	head.add_child(face)
+	var muzzle := MeshInstance3D.new()
+	var mm := SphereMesh.new()
+	mm.radius = 0.1
+	muzzle.mesh = mm
+	muzzle.material_override = _mat(dark)
+	muzzle.position = Vector3(0, -0.34, 0.34)
+	muzzle.scale = Vector3(0.9, 0.8, 1.1)
+	head.add_child(muzzle)
+	for s: float in [-0.04, 0.04]:
+		var nostril := MeshInstance3D.new()
+		var nsm := SphereMesh.new()
+		nsm.radius = 0.022
+		nostril.mesh = nsm
+		nostril.material_override = _mat(Color(0.1, 0.1, 0.12))
+		nostril.position = Vector3(s, -0.31, 0.43)
+		head.add_child(nostril)
+	for s: float in [-1.0, 1.0]:
+		var eye := MeshInstance3D.new()
+		var em := SphereMesh.new()
+		em.radius = 0.045
+		eye.mesh = em
+		eye.material_override = _mat(Color(0.08, 0.07, 0.08))
+		eye.position = Vector3(s * 0.13, 0.02, 0.1)
+		head.add_child(eye)
+	var forelock := MeshInstance3D.new()
+	var flm := BoxMesh.new()
+	flm.size = Vector3(0.1, 0.16, 0.08)
+	forelock.mesh = flm
+	forelock.material_override = _mat(charcoal)
+	forelock.position = Vector3(0, 0.14, 0.1)
+	forelock.rotation.x = -0.3
+	head.add_child(forelock)
+	# Blinkers flanking the eyes; the calèche horse's whole worldview.
 	for s: float in [-1.0, 1.0]:
 		var blinker := MeshInstance3D.new()
 		var bb := BoxMesh.new()
-		bb.size = Vector3(0.05, 0.28, 0.28)
+		bb.size = Vector3(0.04, 0.22, 0.22)
 		blinker.mesh = bb
-		blinker.material_override = _mat(Color(0.2, 0.16, 0.14))
-		blinker.position = Vector3(s * 0.22, 2.3, 1.55)
-		_horse.add_child(blinker)
+		blinker.material_override = _mat(leather)
+		blinker.position = Vector3(s * 0.19, 0.02, 0.08)
+		head.add_child(blinker)
+	# Bridle straps.
+	var brow := MeshInstance3D.new()
+	var brm := BoxMesh.new()
+	brm.size = Vector3(0.3, 0.03, 0.03)
+	brow.mesh = brm
+	brow.material_override = _mat(leather)
+	brow.position = Vector3(0, 0.1, 0.12)
+	head.add_child(brow)
+	var nose_band := MeshInstance3D.new()
+	var nbm := BoxMesh.new()
+	nbm.size = Vector3(0.22, 0.03, 0.03)
+	nose_band.mesh = nbm
+	nose_band.material_override = _mat(leather)
+	nose_band.position = Vector3(0, -0.22, 0.3)
+	nose_band.rotation.x = -0.5
+	head.add_child(nose_band)
+	# Both ears; the right one is the famous flicker.
+	var ear_l := Node3D.new()
+	ear_l.position = Vector3(-0.12, 0.16, -0.02)
+	head.add_child(ear_l)
+	var elm := MeshInstance3D.new()
+	elm.mesh = _cyl(0.0, 0.055, 0.2)
+	elm.material_override = _mat(grey)
+	elm.position = Vector3(0, 0.1, 0)
+	elm.rotation.z = -0.15
+	ear_l.add_child(elm)
 	_ear = Node3D.new()
-	_ear.position = Vector3(0.14, 2.5, 1.35)
-	_horse.add_child(_ear)
-	var ear_mesh := MeshInstance3D.new()
-	ear_mesh.mesh = _cyl(0.0, 0.07, 0.24)
-	ear_mesh.material_override = _mat(grey.darkened(0.1))
-	ear_mesh.position = Vector3(0, 0.12, 0)
-	_ear.add_child(ear_mesh)
-	_tail_node = MeshInstance3D.new()
-	_tail_node.mesh = _cyl(0.04, 0.1, 0.9)
-	_tail_node.material_override = _mat(Color(0.3, 0.3, 0.32))
-	_tail_node.position = Vector3(0, 1.1, -1.35)
-	_tail_node.rotation.x = 0.4
+	_ear.position = Vector3(0.12, 0.16, -0.02)
+	head.add_child(_ear)
+	var erm := MeshInstance3D.new()
+	erm.mesh = _cyl(0.0, 0.055, 0.2)
+	erm.material_override = _mat(grey)
+	erm.position = Vector3(0, 0.1, 0)
+	erm.rotation.z = 0.15
+	_ear.add_child(erm)
+	# Four proper legs: upper, cannon, fetlock, hoof. Hind pair angled.
+	for lp: Array in [[Vector2(-0.24, 0.58), 0.0], [Vector2(0.24, 0.58), 0.0],
+			[Vector2(-0.26, -0.78), 0.14], [Vector2(0.26, -0.78), 0.14]]:
+		var leg := Node3D.new()
+		var lpv: Vector2 = lp[0]
+		leg.position = Vector3(lpv.x, 1.1, lpv.y)
+		leg.rotation.x = lp[1]
+		_horse.add_child(leg)
+		var upper := MeshInstance3D.new()
+		upper.mesh = _cyl(0.1, 0.07, 0.55)
+		upper.material_override = _mat(grey)
+		upper.position = Vector3(0, -0.27, 0)
+		leg.add_child(upper)
+		var cannon := MeshInstance3D.new()
+		cannon.mesh = _cyl(0.055, 0.05, 0.42)
+		cannon.material_override = _mat(dark)
+		cannon.position = Vector3(0, -0.72, 0)
+		leg.add_child(cannon)
+		var fetlock := MeshInstance3D.new()
+		var fem := SphereMesh.new()
+		fem.radius = 0.06
+		fetlock.mesh = fem
+		fetlock.material_override = _mat(dark)
+		fetlock.position = Vector3(0, -0.94, 0)
+		leg.add_child(fetlock)
+		var hoof := MeshInstance3D.new()
+		hoof.mesh = _cyl(0.075, 0.085, 0.12)
+		hoof.material_override = _mat(Color(0.12, 0.11, 0.1))
+		hoof.position = Vector3(0, -1.04, 0)
+		leg.add_child(hoof)
+	# The tail: an arc of tapered segments from a swishing root.
+	_tail_node = Node3D.new()
+	_tail_node.position = Vector3(0, 1.62, -1.22)
 	_horse.add_child(_tail_node)
+	for td: Array in [[Vector3(0, -0.12, -0.06), 0.35, 0.085], [Vector3(0, -0.42, -0.14), 0.18, 0.065],
+			[Vector3(0, -0.7, -0.18), 0.08, 0.045]]:
+		var seg := MeshInstance3D.new()
+		var sgm := CapsuleMesh.new()
+		sgm.radius = td[2]
+		sgm.height = 0.42
+		seg.mesh = sgm
+		seg.material_override = _mat(charcoal)
+		seg.position = td[0]
+		seg.rotation.x = td[1]
+		_tail_node.add_child(seg)
+	# Harness: collar at the chest, girth round the barrel, reins to the shafts.
+	var collar := MeshInstance3D.new()
+	var com := TorusMesh.new()
+	com.inner_radius = 0.22
+	com.outer_radius = 0.28
+	collar.mesh = com
+	collar.material_override = _mat(leather)
+	collar.position = Vector3(0, 1.62, 0.66)
+	collar.rotation.x = PI / 2.0 - 0.72
+	_horse.add_child(collar)
+	var girth := MeshInstance3D.new()
+	var gm := TorusMesh.new()
+	gm.inner_radius = 0.46
+	gm.outer_radius = 0.52
+	girth.mesh = gm
+	girth.material_override = _mat(leather)
+	girth.position = Vector3(0, 1.3, -0.2)
+	girth.rotation.x = PI / 2.0
+	girth.scale = Vector3(1.0, 1.0, 1.15)
+	_horse.add_child(girth)
+	for s: float in [-0.16, 0.16]:
+		var rein := MeshInstance3D.new()
+		rein.mesh = _cyl(0.015, 0.015, 2.0)
+		rein.material_override = _mat(leather)
+		rein.position = Vector3(s, 2.0, -0.6)
+		rein.rotation.x = PI / 2.0 - 0.2
+		_horse.add_child(rein)
 	# The calèche behind: a black carriage with two big wheels.
 	var cart := Node3D.new()
 	cart.position = Vector3(0, 0, -2.6)
