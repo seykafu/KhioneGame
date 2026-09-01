@@ -371,7 +371,9 @@ func _current_objective_text() -> String:
 			if not GameState.get_flag("mmfa_delivered"):
 				return "A framed number 10 lies flat on the arena ice, and its plaque names a museum at the mountain's east foot. The grand door there says TIREZ — and cats push."
 			if not GameState.get_flag("stairs_fixed"):
-				return "The staircases pivot, and every lever swings two flights. From the chalet balcony the whole zigzag reads at a glance… the long way up is the boulder scramble on the west flank."
+				if not GameState.get_flag("lever2_handled"):
+					return "The staircases pivot, and every lever swings two flights — but one lever is a bare stub. The brass handle the museum squirrel returned waits on the front steps."
+				return "Every lever swings its own flight and the next. From the chalet balcony the whole zigzag reads at a glance… the long way up is the boulder scramble on the west flank."
 			if not GameState.get_flag("panes_fitted"):
 				return "Three lanterns on the summit cross have no glass. The Bell Centre's penalty box keeps spares."
 			if not GameState.get_flag("bagels_placed"):

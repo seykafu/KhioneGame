@@ -28,7 +28,7 @@ func _run() -> void:
 	assert(isl != null, "montreal island missing")
 	# The terrace contract, exactly as the header promises.
 	assert(absf(isl._terrain_height(0.0, 10.0) - 0.35) < 0.15, "plain height")
-	assert(absf(isl.mountain_height(0.0, -12.0) - 4.0) < 0.05, "T1 = 4")
+	assert(absf(isl.mountain_height(0.0, -10.0) - 4.0) < 0.05, "T1 = 4")
 	assert(absf(isl.mountain_height(0.0, -21.0) - 8.0) < 0.05, "T2 = 8")
 	assert(absf(isl.mountain_height(0.0, -29.5) - 12.0) < 0.05, "T3 = 12")
 	assert(absf(isl.mountain_height(0.0, -38.0) - 15.0) < 0.05, "summit = 15")

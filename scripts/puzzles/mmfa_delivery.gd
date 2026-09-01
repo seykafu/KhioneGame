@@ -145,7 +145,7 @@ func _build_museum() -> void:
 	# The sculpture-garden squirrel, waiting on the north steps.
 	var squirrel := Node3D.new()
 	squirrel.name = "GardenSquirrel"
-	squirrel.position = Vector3(-5.4, 0.15, 3.0)
+	squirrel.position = Vector3(-5.4, 0.15, 1.6)
 	m.add_child(squirrel)
 	var sb := MeshInstance3D.new()
 	var sbm := CapsuleMesh.new()
@@ -261,7 +261,7 @@ func easel_interact() -> void:
 	Sfx.play("crowd_cheer", 0.8, 0.0, -16.0)
 	var island := get_parent()
 	if island.has_method("_add_pickup"):
-		island._add_pickup(MUSEUM_POS + Vector3(-5.4, 0.0, 3.0), "lever_handle",
+		island._add_pickup(MUSEUM_POS + Vector3(-5.6, 0.0, 0.6), "lever_handle",
 				"Brass Lever Handle", Color(0.85, 0.7, 0.3))
 	Sfx.play("squirrel_chitter", 1.0, 0.0, -10.0)
 	_flash("The portrait settles onto the easel and the whole museum lights up warm. On the steps, the sculpture-garden squirrel sets down something brass, with ceremony.", 6.0)

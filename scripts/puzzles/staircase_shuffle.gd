@@ -75,15 +75,17 @@ func _ready() -> void:
 			rail.position = ramp.position + Vector3(s, 0.6, 0)
 			rail.rotation.x = pitch + PI / 2.0
 			body.add_child(rail)
-		for tr in 7:
-			var t := (tr + 0.5) / 7.0
+		# Real treads: chunky step blocks rising through the hidden ramp
+		# (the smooth ramp does the walking; the steps do the looking).
+		var n_steps := 8
+		for tr in n_steps:
+			var t := (tr + 0.5) / float(n_steps)
 			var step := MeshInstance3D.new()
 			var sm := BoxMesh.new()
-			sm.size = Vector3(1.6, 0.04, 0.12)
+			sm.size = Vector3(1.6, rise / n_steps + 0.1, run / n_steps + 0.1)
 			step.mesh = sm
-			step.material_override = _mat(Color(0.5, 0.48, 0.44))
-			step.position = Vector3(0, 0.18 + rise * t, -run * t)
-			step.rotation.x = pitch
+			step.material_override = _mat(Color(0.56, 0.54, 0.5) if tr % 2 == 0 else Color(0.62, 0.6, 0.56))
+			step.position = Vector3(0, rise * t - 0.06, -run * t)
 			body.add_child(step)
 		body.rotation.y = -_turns[k] * PI / 2.0
 		_flights.append(body)
@@ -212,7 +214,10 @@ func pull(idx: int) -> void:
 			Sfx.play("lever_clunk", 1.2, 0.0, -10.0)
 			_flash("The brass handle seats with a click. Lever two lives again.", 3.0)
 			return
-		_flash("A lever with no handle: a bare iron stub. Something on this mountain steals brass.", 3.5)
+		if GameState.get_flag("mmfa_delivered"):
+			_flash("A bare iron stub. The museum's garden squirrel left something brass on the front steps… exactly handle-shaped.", 4.5)
+		else:
+			_flash("A lever with no handle: a bare iron stub. Squirrels steal brass on this mountain — though the one loitering at the museum looks like it keeps accounts.", 5.0)
 		return
 	if GameState.get_flag("stairs_fixed"):
 		_flash("The zigzag is true, top to bottom. Leave it be.", 2.5)

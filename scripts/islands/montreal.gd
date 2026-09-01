@@ -17,14 +17,16 @@ const COAST_BASE := 46.0
 
 const TERRACES: Array = [
 	# [z_start (south edge of the riser), z_flat (top of riser), height]
-	[-4.0, -7.0, 4.0], [-14.0, -17.0, 8.0], [-23.0, -26.0, 12.0], [-31.0, -34.0, 15.0],
+	# T2's riser starts early so the chalet keeps a real belvedere
+	# forecourt on flat ground (balustrade, benches, lamp all touch down).
+	[-4.0, -7.0, 4.0], [-11.5, -14.5, 8.0], [-23.0, -26.0, 12.0], [-31.0, -34.0, 15.0],
 ]
 ## Flight k climbs terrace k-1 → k. Foot (south) and head (north) points,
 ## all at x = 4 - 2k stagger so the zigzag reads from the balcony.
 const FLIGHTS: Array = [
 	# [foot xz, head xz, foot y, head y]
 	[Vector2(3.0, -3.6), Vector2(3.0, -7.4), 0.35, 4.0],
-	[Vector2(-2.0, -13.6), Vector2(-2.0, -17.4), 4.0, 8.0],
+	[Vector2(-2.0, -10.9), Vector2(-2.0, -15.1), 4.0, 8.0],
 	[Vector2(3.0, -22.6), Vector2(3.0, -26.4), 8.0, 12.0],
 	[Vector2(-2.0, -30.6), Vector2(-2.0, -34.4), 12.0, 15.0],
 ]
