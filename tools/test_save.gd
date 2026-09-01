@@ -65,5 +65,24 @@ func _run() -> void:
 	Inventory.reset()
 	assert(GameState.load_save() == "", "no save means empty track")
 	print("clear + empty load: OK")
+
+	# A drifted save (flags say islands finished, verbs missing — the old
+	# pause-travel grant gap) heals itself on load: finished islands imply
+	# their verbs were learned.
+	GameState.reset()
+	Inventory.reset()
+	GameState.autosave_enabled = true
+	GameState.set_flag("island2_complete")
+	GameState.set_flag("horse_moved")
+	GameState.known_vocals = ["meow"]
+	GameState.save_now()
+	# Hand-break the vocals in the file the way real drifted saves look.
+	GameState.reset()
+	GameState.load_save()
+	assert(GameState.knows_vocal("hiss"), "island2_complete must imply hiss on load")
+	assert(GameState.knows_vocal("growl"), "horse_moved must imply growl on load")
+	GameState.clear_save()
+	GameState.autosave_enabled = false
+	print("verb-ladder repair: OK")
 	print("ALL SAVE TESTS PASSED")
 	get_tree().quit()

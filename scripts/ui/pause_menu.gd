@@ -58,6 +58,10 @@ func _travel_to_island(isl: Dictionary) -> void:
 		GameState.set_flag("island1_complete")
 	if isl.track in ["calgary", "winnipeg", "montreal"] and not GameState.get_flag("island2_complete"):
 		GameState.set_flag("island2_complete")
+	if isl.track in ["calgary", "winnipeg", "montreal"]:
+		# Skipping the mall still means the robot cornered her once:
+		# the verbs travel with the story, not just the flags.
+		GameState.learn_vocal("hiss")
 	if isl.track in ["winnipeg", "montreal"] and not GameState.get_flag("island3_complete"):
 		# Skipping Calgary still means Oreo joined there: the story says so.
 		for f: String in ["island3_complete", "meadow_open", "oreo_untangled",

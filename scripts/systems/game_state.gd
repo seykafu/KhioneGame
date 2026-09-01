@@ -70,8 +70,17 @@ func load_save() -> String:
 	current_island_track = cfg.get_value("progress", "island", "ahalo")
 	var stacks: Array = cfg.get_value("progress", "inventory", [])
 	Inventory.restore(stacks)
+	_repair_consistency()
 	autosave_enabled = was_autosave
 	return current_island_track
+
+## Story logic backfill for saves written before a fix (or built from
+## travel grants): a finished island always means its verb was learned.
+func _repair_consistency() -> void:
+	if get_flag("island2_complete") and not knows_vocal("hiss"):
+		known_vocals.append("hiss")
+	if (get_flag("horse_moved") or get_flag("island5_complete")) and not knows_vocal("growl"):
+		known_vocals.append("growl")
 
 func clear_save() -> void:
 	if has_save():
