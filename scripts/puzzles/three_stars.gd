@@ -21,6 +21,7 @@ var _screen_labels: Array[Label3D] = []
 var _zamboni: Node3D
 var _zamboni_moved := false
 var _awake := false
+var _call_round := 0   # bumping this retires any running callout loop
 var _hoisted: Array[int] = []
 var _banner_nodes := {}
 var _box_door: MeshInstance3D
@@ -208,14 +209,27 @@ func _wake_cube() -> void:
 	_flash("The cube WAKES. Horn, house lights… and it calls the three stars of the game.", 4.0)
 	_call_stars()
 
+## The callout, the way a rink does it: counting DOWN to the first star.
+## Three stars over the first number, two over the second, one over the
+## last — then the cycle repeats until the banners answer.
 func _call_stars() -> void:
-	for i in STARS.size():
-		get_tree().create_timer(2.5 + i * 1.6).timeout.connect(func() -> void:
-			_set_screens("★ %d" % STARS[i])
-			Sfx.play("bell_ding", 1.0 + 0.1 * i, 0.0, -10.0))
-	get_tree().create_timer(2.5 + STARS.size() * 1.6 + 1.2).timeout.connect(func() -> void:
-		if not GameState.get_flag("three_stars_done"):
-			_set_screens("★ ★ ★"))
+	_call_round += 1
+	var my := _call_round
+	var loop := func() -> void:
+		await get_tree().create_timer(2.0).timeout
+		while is_inside_tree() and _awake and my == _call_round \
+				and not GameState.get_flag("three_stars_done"):
+			for i in STARS.size():
+				if not is_inside_tree() or my != _call_round \
+						or GameState.get_flag("three_stars_done"):
+					return
+				var stars: String = ["★ ★ ★", "★ ★", "★"][i]
+				_set_screens(stars + "\n%d" % STARS[i])
+				Sfx.play("bell_ding", 1.0 + 0.1 * i, 0.0, -10.0)
+				await get_tree().create_timer(1.8).timeout
+			_set_screens("")
+			await get_tree().create_timer(1.0).timeout
+	loop.call()
 
 func hoist(number: int) -> void:
 	if GameState.get_flag("three_stars_done"):
@@ -255,6 +269,7 @@ func _buzz() -> void:
 
 func _win() -> void:
 	GameState.set_flag("three_stars_done")
+	_call_round += 1
 	Sfx.play("goal_horn", 1.05, 0.0, -4.0)
 	Sfx.play("crowd_cheer", 1.0, 0.0, -6.0)
 	_set_screens("★ 9\n★ 4\n★ 10")
