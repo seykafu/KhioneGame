@@ -637,7 +637,9 @@ func _maple_fits(x: float, z: float) -> bool:
 	# every flight, the scramble, the glade, the chalet, the cross, the
 	# funicular rail, and the dock.
 	if z > 4.0 and absf(x - 2.0) < 17.0:
-		return false  # plaza / downtown / arena
+		return false  # plaza / downtown
+	if x > 7.0 and x < 25.0 and z > 12.0 and z < 28.0:
+		return false  # the Bell Centre grows no indoor maples
 	if z > 26.0:
 		return false  # port
 	if absf(x) < 5.0 and z > -36.0 and z < 0.0:

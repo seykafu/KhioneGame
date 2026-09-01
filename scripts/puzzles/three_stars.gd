@@ -16,7 +16,8 @@ const CENTRE_LOCAL := Vector3(0, 0.0, 0)
 
 var _arena: Node3D
 var _cube: MeshInstance3D
-var _cube_label: Label3D
+var _screens: Array[MeshInstance3D] = []
+var _screen_labels: Array[Label3D] = []
 var _zamboni: Node3D
 var _zamboni_moved := false
 var _awake := false
@@ -76,13 +77,39 @@ func _ready() -> void:
 	# The scoreboard cube, hanging dark over centre.
 	_cube = _child_box(_arena, Vector3(2.4, 1.6, 2.4), CUBE_LOCAL, Color(0.14, 0.14, 0.16), true)
 	_cube.name = "ScoreboardCube"
-	_cube_label = Label3D.new()
-	_cube_label.font_size = 96
-	_cube_label.pixel_size = 0.01
-	_cube_label.modulate = Color(1.0, 0.85, 0.35)
-	_cube_label.position = CUBE_LOCAL + Vector3(0, 0, 1.22)
-	_cube_label.text = ""
-	_arena.add_child(_cube_label)
+	# A real jumbotron: an inset screen on each of the four faces, dark
+	# until the growl wakes it, with the text rendered ON the glass.
+	for k in 4:
+		var face := Node3D.new()
+		face.position = CUBE_LOCAL
+		face.rotation.y = k * PI / 2.0
+		_arena.add_child(face)
+		var screen := MeshInstance3D.new()
+		var sm := BoxMesh.new()
+		sm.size = Vector3(2.0, 1.2, 0.05)
+		screen.mesh = sm
+		var smat := StandardMaterial3D.new()
+		smat.albedo_color = Color(0.05, 0.05, 0.07)
+		smat.roughness = 0.25
+		screen.material_override = smat
+		screen.position = Vector3(0, 0, 1.23)
+		face.add_child(screen)
+		_screens.append(screen)
+		var lbl := Label3D.new()
+		lbl.font_size = 64
+		lbl.pixel_size = 0.006
+		lbl.modulate = Color(1.0, 0.78, 0.3)
+		lbl.outline_size = 8
+		lbl.outline_modulate = Color(0.4, 0.2, 0.05)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		lbl.position = Vector3(0, 0, 1.27)
+		lbl.text = ""
+		face.add_child(lbl)
+		_screen_labels.append(lbl)
+	# The frame band around the screens.
+	_child_box(_arena, Vector3(2.5, 0.12, 2.5), CUBE_LOCAL + Vector3(0, 0.72, 0), Color(0.75, 0.16, 0.2), false)
+	_child_box(_arena, Vector3(2.5, 0.12, 2.5), CUBE_LOCAL + Vector3(0, -0.72, 0), Color(0.75, 0.16, 0.2), false)
 	# Retired banners in the rafters (decor) and the five fallen ones.
 	for i in 6:
 		var b := _child_box(_arena, Vector3(0.7, 1.2, 0.04), Vector3(-4.5 + i * 1.8, 5.2, -3.6), Color(0.75, 0.16, 0.2), false)
@@ -158,6 +185,10 @@ func _on_vocal(kind: String) -> void:
 		else:
 			_flash("The cube hangs dark over the centre dot. Growl from RIGHT under it; big things need to hear you.", 3.5)
 
+func _set_screens(text: String) -> void:
+	for lbl in _screen_labels:
+		lbl.text = text
+
 func _wake_cube() -> void:
 	_awake = true
 	Sfx.play("goal_horn", 1.0, 0.0, -4.0)
@@ -165,19 +196,26 @@ func _wake_cube() -> void:
 	m.albedo_color = Color(0.2, 0.2, 0.24)
 	m.emission_enabled = true
 	m.emission = Color(1.0, 0.7, 0.3)
-	m.emission_energy_multiplier = 1.2
+	m.emission_energy_multiplier = 0.4
 	_cube.material_override = m
+	for screen in _screens:
+		var on := StandardMaterial3D.new()
+		on.albedo_color = Color(0.12, 0.08, 0.03)
+		on.emission_enabled = true
+		on.emission = Color(1.0, 0.6, 0.2)
+		on.emission_energy_multiplier = 0.35
+		screen.material_override = on
 	_flash("The cube WAKES. Horn, house lights… and it calls the three stars of the game.", 4.0)
 	_call_stars()
 
 func _call_stars() -> void:
 	for i in STARS.size():
 		get_tree().create_timer(2.5 + i * 1.6).timeout.connect(func() -> void:
-			_cube_label.text = "★ %d" % STARS[i]
+			_set_screens("★ %d" % STARS[i])
 			Sfx.play("bell_ding", 1.0 + 0.1 * i, 0.0, -10.0))
 	get_tree().create_timer(2.5 + STARS.size() * 1.6 + 1.2).timeout.connect(func() -> void:
 		if not GameState.get_flag("three_stars_done"):
-			_cube_label.text = "★ ★ ★")
+			_set_screens("★ ★ ★"))
 
 func hoist(number: int) -> void:
 	if GameState.get_flag("three_stars_done"):
@@ -219,7 +257,7 @@ func _win() -> void:
 	GameState.set_flag("three_stars_done")
 	Sfx.play("goal_horn", 1.05, 0.0, -4.0)
 	Sfx.play("crowd_cheer", 1.0, 0.0, -6.0)
-	_cube_label.text = "★ 9  ★ 4  ★ 10"
+	_set_screens("★ 9\n★ 4\n★ 10")
 	_open_box(false)
 	_flash("The horn, again, and a crowd that is not there sings OLÉ. The penalty box door swings open: three spare panes of arena glass.", 5.5)
 
