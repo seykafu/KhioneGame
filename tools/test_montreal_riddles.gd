@@ -2,8 +2,8 @@ extends Node
 ## Headless end-to-end test of every Island 5 riddle:
 ## godot --headless --path . res://tools/test_montreal_riddles.tscn
 ## Growl from the horse, the bagel oven and the toll, the Three Stars
-## (wrong hoist buzzes, right order opens the box), the tam-tams and the
-## lever handle, the linked staircase levers, and the finale: panes,
+## (wrong hoist buzzes, right order opens the box), the fallen portrait
+## delivered to the museum, the linked staircase levers, and the finale: panes,
 ## twelve bagels, the summit duet, the lit cross, and the funicular ride.
 
 func _ready() -> void:
@@ -78,18 +78,27 @@ func _run() -> void:
 		Inventory.add_item("arena_pane")
 	print("three stars: OK")
 
-	# --- the tam-tams: pattern with the echo gaps ---
-	var tam: Node = isl.get_node("TamTamCircle")
-	tam.strike("low")
-	await get_tree().create_timer(0.2).timeout
-	tam.strike("high")                         # too soon: swallowed by the echo
-	assert(not GameState.get_flag("tamtam_done"), "hits inside the echo do not count")
-	for kind: String in ["low", "high", "low", "mid"]:
-		tam.strike(kind)
-		await get_tree().create_timer(1.0).timeout
-	assert(GameState.get_flag("tamtam_done"), "the pattern between echoes wins the circle")
+	# --- the fallen star: portrait to the museum ---
+	await get_tree().create_timer(3.5).timeout   # the horn shakes it loose
+	var delivery: Node = isl.get_node("MmfaDelivery")
+	assert(get_tree().get_nodes_in_group("pickup_lafleur_portrait").size() > 0,
+			"the winning horn must drop the portrait onto the ice")
+	delivery.easel_interact()
+	assert(not GameState.get_flag("mmfa_delivered"), "no portrait in paw, no delivery")
+	Inventory.add_item("lafleur_portrait")
+	oreo.global_position = Vector3(40.0, 0.5, 40.0)
+	delivery.door_interact()
+	Inventory.add_item("bagel")   # scratch: prove the door needs the dog, not items
+	Inventory.remove_item("bagel")
+	oreo.global_position = (delivery.MUSEUM_POS as Vector3) + Vector3(-4.5, 0.5, 0.5)
+	delivery.door_interact()
+	delivery.easel_interact()
+	assert(GameState.get_flag("mmfa_delivered"), "portrait on the easel completes the loan")
+	assert(not Inventory.has_item("lafleur_portrait"), "the portrait stays with the museum")
+	var handle_drop := get_tree().get_nodes_in_group("pickup_lever_handle")
+	assert(handle_drop.size() > 0, "the garden squirrel must return the lever handle")
 	Inventory.add_item("lever_handle")
-	print("tam-tam circle: OK")
+	print("fallen star delivery: OK")
 
 	# --- the staircase: linked levers, solved from the bottom up ---
 	stairs.pull(1)                             # seats the handle

@@ -4,7 +4,7 @@ extends Node3D
 ## Phase 2: warm bagels in the twelve lantern bases (à la douzaine): the
 ## sky goes to dusk, the city lights come on, and the fireflies come
 ## upslope to circle the cross. They will not settle.
-## Phase 3: on the summit drum, Khione plays the tam-tam pattern and Oreo
+## Phase 3: on the summit drum (chalk shows the rhythm), Khione plays and Oreo
 ## barks the echoes: the swarm pulses in sync and pours into the
 ## lanterns tier by tier, and the cross lights like a slow vertical
 ## sunrise. Its shadow finds the funicular gate; ride down through the
@@ -82,6 +82,15 @@ func _ready() -> void:
 		mark.position = (def[1] as Vector3) - Vector3(0, 0.02, 0)
 		mark.scale = Vector3(1, 0.2, 1)
 		drum.add_child(mark)
+	# The chalk on the drum's rim: the pattern, with rests where the
+	# echo (a certain dog) answers. Self-taught, summit edition.
+	var chalk := Label3D.new()
+	chalk.text = "●  –  ·  –  ●  –  •  –"
+	chalk.font_size = 34
+	chalk.pixel_size = 0.008
+	chalk.modulate = Color(0.95, 0.95, 0.9)
+	chalk.position = Vector3(0, 0.5, 0.55)
+	drum.add_child(chalk)
 	var fp := FunicularPlate.new()
 	fp.owner_puzzle = self
 	fp.position = Vector3(0, 0.8, 0)
@@ -137,7 +146,7 @@ func cross_interact() -> void:
 			_flash("Twelve lantern bases, cold. Fireflies love warmth. Something on this mountain bakes it by the dozen.", 4.5)
 		return
 	if not _settled:
-		_flash("The swarm circles and circles. They will not settle for warmth alone. Fireflies blink in rhythm; the drum by the cross remembers one.", 4.5)
+		_flash("The swarm circles and circles. They will not settle for warmth alone. Fireflies blink in rhythm — and the drum by the cross wears a chalk one, with rests left for an echo.", 4.5)
 		return
 	_flash("The cross burns warm over the city. Its shadow points down the west slope: the funicular gate stands open.", 4.0)
 

@@ -368,15 +368,15 @@ func _current_objective_text() -> String:
 				return "A calèche horse sleeps across the mountain road and nothing she says moves it. Her friend's big voice does. Maybe hers can learn its shape."
 			if not GameState.get_flag("three_stars_done"):
 				return "The Bell Centre is empty and its ice still glows. Something parked on the centre dot fears a hiss… and the great dark cube above it is the biggest thing downtown."
-			if not GameState.get_flag("tamtam_done"):
-				return "Drums lie abandoned in the glade at the mountain's east foot. The mountain answers every beat, half a beat late. The chalk on the biggest drum leaves room for that."
+			if not GameState.get_flag("mmfa_delivered"):
+				return "A framed number 10 lies flat on the arena ice, and its plaque names a museum at the mountain's east foot. The grand door there says TIREZ — and cats push."
 			if not GameState.get_flag("stairs_fixed"):
 				return "The staircases pivot, and every lever swings two flights. From the chalet balcony the whole zigzag reads at a glance… the long way up is the boulder scramble on the west flank."
 			if not GameState.get_flag("panes_fitted"):
 				return "Three lanterns on the summit cross have no glass. The Bell Centre's penalty box keeps spares."
 			if not GameState.get_flag("bagels_placed"):
 				return "Twelve lantern bases, twelve warm bagels: the oven at the mountain's foot bakes them in the golden second. The sign said à la douzaine, and squirrels count."
-			return "The fireflies circle but will not settle. They love warmth… and rhythm. The summit drum remembers the tam-tam pattern, and so does a certain dog."
+			return "The fireflies circle but will not settle. They love warmth… and rhythm. The old drum by the cross wears a chalk rhythm with rests left for an echo… and a certain dog has the echo covered."
 		if mgr and mgr.current_island and mgr.current_island.name == "Winnipeg":
 			if GameState.get_flag("island4_complete"):
 				return "The crescent sleeps under brand-new tracks. East, in a foggy Maritime cove, an old galleon is waiting. (travel from the pause menu)"

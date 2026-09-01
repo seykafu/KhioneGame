@@ -275,6 +275,11 @@ func _win() -> void:
 	_set_screens("★ 9\n★ 4\n★ 10")
 	_open_box(false)
 	_flash("The horn, again, and a crowd that is not there sings OLÉ. The penalty box door swings open: three spare panes of arena glass.", 5.5)
+	# And the horn shakes something loose from the rafters…
+	var delivery := get_node_or_null("../MmfaDelivery")
+	if delivery and delivery.has_method("drop_portrait"):
+		get_tree().create_timer(3.0).timeout.connect(func() -> void:
+			delivery.drop_portrait(true))
 
 func _open_box(instant: bool) -> void:
 	var island := get_parent()

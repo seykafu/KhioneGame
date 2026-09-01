@@ -48,6 +48,7 @@ const NAMES := {
 	"bagel": "Sesame Bagel",
 	"arena_pane": "Arena Glass Pane",
 	"lever_handle": "Brass Lever Handle",
+	"lafleur_portrait": "Portrait of the Démon Blond",
 }
 
 const DESCRIPTIONS := {
@@ -76,7 +77,8 @@ const DESCRIPTIONS := {
 	"old_loonie": "A loonie old enough to remember being lucky. Roof money is the luckiest money.",
 	"bagel": "Wood-fired, sesame, still warm. Squirrels accept these as legal tender, strictly by the count.",
 	"arena_pane": "A spare pane of arena glass from the penalty box. Clear as a held breath, and exactly lantern-sized.",
-	"lever_handle": "The brass handle a squirrel stole off a staircase lever. It rained down with the rest of the loot.",
+	"lever_handle": "The brass handle a squirrel stole off a staircase lever, returned on the museum steps with full ceremony.",
+	"lafleur_portrait": "Number 10 in a gilded frame, shaken loose by the winning horn. The plaque says it belongs to the museum on the mountain's east foot.",
 }
 
 var max_slots: int = 5

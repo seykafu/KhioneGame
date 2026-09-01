@@ -5,7 +5,7 @@ extends Node3D
 ## k+1 a quarter turn. From below it is a maze of stairs pointing off
 ## cliffs; from the chalet balcony the whole zigzag reads at a glance,
 ## exactly two flights wrong (2 and 4). Lever 2 lost its brass handle to
-## the squirrels (the tam-tams give it back). The squirrel baron's toll
+## the squirrels (the museum's grateful squirrel returns it). The baron's toll
 ## rope guards flight 1: one bagel, strictly by the count.
 
 ## Quarter turns from aligned. Flights 2 and 4 start wrong.

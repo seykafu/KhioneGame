@@ -4,7 +4,7 @@ extends Node3D
 ## plaza, the Bell Centre with its four bronze legends, Place Ville
 ## Marie's beacon, the bagel oven, orange cones nobody moved, and a
 ## calèche horse asleep across the mountain road. North: Mont Royal
-## climbing in terraces (tam-tam glade, staircases, the chalet and its
+## climbing in terraces (the Cartier monument, staircases, the chalet and its
 ## belvedere, the great cross at the summit, dark), the old funicular on
 ## the west flank. Teaches: growl, and vertical patience.
 ##
@@ -89,14 +89,15 @@ func _ready() -> void:
 	_add_location_trigger(Vector3(0, 0, 36), 8.0, "The Old Port")
 	_add_location_trigger(Vector3(0, 0, 14), 9.0, "Downtown")
 	_add_location_trigger(ARENA_POS, 8.0, "The Bell Centre")
-	_add_location_trigger(GLADE_POS, 6.0, "The Tam-Tam Glade")
+	_add_location_trigger(GLADE_POS, 6.0, "The Cartier Monument")
+	_add_location_trigger(Vector3(26.0, 0.35, 4.0), 7.0, "The Museum")
 	_add_location_trigger(CHALET_POS + Vector3(0, 0, 3), 7.0, "The Belvedere")
 	_add_location_trigger(CROSS_POS, 8.0, "The Summit")
 	for def: Array in [
 		["CalecheHorse", "res://scripts/puzzles/caleche_horse.gd"],
 		["BagelStandard", "res://scripts/puzzles/bagel_standard.gd"],
 		["ThreeStars", "res://scripts/puzzles/three_stars.gd"],
-		["TamTamCircle", "res://scripts/puzzles/tam_tam_circle.gd"],
+		["MmfaDelivery", "res://scripts/puzzles/mmfa_delivery.gd"],
 		["StaircaseShuffle", "res://scripts/puzzles/staircase_shuffle.gd"],
 		["LightTheCross", "res://scripts/puzzles/light_the_cross.gd"],
 	]:
@@ -452,7 +453,7 @@ func _build_mountain_dressing() -> void:
 		rock.rotation.y = 0.3 * i
 	# A stone ledge bridging the last boulder onto the chalet terrace.
 	_add_box(Vector3(3.0, 0.4, 2.0), Vector3(-13.6, 7.8, -20.0), STONE)
-	# The tam-tam glade: the George-Étienne Cartier monument, a plinth and
+	# The Cartier monument in its glade: a plinth and
 	# a bronze figure with a raised arm (the drums gather at its foot).
 	var mon := Node3D.new()
 	mon.position = GLADE_POS + Vector3(0, 0, -5.0)
@@ -568,7 +569,7 @@ func _build_cross() -> void:
 		# Three lanterns lost their glass to the winters.
 		glass.visible = not (i in [2, 7, 10])
 		lantern.add_child(glass)
-	# The summit's own drum: the tam-tam players always end at the top.
+	# The summit's own drum, chalk on its rim: the finale's rhythm keeper.
 	var drum := Node3D.new()
 	drum.name = "SummitDrum"
 	drum.position = Vector3(3.5, 0, 3.0)
@@ -640,6 +641,8 @@ func _maple_fits(x: float, z: float) -> bool:
 		return false  # plaza / downtown
 	if x > 7.0 and x < 25.0 and z > 12.0 and z < 28.0:
 		return false  # the Bell Centre grows no indoor maples
+	if x > 20.0 and x < 32.0 and z > -2.0 and z < 10.0:
+		return false  # nor does the Musée des beaux-arts
 	if z > 26.0:
 		return false  # port
 	if absf(x) < 5.0 and z > -36.0 and z < 0.0:
