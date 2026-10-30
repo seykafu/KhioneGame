@@ -45,6 +45,29 @@ Capacitor's Swift package is vendored in `native/ios/App/vendor/` so Xcode never
 fetches from github.com. Don't run `npx cap sync` / `npx cap update`: they rewrite
 `CapApp-SPM/Package.swift` back to the GitHub URL.
 
+## TestFlight (install on your iPhone)
+
+`.github/workflows/khione-ios-testflight.yml` builds the app on GitHub's macOS
+runners (latest Xcode) and uploads it to TestFlight on every push that touches
+the game or the native project, or on demand from the Actions tab. One-time setup:
+
+1. Join the Apple Developer Program (developer.apple.com/programs).
+2. App Store Connect → Apps → **+ New App**: platform iOS, name "Khione",
+   bundle ID `com.kasey.khione` (register it under Certificates, Identifiers &
+   Profiles → Identifiers first if it isn't offered). Any unique SKU.
+3. App Store Connect → Users and Access → Integrations → **App Store Connect API**
+   → generate a key with **Admin** access. Note the Key ID and Issuer ID and
+   download the `.p8` file (it can only be downloaded once).
+4. GitHub → KhioneGame → Settings → Secrets and variables → Actions → add
+   `APPLE_TEAM_ID` (Membership details page), `ASC_KEY_ID`, `ASC_ISSUER_ID`, and
+   `ASC_KEY_P8` (paste the whole `.p8` file). If you used a different bundle ID,
+   add a repository *variable* `IOS_BUNDLE_ID`.
+5. Actions → **Khione iOS → TestFlight** → Run workflow. About 15 minutes later
+   the build appears in App Store Connect → TestFlight; add yourself as an
+   internal tester, then install from the TestFlight app on your iPhone.
+
+Until the secrets exist, the workflow skips the build and passes.
+
 ## Deploy
 
 The Higgsfield repo lives in Higgsfield's cloud sandbox. `tools/package_app.sh`
