@@ -2,6 +2,7 @@
 // attenuation + stereo pan, and looping ambience beds. iOS needs the context
 // resumed inside a user gesture, which input.js does on the first touch.
 import { G, clamp } from './core.js';
+import { hapticForSfx } from './haptics.js';
 
 const BASE = './assets/';
 const SFX_FILES = {
@@ -78,7 +79,8 @@ class Audio {
       this.loading.set(url, (async () => {
         this.init();
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`audio ${url}: ${res.status}`);
+        // The native iOS app serves files from capacitor://, which reports status 0.
+        if (!res.ok && res.status !== 0) throw new Error(`audio ${url}: ${res.status}`);
         const arr = await res.arrayBuffer();
         const buf = await new Promise((ok, bad) => this.ctx.decodeAudioData(arr, ok, bad));
         this.buffers.set(url, buf);
@@ -97,6 +99,7 @@ class Audio {
    * camera focus and pans left/right.
    */
   sfx(name, opts = {}) {
+    hapticForSfx(name, opts.pos);
     if (!this.ctx || this.ctx.state !== 'running') return;
     // Unregistered names fall back to assets/sfx/<name>.mp3.
     const file = SFX_FILES[name] ?? `${name}.mp3`;

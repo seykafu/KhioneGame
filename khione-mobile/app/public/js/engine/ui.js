@@ -348,6 +348,7 @@ class UI {
     wrap.innerHTML = `
       <div class="set">Music<input type="range" min="0" max="1" step="0.05" value="${a.musicVol}" data-k="music"></div>
       <div class="set">Sound effects<input type="range" min="0" max="1" step="0.05" value="${a.sfxVol}" data-k="sfx"></div>
+      ${G.haptics?.available ? `<div class="set">Vibration<button class="tg${G.haptics.enabled ? ' on' : ''}" data-a="haptics" aria-label="Vibration"></button></div>` : ''}
       <div class="set">Camera reset<button class="btn small secondary" data-a="cam">Reset view</button></div>
       <div class="set" style="flex-direction:column;align-items:stretch;gap:4px">Cloud code
         <small style="font-weight:700">Your journey backs itself up online. Use this code to continue on another device or after adding Khione to your Home Screen.</small>
@@ -366,6 +367,11 @@ class UI {
     wrap.querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => {
       if (r.dataset.k === 'music') a.setMusicVolume(Number(r.value)); else a.setSfxVolume(Number(r.value));
     }));
+    wrap.querySelector('[data-a=haptics]')?.addEventListener('click', (e) => {
+      G.haptics.enabled = !G.haptics.enabled;
+      e.currentTarget.classList.toggle('on', G.haptics.enabled);
+      G.haptics.impact('medium');
+    });
     wrap.querySelector('[data-a=cam]').addEventListener('click', () => { G.rig.yawTarget = 36 * Math.PI / 180; G.rig.zoomTarget = 1; this.closeSheet(); });
     wrap.querySelector('[data-a=journal]').addEventListener('click', () => this.openJournal());
     wrap.querySelector('[data-a=stuck]').addEventListener('click', () => {
