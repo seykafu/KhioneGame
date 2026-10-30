@@ -62,6 +62,9 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Show toolchain
+        run: xcodebuild -version && xcrun --sdk iphoneos --show-sdk-version
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
