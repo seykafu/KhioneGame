@@ -45,9 +45,13 @@ class Audio {
     this.master.connect(this.ctx.destination);
     this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = this.musicVol; this.musicBus.connect(this.master);
     this.sfxBus = this.ctx.createGain(); this.sfxBus.gain.value = this.sfxVol; this.sfxBus.connect(this.master);
+    // iOS starts (and, after calls or app switches, restarts) the context
+    // asynchronously; music asked for while it was off starts once it's on.
+    this.ctx.onstatechange = () => { if (this.ctx.state === 'running') this.resumeMusic(); };
     document.addEventListener('visibilitychange', () => {
       if (!this.ctx) return;
-      if (document.hidden) this.ctx.suspend(); else this.ctx.resume();
+      if (document.hidden) this.ctx.suspend();
+      else this.ctx.resume().then(() => this.resumeMusic()).catch(() => {});
     });
   }
 
@@ -55,11 +59,17 @@ class Audio {
   unlock() {
     this.init();
     if (!this.ctx) return;
-    if (this.ctx.state !== 'running') this.ctx.resume();
+    if (this.ctx.state !== 'running') this.ctx.resume().then(() => this.resumeMusic()).catch(() => {});
     // A silent buffer kicks iOS into actually starting the graph.
     const b = this.ctx.createBuffer(1, 1, 22050);
     const s = this.ctx.createBufferSource(); s.buffer = b; s.connect(this.master); s.start(0);
-    if (this.wantedMusic && (!this.current || this.current.name !== this.wantedMusic)) this.music(this.wantedMusic);
+    this.resumeMusic();
+  }
+
+  resumeMusic() {
+    if (!this.ctx || this.ctx.state !== 'running' || !this.wantedMusic) return;
+    if (this.current?.name === this.wantedMusic && (this.current.src || this.current.loading)) return;
+    this.music(this.wantedMusic);
   }
 
   async buffer(url) {
@@ -131,9 +141,9 @@ class Audio {
   async music(name, { fade = 2.0, vol = 1 } = {}) {
     this.wantedMusic = name;
     if (!this.ctx || this.ctx.state !== 'running') return;
-    if (this.current?.name === name) return;
+    if (this.current?.name === name && (this.current.src || this.current.loading)) return;
     const old = this.current;
-    this.current = name ? { name } : null;
+    this.current = name ? { name, loading: true } : null;
     if (old?.gain) {
       const g = old.gain.gain;
       g.cancelScheduledValues(this.ctx.currentTime);
@@ -141,9 +151,15 @@ class Audio {
       g.linearRampToValueAtTime(0, this.ctx.currentTime + fade);
       old.src.stop(this.ctx.currentTime + fade + 0.05);
     }
+    // A decoded track is tens of MB of PCM; keep only the one playing.
+    if (old?.name && old.name !== name) {
+      const oldUrl = BASE + 'music/' + old.name + '.mp3';
+      setTimeout(() => { if (this.current?.name !== old.name) { this.buffers.delete(oldUrl); this.loading.delete(oldUrl); } }, (fade + 0.5) * 1000);
+    }
     if (!name) return;
     const buf = await this.buffer(BASE + 'music/' + name + '.mp3');
-    if (!buf || this.current?.name !== name) return;
+    if (this.current?.name !== name) return;
+    if (!buf) { this.current = null; return; }
     const src = this.ctx.createBufferSource();
     src.buffer = buf; src.loop = true;
     const gain = this.ctx.createGain();
