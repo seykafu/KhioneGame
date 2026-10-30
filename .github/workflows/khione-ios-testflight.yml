@@ -79,8 +79,32 @@ jobs:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
           mkdir -p "$RUNNER_TEMP/keys"
-          printf '%s' "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
-          echo "ASC_KEY_PATH=$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+          KEY_FILE="$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+          # Rebuild a clean PEM however the .p8 was pasted: intact, squashed onto
+          # one line (spaces instead of line breaks), or base64 of the whole file.
+          python3 - "$KEY_FILE" <<'PY'
+          import base64, os, re, sys, textwrap
+          raw = os.environ["ASC_KEY_P8"].strip()
+          if "BEGIN" not in raw:
+              try:
+                  decoded = base64.b64decode(raw, validate=False).decode("ascii", "ignore")
+                  if "BEGIN" in decoded:
+                      raw = decoded
+              except Exception:
+                  pass
+          m = re.search(r"-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY-----", raw, re.S)
+          body = re.sub(r"[^A-Za-z0-9+/=]", "", m.group(1) if m else raw)
+          try:
+              ok = len(base64.b64decode(body)) > 100
+          except Exception:
+              ok = False
+          if not ok:
+              print("::error::ASC_KEY_P8 does not contain an App Store Connect private key. Paste the whole AuthKey_XXXX.p8 file, from -----BEGIN PRIVATE KEY----- through -----END PRIVATE KEY-----.")
+              sys.exit(1)
+          pem = "-----BEGIN PRIVATE KEY-----\n" + "\n".join(textwrap.wrap(body, 64)) + "\n-----END PRIVATE KEY-----\n"
+          open(sys.argv[1], "w").write(pem)
+          PY
+          echo "ASC_KEY_PATH=$KEY_FILE" >> "$GITHUB_ENV"
 
       - name: Archive
         run: |
