@@ -490,8 +490,11 @@ func _rabbit_brain(rabbit: Node3D) -> void:
 
 func _train_horn_loop() -> void:
 	# Somewhere south, a freight crosses the night. Winnipeg keeps time by it.
+	const HORN_PATH := "res://assets/audio/train_horn.wav"
+	if not ResourceLoader.exists(HORN_PATH):
+		return
 	var horn := AudioStreamPlayer3D.new()
-	horn.stream = load("res://assets/audio/train_horn.wav")
+	horn.stream = load(HORN_PATH)
 	horn.position = Vector3(30, 3.0, 90)
 	horn.volume_db = -8.0
 	horn.max_distance = 220.0

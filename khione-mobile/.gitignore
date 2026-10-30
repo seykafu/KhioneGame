@@ -1,0 +1,8 @@
+node_modules/
+app/dist/
+app/.wrangler/
+native/ios/App/App/public/
+native/ios/App/build/
+native/ios/DerivedData/
+xcuserdata/
+.DS_Store

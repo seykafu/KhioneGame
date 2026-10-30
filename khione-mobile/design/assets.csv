@@ -1,0 +1,16 @@
+id,role,type,description,size/ratio,style line ref,source
+khione,player character (rigged),glb,small white cat in a teal top (Whisker Isle PoC hero),height 1.0,STYLE FORMULA,reference_media[whisker-isle-v01.html]
+oreo,companion (rigged; shares Khione's skeleton),glb,chibi border collie with one blue eye and a red bandana,height 1.12,STYLE FORMULA,generate (nano_banana_2 → image_to_3d rig + walk; 3d_rigging clips 276/44/466/16)
+clips,shared animation clips,json,idle/run/attack/death (PoC) + walk/pickup/happy/jump/runfast (Meshy),~460 KB,—,extract_clips.py
+chest coconut shovel tiki,props,glb,PoC props,normalized at load,STYLE FORMULA,reference_media[whisker-isle-v01.html]
+bottle raft goose robot icecart canoe toboggan snowman galleon parrot raccoon pigeon gopher,props/creatures,glb,story props for islands 1-7,1-9k tris each,STYLE FORMULA,generate (nano_banana_2 → sam_3_3d → gltf-transform)
+pole_raven pole_bear pole_orca,English Bay carved poles,glb,cedar story poles crowned by raven/bear/orca,~4k tris,STYLE FORMULA,generate
+palm tree_leafy tree_pine tree_cherry,vegetation (instanced),glb,palm / cottonwood / snowy spruce / cherry blossom,3.5-4.5k tris,STYLE FORMULA,generate
+house_snow house_westend car mailbox crab gull pelican,set dressing,glb,Winnipeg bungalow / West End house / buried car / mailbox / crab / gull / pelican,2-6k tris,STYLE FORMULA,generate
+sand grass snow mall_floor planks cobble,terrain tiles,jpg,seamless ground textures,512x512,STYLE FORMULA,generate (nano_banana_2)
+ahalo eaton calgary winnipeg intro,music,mp3,bespoke tracks from the Godot project,72 kbps,—,reference (assets/music)
+pirate englishbay agrea,music,mp3,island themes,40 s loops,—,generate (sonilo_music)
+godot sfx (36),sound effects,mp3/wav,bespoke Khione sounds from the Godot project,—,—,reference (assets/audio)
+growl geese pigeons snow_dig big_wave cannon sled raccoon parrot gust breeze_gust,sound effects,mp3,generated one-shots,0.5-3 s,—,generate (mirelo_text_to_audio)
+icon-180/192/512/1024,app icons,png,Khione portrait on turquoise,square,STYLE FORMULA,generate (nano_banana_2)
+cover/og,marketplace + link preview,png,Khione and Oreo rafting past the islands,3:2,STYLE FORMULA,generate (gpt_image_2) + compose_cover.py

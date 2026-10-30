@@ -1,0 +1,11 @@
+{
+  "appId": "com.kasey.khione",
+  "appName": "Khione",
+  "webDir": "../app/public",
+  "backgroundColor": "#13a8c8",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "backgroundColor": "#13a8c8"
+  }
+}
