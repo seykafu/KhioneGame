@@ -49,7 +49,9 @@ func _ready() -> void:
 
 func _build_plank() -> void:
 	var plank := _box(Vector3(1.6, 0.1, 0.9), PLANK_POS, Color(0.6, 0.5, 0.4))
-	plank.create_trimesh_collision()
+	# Convex, never trimesh: a box trimesh is a hollow shell. (The plank's
+	# y-lift against z-fighting stays exactly as tuned.)
+	plank.create_convex_collision()
 	# A stack of waiting paper, and the kids' chalk clue: fluff, arrow, gate.
 	_box(Vector3(0.4, 0.12, 0.5), PLANK_POS + Vector3(-0.4, 0.12, 0.1), Color(0.95, 0.95, 0.92))
 	_box(Vector3(0.1, 0.02, 0.1), PLANK_POS + Vector3(0.3, 0.07, -0.2), Color(0.98, 0.98, 0.96))
@@ -72,11 +74,11 @@ func _build_weir() -> void:
 	# Two posts in the narrows and a board between them that lifts.
 	for s in [-1.0, 1.0]:
 		var post := _box(Vector3(0.1, 0.8, 0.1), WEIR_POS + Vector3(s * 0.9, 0.3, 0), Color(0.45, 0.38, 0.3))
-		post.create_trimesh_collision()
+		post.create_convex_collision()
 	_weir_board = _box(Vector3(1.7, 0.45, 0.08), WEIR_POS + Vector3(0, 0.12, 0), Color(0.55, 0.46, 0.36))
 	# The lever on the shore.
 	var base := _box(Vector3(0.3, 0.5, 0.3), LEVER_POS + Vector3(0, 0.25, 0), Color(0.45, 0.38, 0.3))
-	base.create_trimesh_collision()
+	base.create_convex_collision()
 	var arm := _box(Vector3(0.07, 0.7, 0.07), LEVER_POS + Vector3(0.1, 0.75, 0), Color(0.7, 0.3, 0.25))
 	arm.rotation.z = -0.5
 	arm.name = "LeverArm"

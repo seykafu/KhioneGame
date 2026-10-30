@@ -361,9 +361,27 @@ func _current_objective_text() -> String:
 				return "Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o'clock."
 			return "Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner."
 		var mgr := get_tree().get_first_node_in_group("island_manager")
+		if mgr and mgr.current_island and mgr.current_island.name == "Montreal":
+			if GameState.get_flag("island5_complete"):
+				return "The cross burns warm over the city, and the funicular hums in its shed. West, a bay full of blossom wind is waiting. (Island 6 coming soon)"
+			if not GameState.knows_vocal("growl"):
+				return "A calèche horse sleeps across the mountain road and nothing she says moves it. Her friend's big voice does. Maybe hers can learn its shape."
+			if not GameState.get_flag("three_stars_done"):
+				return "The Bell Centre is empty and its ice still glows. Something parked on the centre dot fears a hiss… and the great dark cube above it is the biggest thing downtown."
+			if not GameState.get_flag("mmfa_delivered"):
+				return "A framed number 10 lies flat on the arena ice, and its plaque names a museum at the mountain's east foot. The grand door there says TIREZ — and cats push."
+			if not GameState.get_flag("stairs_fixed"):
+				if not GameState.get_flag("lever2_handled"):
+					return "The staircases pivot, and every lever swings two flights — but one lever is a bare stub. The brass handle the museum squirrel returned waits on the front steps."
+				return "Every lever swings its own flight and the next. From the chalet balcony the whole zigzag reads at a glance… the long way up is the boulder scramble on the west flank."
+			if not GameState.get_flag("panes_fitted"):
+				return "Three lanterns on the summit cross have no glass. The Bell Centre's penalty box keeps spares."
+			if not GameState.get_flag("bagels_placed"):
+				return "Twelve lantern bases, twelve warm bagels: the oven at the mountain's foot bakes them in the golden second. The sign said à la douzaine, and squirrels count."
+			return "The fireflies circle but will not settle. They love warmth… and rhythm. The old drum by the cross wears a chalk rhythm with rests left for an echo… and a certain dog has the echo covered."
 		if mgr and mgr.current_island and mgr.current_island.name == "Winnipeg":
 			if GameState.get_flag("island4_complete"):
-				return "The crescent sleeps under brand-new tracks. Somewhere warm, an indoor sea waits. (Island 5 coming soon)"
+				return "The crescent sleeps under brand-new tracks. East, in a foggy Maritime cove, an old galleon is waiting. (travel from the pause menu)"
 			if not GameState.get_flag("drift_line_done"):
 				return "The squall stole the laundry off the line. Meow at the lumps in the drifts… somebody here was born to dig."
 			if not GameState.get_flag("rink_done"):

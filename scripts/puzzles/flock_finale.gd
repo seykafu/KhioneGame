@@ -89,18 +89,20 @@ func _build_socket() -> void:
 	dais.material_override = _mat(Color(0.5, 0.4, 0.34))
 	dais.position = SOCKET_POS + Vector3(0, 0.09, 0)
 	add_child(dais)
-	dais.create_trimesh_collision()
+	dais.create_convex_collision()
 	var stool := MeshInstance3D.new()
 	stool.mesh = _cyl(0.28, 0.24, 0.5)
 	stool.material_override = _mat(Color(0.32, 0.28, 0.26))
 	stool.position = SOCKET_POS + Vector3(-0.95, 0.43, 0.4)
 	add_child(stool)
+	stool.create_convex_collision()
 	for def: Array in [[Vector3(0.85, 0.2, -0.5), 0.34], [Vector3(1.05, 0.2, 0.45), 0.26]]:
 		var drum := MeshInstance3D.new()
 		drum.mesh = _cyl(def[1], def[1], 0.42)
 		drum.material_override = _mat(Color(0.62, 0.3, 0.28))
 		drum.position = SOCKET_POS + (def[0] as Vector3) + Vector3(0, 0.21, 0)
 		add_child(drum)
+		drum.create_convex_collision()
 		var skin := MeshInstance3D.new()
 		skin.mesh = _cyl(def[1] - 0.02, def[1] - 0.02, 0.03)
 		skin.material_override = _mat(Color(0.92, 0.9, 0.84))
@@ -111,7 +113,7 @@ func _build_socket() -> void:
 	pedestal.material_override = _mat(STEEL)
 	pedestal.position = SOCKET_POS + Vector3(0, 0.43, 0)
 	add_child(pedestal)
-	pedestal.create_trimesh_collision()
+	pedestal.create_convex_collision()
 	var hole := MeshInstance3D.new()
 	hole.mesh = _cyl(0.06, 0.06, 0.08)
 	hole.material_override = _mat(Color(0.1, 0.1, 0.1))
@@ -286,7 +288,7 @@ func _build_elevator_bits() -> void:
 	walk.material_override = _mat(STEEL)
 	walk.position = ELEVATOR_POS + Vector3(0, 10.56, -1.95)
 	add_child(walk)
-	walk.create_trimesh_collision()
+	walk.create_convex_collision()
 	for s in [-1.0, 1.0]:
 		var rail := MeshInstance3D.new()
 		var rb := BoxMesh.new()
@@ -295,6 +297,9 @@ func _build_elevator_bits() -> void:
 		rail.material_override = _mat(STEEL.lightened(0.15))
 		rail.position = ELEVATOR_POS + Vector3(s * 0.67, 11.0, -1.95)
 		add_child(rail)
+		# Real guard rails: nobody steps off the roof catwalk sideways
+		# through a rail that reads solid.
+		rail.create_convex_collision()
 	# Roof-side call plate for the ride back down.
 	var down := RideDownPlate.new()
 	down.owner_puzzle = self
@@ -469,7 +474,7 @@ func _build_banner_station() -> void:
 	pole.material_override = _mat(STEEL)
 	pole.position = BANNER_POS + Vector3(0, 1.3, 0)
 	add_child(pole)
-	pole.create_trimesh_collision()
+	pole.create_convex_collision()
 	var roll := MeshInstance3D.new()
 	roll.mesh = _cyl(0.22, 0.22, 1.9)
 	roll.material_override = _mat(Color(0.2, 0.5, 0.5))

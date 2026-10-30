@@ -150,7 +150,7 @@ func _build_mannequins() -> void:
 		pedestal.material_override = _mat(Color(0.45, 0.44, 0.42))
 		pedestal.position = Vector3(ROOM_X, 0.63, z)
 		add_child(pedestal)
-		pedestal.create_trimesh_collision()
+		pedestal.create_convex_collision()
 
 		var m := Node3D.new()
 		m.position = Vector3(ROOM_X, 0.9, z)
@@ -326,7 +326,10 @@ func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true)
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: hollow trimesh shells trap anything that
+		# clips inside. The shop stays enterable because each wall, pane,
+		# ceiling slab and the door are separate convex pieces.
+		mi.create_convex_collision()
 	return mi
 
 func _glass() -> StandardMaterial3D:

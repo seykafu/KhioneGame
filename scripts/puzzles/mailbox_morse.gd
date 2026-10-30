@@ -78,8 +78,9 @@ func _build_truck() -> void:
 	cab.position = TRUCK_POS + Vector3(0, 0.85, 0) + Vector3(0, 0, 2.3).rotated(Vector3.UP, 0.5)
 	cab.rotation.y = 0.5
 	for s: Array in [[-0.8, 1.2], [0.8, 1.2], [-0.8, -1.2], [0.8, -1.2]]:
+		# Wheels are solid: a cat must never pass through a tire.
 		var wheel := _add_mesh(_cyl(0.32, 0.32, 0.2), TRUCK_POS + Vector3(0, 0.32, 0)
-				+ Vector3(s[0], 0, s[1]).rotated(Vector3.UP, 0.5), Color(0.15, 0.15, 0.17), false)
+				+ Vector3(s[0], 0, s[1]).rotated(Vector3.UP, 0.5), Color(0.15, 0.15, 0.17), true)
 		wheel.rotation.z = PI / 2.0
 		wheel.rotation.y = 0.5
 
@@ -173,5 +174,6 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := false) 
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: trimesh shells are hollow and trap the cat.
+		mi.create_convex_collision()
 	return mi

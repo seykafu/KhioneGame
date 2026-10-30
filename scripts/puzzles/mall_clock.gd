@@ -119,7 +119,7 @@ func _build_clock() -> void:
 	pole.material_override = _mat(Color(0.35, 0.37, 0.4))
 	pole.position = CLOCK_POS + Vector3(0, 2.6, 0)
 	add_child(pole)
-	pole.create_trimesh_collision()
+	pole.create_convex_collision()
 
 	var face := MeshInstance3D.new()
 	face.mesh = _cyl(0.95, 0.95, 0.08)
@@ -202,7 +202,7 @@ func _build_kiosk() -> void:
 	cart.material_override = _mat(WOOD)
 	cart.position = KIOSK_POS + Vector3(0, 0.45, 0)
 	add_child(cart)
-	cart.create_trimesh_collision()
+	cart.create_convex_collision()
 	var flower_paths := [
 		"res://assets/nature/flower_redA.glb",
 		"res://assets/nature/flower_yellowA.glb",
@@ -261,7 +261,7 @@ func _build_directory() -> void:
 	stand.material_override = _mat(Color(0.25, 0.4, 0.42))
 	stand.position = DIRECTORY_POS + Vector3(0, 1.3, 0)
 	add_child(stand)
-	stand.create_trimesh_collision()
+	stand.create_convex_collision()
 	var legs := MeshInstance3D.new()
 	legs.mesh = _cyl(0.07, 0.09, 0.6)
 	legs.material_override = _mat(Color(0.35, 0.37, 0.4))

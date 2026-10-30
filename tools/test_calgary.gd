@@ -54,6 +54,50 @@ func _run() -> void:
 			assert(not hit.is_empty(), "the fence at x=%s y=%s should be solid" % [x, y])
 	print("fence seals (low and high): OK")
 
+	# --- prop solidity ---
+	# Big set-pieces must be solid VOLUME, not hollow trimesh shells: a
+	# sphere probe at each core has to overlap a collider. (Hollow shells
+	# were how Khione got trapped inside island 4's props.)
+	var probe := PhysicsShapeQueryParameters3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 0.15
+	probe.shape = sph
+	for spot: Vector3 in [
+		Vector3(3.0, 1.15, 14.0),    # ice cream cart body core
+		Vector3(3.7, 0.63, 14.42),   # cart wheel, right
+		Vector3(2.3, 0.63, 14.42),   # cart wheel, left
+		Vector3(8.0, 0.52, 5.0),     # bandstand platform core
+		Vector3(8.0 + 2.3, 1.5, 5.0),  # a bandstand post
+		Vector3(1.8, 0.6, -27.6),    # memorial stone core
+		Vector3(3.2, 0.6, 38.5),     # the beached canoe's hull (above the beach)
+		Vector3(-3.6, 1.7, 17.0),    # entrance sign board
+		Vector3(13.0, 1.13, 6.5),    # picnic table top
+	]:
+		probe.transform = Transform3D(Basis(), spot)
+		assert(space.intersect_shape(probe).size() > 0,
+				"prop must be solid at %s" % spot)
+	# The cart's wheels stop a walk-through at shin height (island 4's
+	# postal truck let the cat stroll through a tire).
+	var tire := PhysicsRayQueryParameters3D.create(
+			Vector3(3.7, 0.55, 15.3), Vector3(3.7, 0.55, 13.6))
+	assert(not space.intersect_ray(tire).is_empty(),
+			"shin-height ray must stop at the cart wheel")
+	print("prop solidity: OK")
+
+	# --- the Peace Bridge tube ---
+	# The deck stays a solid walkway (boxes, not paper trimesh)…
+	var deck := PhysicsRayQueryParameters3D.create(
+			Vector3(-11.0, 3.0, -1.0), Vector3(-11.0, 0.0, -1.0))
+	var deck_hit := space.intersect_ray(deck)
+	assert(not deck_hit.is_empty() and (deck_hit.position as Vector3).y > 1.0,
+			"the bridge deck should hold weight at the arch apex")
+	# …and the tube's interior stays PASSABLE: no hoop or rail collider
+	# may bulge into the walkway a cat and a dog walk through.
+	probe.transform = Transform3D(Basis(), Vector3(-11.0, 1.85, -1.0))
+	assert(space.intersect_shape(probe).is_empty(),
+			"the bridge tube interior must stay walkable")
+	print("peace bridge deck + tube: OK")
+
 	# Jumping ahead must silence earlier islands' objective chains.
 	var objective: String = main.get_node("HUD")._current_objective_text()
 	assert(objective.find("glass mall") == -1, "the mall hint must not leak onto island 3")

@@ -41,6 +41,7 @@ func _run() -> void:
 			"eaton": ["res://scenes/islands/eaton.tscn", Vector3(0, 1.2, 40.0), "The Eaton Centre"],
 			"calgary": ["res://scenes/islands/calgary.tscn", Vector3(0, 1.2, 42.0), "Prince's Island"],
 			"winnipeg": ["res://scenes/islands/winnipeg.tscn", Vector3(0, 1.2, 42.0), "The Winnipeg Crescent"],
+			"montreal": ["res://scenes/islands/montreal.tscn", Vector3(0, 1.2, 42.0), "Montréal"],
 		}
 		if dests.has(travel):
 			await get_tree().create_timer(0.5).timeout
@@ -48,6 +49,11 @@ func _run() -> void:
 			if mgr:
 				var d: Array = dests[travel]
 				mgr.travel_to(d[0], d[1], travel, d[2])
+	if OS.get_environment("KH_CUBE") == "1":
+		await get_tree().create_timer(1.0).timeout
+		var ts := get_tree().root.find_child("ThreeStars", true, false)
+		if ts:
+			ts.force_awake()
 	if OS.get_environment("KH_GOPHERMAP") == "1":
 		await get_tree().create_timer(6.0).timeout
 		var sem := get_tree().root.find_child("GopherSemaphore", true, false)

@@ -139,6 +139,8 @@ func _build_island() -> void:
 	sm.set_shader_parameter("lagoon_radii", LAGOON_RADII)
 	terrain.material_override = sm
 	add_child(terrain)
+	# Terrain is the ONE mesh that earns a trimesh: it is a heightfield the
+	# player walks the top of, never the inside. Every prop is convex.
 	terrain.create_trimesh_collision()
 
 func _build_water() -> void:
@@ -264,8 +266,11 @@ func _build_peace_bridge() -> void:
 		var y1: float = deck_y.call(t1)
 		var length := Vector2(z1 - z0, y1 - y0).length() + 0.06
 		for s in [-1.0, 1.0]:
+			# The rails are real guard rails: convex collision so nobody
+			# walks through them off the deck edge. The leaning ribs and
+			# the hoops stay collision-free — the tube must stay walkable.
 			var rail := _add_box(Vector3(0.08, 0.08, length),
-					Vector3(x + s * 1.08, (y0 + y1) / 2.0 + 1.02, (z0 + z1) / 2.0), BRIDGE_RED, false)
+					Vector3(x + s * 1.08, (y0 + y1) / 2.0 + 1.02, (z0 + z1) / 2.0), BRIDGE_RED)
 			rail.rotation.x = -atan2(y1 - y0, z1 - z0)
 			if i % 3 == 0:
 				var rib := _add_box(Vector3(0.055, 1.15, 0.055),
@@ -594,6 +599,21 @@ func _build_dock() -> void:
 	canoe.rotation.y = 0.4
 	canoe.scale = Vector3(1.0, 1.0, 0.55)
 	add_child(canoe)
+	# A solid hull: the beached canoe is hip-high and must not be walked
+	# through. The body is a CHILD of the canoe so it rides the shove and
+	# the paddle-out (the corridor test exempts it by ancestry). The
+	# canoe's flattening scale is undone on the body so physics never sees
+	# a non-uniform scale; the box lives in the canoe's local frame, where
+	# the capsule's long axis is Y and local X points up in the world.
+	var hull := StaticBody3D.new()
+	hull.name = "CanoeHull"
+	hull.scale = Vector3(1.0, 1.0, 1.0 / 0.55)
+	var hull_cs := CollisionShape3D.new()
+	var hull_box := BoxShape3D.new()
+	hull_box.size = Vector3(1.0, 3.4, 0.62)
+	hull_cs.shape = hull_box
+	hull.add_child(hull_cs)
+	canoe.add_child(hull)
 	var paddle := _add_box(Vector3(0.08, 0.08, 1.5), Vector3(4.4, 0.4, 38.0), WOOD, false)
 	paddle.rotation.y = 0.7
 
@@ -648,7 +668,9 @@ func _build_dog_park() -> void:
 	stone.rotation.y = -0.3
 	stone.rotation.x = -0.08
 	add_child(stone)
-	stone.create_trimesh_collision()
+	# Convex, not trimesh: a box trimesh is a hollow shell a cat can wedge
+	# into; the convex hull of a box is the same box, solid through.
+	stone.create_convex_collision()
 	_add_mesh(_cyl(0.22, 0.26, 0.12), Vector3(-1.2, 0.42, -23.8), Color(0.3, 0.5, 0.75))
 	# Two tennis balls the grass half swallowed.
 	for bp: Vector3 in [Vector3(-2.6, 0.42, -26.2), Vector3(3.4, 0.42, -29.0)]:
@@ -683,6 +705,9 @@ func _build_ice_cream_cart() -> void:
 		wheel.rotation.z = PI / 2.0
 		wheel.position = origin + Vector3(s * 0.7, 0.28, 0.42)
 		add_child(wheel)
+		# Wheels are SOLID. Island 4's postal truck taught us: a wheel with
+		# no collider is a wheel the cat walks straight through.
+		wheel.create_convex_collision()
 	_add_box(Vector3(0.06, 0.06, 0.9), origin + Vector3(-1.0, 0.95, -0.2), Color(0.6, 0.58, 0.55), false)
 	# The bell with no clapper, and the striped parasol.
 	_add_mesh(_cyl(0.12, 0.16, 0.14), origin + Vector3(0.45, 1.6, 0.2), Color(0.8, 0.66, 0.3), false)
@@ -730,7 +755,7 @@ func _bench(pos: Vector3, yrot: float) -> void:
 		mi.position = part[1]
 		mi.rotation.x = part[2]
 		bench.add_child(mi)
-		mi.create_trimesh_collision()
+		mi.create_convex_collision()
 	for s in [-0.6, 0.6]:
 		var leg := MeshInstance3D.new()
 		var lb := BoxMesh.new()
@@ -1182,7 +1207,10 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := true) -
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: trimesh shells are hollow, and anything
+		# that clips inside one (a hard fall, a fast jump) is trapped.
+		# Only the terrain earns a trimesh.
+		mi.create_convex_collision()
 	return mi
 
 func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true) -> MeshInstance3D:

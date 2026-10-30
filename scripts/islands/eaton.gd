@@ -82,7 +82,7 @@ func _build_island() -> void:
 	mi.material_override = sm
 	mi.position = Vector3(0, 0.34, 0)
 	add_child(mi)
-	mi.create_trimesh_collision()
+	mi.create_convex_collision()
 
 func _build_water() -> void:
 	var plane := PlaneMesh.new()
@@ -147,10 +147,14 @@ func _build_mall() -> void:
 	_add_box(Vector3(12.0, 1.3, 0.3), Vector3(0, 8.6, hd + 0.2), Color(0.2, 0.5, 0.5), false)
 	_add_box(Vector3(0.9, 0.9, 0.32), Vector3(-4.6, 8.6, hd + 0.22), Color(0.95, 0.93, 0.85), false)
 	# Rooftop clutter: parapet lips and HVAC units, the honest mall silhouette.
-	_add_box(Vector3(MALL_W + 1.2, 0.5, 0.3), Vector3(0, ROOF_Y + 0.45, -hd), CONCRETE.darkened(0.05), false)
+	# The north/west/east parapets are solid kerbs the player can't walk
+	# through. The SOUTH parapet stays passable on purpose: the banner-glide
+	# hop carries Khione over that exact edge with physics off, and a solid
+	# lip there would clip her mid-cinematic.
+	_add_box(Vector3(MALL_W + 1.2, 0.5, 0.3), Vector3(0, ROOF_Y + 0.45, -hd), CONCRETE.darkened(0.05))
 	_add_box(Vector3(MALL_W + 1.2, 0.5, 0.3), Vector3(0, ROOF_Y + 0.45, hd), CONCRETE.darkened(0.05), false)
-	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(-hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
-	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05), false)
+	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(-hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05))
+	_add_box(Vector3(0.3, 0.5, MALL_D + 1.2), Vector3(hw, ROOF_Y + 0.45, 0), CONCRETE.darkened(0.05))
 	for def: Array in [
 		[-15.0, Vector3(2.2, 1.2, 1.8)],
 		[10.0, Vector3(1.8, 1.0, 1.6)],
@@ -159,8 +163,9 @@ func _build_mall() -> void:
 	]:
 		var size: Vector3 = def[1]
 		_add_box(size, Vector3(def[0], ROOF_Y + 0.2 + size.y / 2.0, -hd + 3.0), FRAME.lightened(0.35))
-	# Duct runs between the units, plus a slim radio mast.
-	_add_mesh(_cylinder(0.18, 0.18, 8.0), Vector3(-11.0, ROOF_Y + 0.55, -hd + 3.0), FRAME.lightened(0.3), false).rotation.z = PI / 2.0
+	# Duct runs between the units, plus a slim radio mast. The duct is a
+	# chest-high (for a cat) solid pipe across the walkable roof: collide.
+	_add_mesh(_cylinder(0.18, 0.18, 8.0), Vector3(-11.0, ROOF_Y + 0.55, -hd + 3.0), FRAME.lightened(0.3)).rotation.z = PI / 2.0
 	_add_mesh(_cylinder(0.03, 0.05, 3.2), Vector3(-21.5, ROOF_Y + 1.9, -hd + 2.0), FRAME.lightened(0.2), false)
 	_add_mesh(_cylinder(0.14, 0.14, 0.5), Vector3(-21.5, ROOF_Y + 0.4, -hd + 2.0), FRAME.lightened(0.3), false)
 
@@ -182,6 +187,11 @@ func _build_mall() -> void:
 	_add_box(Vector3(MALL_W + 1.0, 0.4, 6.5), Vector3(0, ROOF_Y, hd - 3.25), CONCRETE)
 	_add_box(Vector3(6.5, 0.4, MALL_D - 13.0), Vector3(-hw + 3.25, ROOF_Y, 0), CONCRETE)
 	_add_box(Vector3(6.5, 0.4, MALL_D - 13.0), Vector3(hw - 3.25, ROOF_Y, 0), CONCRETE)
+	# NOTE: the skylight sheet is deliberately collisionless. Its plane
+	# crosses the elevator shaft's top and the cab's roof-landing headroom
+	# (shaft at x 16.5 z -7.5 sits inside the sheet's footprint); a solid
+	# sheet would squeeze the player between the rising cab floor and the
+	# glass. The finale route needs that plane open.
 	var sky := _add_box(Vector3(MALL_W - 12.0, 0.1, MALL_D - 12.5), Vector3(0, ROOF_Y + 0.2, 0), GLASS, false)
 	_glassify(sky)
 	for i in 10:
@@ -233,7 +243,7 @@ func _ramp(from: Vector3, to: Vector3, width: float, with_skirts := false) -> vo
 	mi.rotation.y = atan2(span.x, span.z)
 	mi.rotation.x = -atan(span.y / flat)
 	add_child(mi)
-	mi.create_trimesh_collision()
+	mi.create_convex_collision()
 	if with_skirts:
 		var dirn := Vector3(span.x, 0, span.z).normalized()
 		var perp := Vector3(dirn.z, 0, -dirn.x)
@@ -247,6 +257,9 @@ func _ramp(from: Vector3, to: Vector3, width: float, with_skirts := false) -> vo
 			sk.rotation.y = mi.rotation.y
 			sk.rotation.x = mi.rotation.x
 			add_child(sk)
+			# The skirts read as solid balustrades along the escalator:
+			# collide so nobody walks off the ramp through them.
+			sk.create_convex_collision()
 
 func _build_lighting() -> void:
 	# Warm light strips under the balcony soffits and omni fill lights.
@@ -524,7 +537,11 @@ func _build_elevator() -> void:
 			_add_box(Vector3(0.16, ROOF_Y - 0.3, 0.16), pos + Vector3(cx, ROOF_Y / 2.0 + 0.3, cz), FRAME)
 	for band_y in [BALCONY_Y, ROOF_Y - 0.4]:
 		_add_box(Vector3(2.6, 0.14, 2.6), pos + Vector3(0, band_y, 0), FRAME, false)
-	_add_box(Vector3(1.5, 0.8, 1.5), pos + Vector3(0, ROOF_Y + 0.8, 0), FRAME.lightened(0.15))
+	# The machine box hangs over the open shaft; the cab (and the player's
+	# head at the roof landing) travels through this exact space, so it is
+	# visual only — a solid box here squeezes the rider against the cab
+	# floor at the top of the ride.
+	_add_box(Vector3(1.5, 0.8, 1.5), pos + Vector3(0, ROOF_Y + 0.8, 0), FRAME.lightened(0.15), false)
 	_add_mesh(_cylinder(0.045, 0.045, ROOF_Y - 1.0), pos + Vector3(0, ROOF_Y / 2.0, 0), Color(0.2, 0.2, 0.22), false)
 	# Call panel pillar with its patient little button, beside the north door.
 	_add_box(Vector3(0.22, 1.2, 0.22), pos + Vector3(-1.6, 0.9, -1.55), FRAME)
@@ -759,7 +776,11 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := true) -
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: trimesh shells are hollow, and anything
+		# that clips inside one (a fall, a shove from the escalator) is
+		# trapped. Every solid here is a convex primitive, and the mall
+		# stays enterable because each wall/floor/facade is its own piece.
+		mi.create_convex_collision()
 	return mi
 
 func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true) -> MeshInstance3D:
@@ -776,7 +797,7 @@ func _add_scene(path: String, pos: Vector3, yrot: float, s: float, collide := fa
 	if collide:
 		var mi := _fmi(n)
 		if mi:
-			mi.create_trimesh_collision()
+			mi.create_convex_collision()
 	return n
 
 func _fmi(n: Node) -> MeshInstance3D:

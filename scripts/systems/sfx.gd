@@ -28,6 +28,19 @@ const SOUNDS := {
 	"howl": "res://assets/audio/howl.wav",
 	"bark": "res://assets/audio/bark.wav",
 	"whimper": "res://assets/audio/whimper.wav",
+	"growl": "res://assets/audio/growl.wav",
+	"horse_snort": "res://assets/audio/horse_snort.wav",
+	"drum_low": "res://assets/audio/drum_low.wav",
+	"drum_mid": "res://assets/audio/drum_mid.wav",
+	"drum_high": "res://assets/audio/drum_high.wav",
+	"goal_horn": "res://assets/audio/goal_horn.wav",
+	"crowd_cheer": "res://assets/audio/crowd_cheer.wav",
+	"crowd_groan": "res://assets/audio/crowd_groan.wav",
+	"squirrel_chitter": "res://assets/audio/squirrel_chitter.wav",
+	"oven_pop": "res://assets/audio/oven_pop.wav",
+	"lever_clunk": "res://assets/audio/lever_clunk.wav",
+	"funicular_bell": "res://assets/audio/funicular_bell.wav",
+	"firefly_hum": "res://assets/audio/firefly_hum.wav",
 }
 const POOL_SIZE := 10
 

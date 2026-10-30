@@ -287,26 +287,54 @@ func _noise_tex(seed_v: int, freq: float, as_normal := false) -> NoiseTexture2D:
 	tex.height = 256
 	return tex
 
+## Dune and mound domes must not swell into gameplay spaces: the boat
+## channel the raft departs through, the seesaw den, echo cove, the crab's
+## vine rock, and the frond palm's jump route. (x, z, keep-clear radius.)
+const DUNE_KEEP_CLEAR: Array[Vector3] = [
+	Vector3(-14.56, 4.36, 3.5),   # driftwood seesaw + hillside den
+	Vector3(33.0, -4.0, 7.0),     # echo cove stones, carving, tide pool
+	Vector3(36.0, -12.0, 4.5),    # crab vines rock
+	Vector3(18.0, -14.0, 4.5),    # frond palm jump route
+]
+
+func _dune_fits(pos: Vector3, radius: float) -> bool:
+	if pos.z + radius > 24.0 and absf(pos.x) - radius < 22.0:
+		return false  # the raft's southern boat channel stays clear
+	for kc: Vector3 in DUNE_KEEP_CLEAR:
+		if Vector2(pos.x, pos.z).distance_to(Vector2(kc.x, kc.y)) < radius + kc.z:
+			return false
+	return true
+
 func _scatter_dunes() -> void:
 	# Gentle walkable mounds so the ground has a silhouette.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 313
 	for i in 7:
-		var r := rng.randf_range(31.0, 38.0)
-		var a := rng.randf_range(0.0, TAU)
-		var dune := SphereMesh.new()
-		var dr := rng.randf_range(4.5, 8.0)
-		dune.radius = dr
-		dune.height = dr * 0.22
-		_add_mesh(dune, Vector3(cos(a) * r, 0.0, sin(a) * r), SAND, true, _sand_mat)
+		for attempt in 8:
+			var r := rng.randf_range(31.0, 38.0)
+			var a := rng.randf_range(0.0, TAU)
+			var dr := rng.randf_range(4.5, 8.0)
+			var pos := Vector3(cos(a) * r, 0.0, sin(a) * r)
+			if not _dune_fits(pos, dr):
+				continue
+			var dune := SphereMesh.new()
+			dune.radius = dr
+			dune.height = dr * 0.22
+			_add_mesh(dune, pos, SAND, true, _sand_mat)
+			break
 	for i in 4:
-		var r := rng.randf_range(16.0, 26.0)
-		var a := rng.randf_range(0.0, TAU)
-		var mound := SphereMesh.new()
-		var mr := rng.randf_range(3.5, 6.0)
-		mound.radius = mr
-		mound.height = mr * 0.2
-		_add_mesh(mound, Vector3(cos(a) * r, 0.28, sin(a) * r), GRASS, true, _grass_mat)
+		for attempt in 8:
+			var r := rng.randf_range(16.0, 26.0)
+			var a := rng.randf_range(0.0, TAU)
+			var mr := rng.randf_range(3.5, 6.0)
+			var pos := Vector3(cos(a) * r, 0.28, sin(a) * r)
+			if not _dune_fits(pos, mr):
+				continue
+			var mound := SphereMesh.new()
+			mound.radius = mr
+			mound.height = mr * 0.2
+			_add_mesh(mound, pos, GRASS, true, _grass_mat)
+			break
 
 func _build_water() -> void:
 	# Subdivided plane + shader: gentle waves, fresnel colour shift.
@@ -444,7 +472,10 @@ func _add_scene(scene: PackedScene, pos: Vector3, yrot: float, s: float, collide
 	if collide:
 		var mi := _first_mesh_instance(n)
 		if mi:
-			mi.create_trimesh_collision()
+			# Convex, not trimesh: these are single solid props (rocks, palms).
+			# A trimesh here is a hollow shell — anything that clips inside is
+			# trapped, and thin faces can be tunneled through.
+			mi.create_convex_collision()
 	return n
 
 func _first_mesh_instance(n: Node) -> MeshInstance3D:
@@ -530,6 +561,9 @@ func _build_story_flourishes() -> void:
 		t.material_override = tower_mat
 		t.position = (def[0] as Vector3) + Vector3(0, (def[1] as float) / 2.0 - 1.0, 0)
 		add_child(t)
+		# Far offshore, but swimmable-to: a tower you can pass through would
+		# break the illusion harder than any other prop on the island.
+		t.create_convex_collision()
 	var glint := MeshInstance3D.new()
 	var gmesh := SphereMesh.new()
 	gmesh.radius = 0.8
@@ -696,7 +730,9 @@ func _add_mesh(mesh: Mesh, pos: Vector3, color: Color, with_collision := true,
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex: every caller passes a single convex primitive (dune spheres,
+		# driftwood cylinders). Trimesh would be a hollow, tunnelable shell.
+		mi.create_convex_collision()
 	return mi
 
 func _add_pickup(pos: Vector3, id: String, disp: String, color: Color) -> void:

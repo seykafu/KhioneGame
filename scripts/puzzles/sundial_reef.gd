@@ -167,7 +167,7 @@ func _build_rock(pos: Vector3, is_target: bool) -> void:
 	add_child(rock)
 	var mi := _first_mesh_instance(rock)
 	if mi:
-		mi.create_trimesh_collision()
+		mi.create_convex_collision()  # climbable solid rock, not a hollow shell
 	# A lower stepping rock on the island-facing side, so the climb reads.
 	var toward_island := Vector3(-pos.x, 0, -pos.z).normalized() * 3.2
 	var step: Node3D = load("res://assets/nature/rock_smallB.glb").instantiate()
@@ -176,7 +176,7 @@ func _build_rock(pos: Vector3, is_target: bool) -> void:
 	add_child(step)
 	var smi := _first_mesh_instance(step)
 	if smi:
-		smi.create_trimesh_collision()
+		smi.create_convex_collision()  # solid stepping rock
 
 	var info := {"pos": pos, "birds": [], "is_target": is_target, "scattered": false}
 	_rock_infos.append(info)
@@ -339,7 +339,7 @@ func _box_free_mesh(mesh: Mesh, pos: Vector3, color: Color, collide: bool) -> Me
 	mi.position = pos
 	add_child(mi)
 	if collide:
-		mi.create_trimesh_collision()
+		mi.create_convex_collision()  # cylinders/boxes are single convex prims
 	return mi
 
 func _first_mesh_instance(n: Node) -> MeshInstance3D:

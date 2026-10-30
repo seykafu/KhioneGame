@@ -19,6 +19,7 @@ var _ear_l: Node3D
 var _ear_r: Node3D
 var _hips: Array[Node3D] = []  # FL, FR, BL, BR pivots — legs swing from the hip
 var _run_phase := 0.0
+var _gait := 0.0          # eased 0..1 stride amplitude: no more hard snaps
 var _cur_speed := 0.0     # eased, so strides build and settle smoothly
 var _chasing := false     # hysteresis so he doesn't stutter at the follow edge
 var _hopping := false
@@ -365,6 +366,8 @@ func _process(delta: float) -> void:
 		_settle(delta)
 		return
 	# Far behind? Border collies do not do "far behind."
+	# (This teleport is also the net under _avoid_walls: if a wall ever
+	# boxes him in, falling far enough behind pops him to her side.)
 	if following and _move_target == Vector3.INF and flat.length() > 30.0:
 		global_position.x = target.x
 		global_position.z = target.z
@@ -374,6 +377,14 @@ func _process(delta: float) -> void:
 		want_speed = minf(want_speed, 2.8)  # dog paddle, not dog sprint
 	_cur_speed = lerpf(_cur_speed, want_speed, minf(6.0 * delta, 1.0))
 	var step := flat.normalized() * minf(_cur_speed * delta, flat.length())
+	# Wall-sense applies to his own following only: scripted moves (dig
+	# sites, stay marks, fetches) are placed deliberately by puzzles —
+	# boards and fences yield to a border collie with a job.
+	if _move_target == Vector3.INF:
+		step = _avoid_walls(step)
+	if step.length() < 0.001:
+		_settle(delta)
+		return
 	global_position.x += step.x
 	global_position.z += step.y
 	rotation.y = lerp_angle(rotation.y, atan2(step.x, step.y), minf(8.0 * delta, 1.0))
@@ -392,15 +403,47 @@ func _process(delta: float) -> void:
 	else:
 		# The trot: diagonal leg pairs swing opposite ways from the hip,
 		# the body rides a soft double-beat bounce and rocks a little.
+		# Stride amplitude eases in and out through _gait, so starting,
+		# stopping, and wall-brushes never snap the legs.
+		_gait = lerpf(_gait, 1.0, minf(5.0 * delta, 1.0))
 		_run_phase += delta * (6.0 + _cur_speed * 0.6)
 		for i in _hips.size():
 			var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
-			_hips[i].rotation.x = sin(phase) * 0.6
-		_body.rotation.z = sin(_run_phase) * 0.05
+			_hips[i].rotation.x = sin(phase) * 0.6 * _gait
+		_body.rotation.z = sin(_run_phase) * 0.05 * _gait
 		_body.rotation.x = PI / 2.0
 		_tail.rotation.x = -0.12 + sin(_run_phase * 0.5) * 0.08
 		if not _hopping:
-			global_position.y = _rest_height() + pow(absf(sin(_run_phase)), 2.0) * 0.05
+			global_position.y = _rest_height() + pow(absf(sin(_run_phase)), 2.0) * 0.05 * _gait
+
+## He is not a physics body, so he probes ahead himself: a wall in the
+## way turns his step into a slide along it instead of a ghost through
+## it. Walkable slopes (normal.y high) don't count as walls.
+func _avoid_walls(step: Vector2) -> Vector2:
+	if step.length() < 0.001:
+		return step
+	var space := get_world_3d().direct_space_state
+	var fwd := Vector3(step.x, 0, step.y).normalized()
+	var player := get_tree().get_first_node_in_group("player")
+	# Two probes: chest height for walls, shin height for benches, crates,
+	# and everything else a single high ray used to sail right over.
+	var hit := {}
+	for h: float in [0.55, 0.28]:
+		var from := global_position + Vector3(0, h, 0)
+		var q := PhysicsRayQueryParameters3D.create(from, from + fwd * 0.7)
+		if player is CollisionObject3D:
+			q.exclude = [player.get_rid()]
+		hit = space.intersect_ray(q)
+		if not hit.is_empty() and (hit.normal as Vector3).y <= 0.55:
+			break
+		hit = {}
+	if hit.is_empty():
+		return step
+	var n := Vector2((hit.normal as Vector3).x, (hit.normal as Vector3).z)
+	if n.length() < 0.01:
+		return step
+	n = n.normalized()
+	return (step - n * step.dot(n)) * 0.9
 
 func _settle(delta: float) -> void:
 	# At rest: legs straighten under the hips, the body levels, and he
@@ -417,7 +460,16 @@ func _settle(delta: float) -> void:
 			global_position.y = lerpf(global_position.y,
 					_rest_height() + sin(_run_phase * 0.5) * 0.03, minf(8.0 * delta, 1.0))
 		return
-	_settle_legs_only(delta)
+	# Ease the stride out through the same formula the trot uses: the
+	# legs decelerate along their own curve instead of snapping to rest.
+	_gait = lerpf(_gait, 0.0, minf(4.0 * delta, 1.0))
+	if _gait > 0.04:
+		_run_phase += delta * (4.0 + _cur_speed * 0.6)
+		for i in _hips.size():
+			var phase := _run_phase + (0.0 if i == 0 or i == 3 else PI)
+			_hips[i].rotation.x = sin(phase) * 0.6 * _gait
+	else:
+		_settle_legs_only(delta)
 	_body.rotation.z = lerpf(_body.rotation.z, 0.0, minf(10.0 * delta, 1.0))
 	_body.rotation.x = lerp_angle(_body.rotation.x, PI / 2.0, minf(8.0 * delta, 1.0))
 	_tail.rotation.x = lerpf(_tail.rotation.x, 0.0, minf(6.0 * delta, 1.0))

@@ -56,6 +56,18 @@ const RIDDLES := [
 		"text": "Pump with the rhythm, let go with courage. The rooftops keep bolts, a loonie, and the view that matters."},
 	{"flag": "island4_complete", "title": "The Longest Slide", "island": 4,
 		"text": "Salt the gate, wake the toboggan, and dig the run open along the flag-line: she marks, he digs. Then ride it, all the way to the cellar."},
+	{"flag": "horse_moved", "title": "The Calèche Horse", "island": 5,
+		"text": "It ignored the meow and planted its hooves at the hiss. Oreo barked; it backed a step. She tried to bark, and what came out was a GROWL. Big things listen."},
+	{"flag": "three_stars_done", "title": "The Three Stars", "island": 5,
+		"text": "Hiss the Zamboni off the dot, growl the great cube awake, and hoist the three star numbers in the order it calls. The penalty box keeps spare arena glass."},
+	{"flag": "mmfa_delivered", "title": "The Fallen Star", "island": 5,
+		"text": "The horn shook number 10 out of the rafters, and the plaque said en prêt: on loan. TIREZ means pull, and pulling is a dog's work. The museum lit up warm, and a squirrel paid its debt in brass."},
+	{"flag": "stairs_fixed", "title": "The Staircase Shuffle", "island": 5,
+		"text": "Every lever swings its own flight and the next. From below, a maze; from the chalet balcony, a zigzag with two flights wrong. Climb high to think, then act."},
+	{"flag": "bagels_placed", "title": "The Bagel Standard", "island": 5,
+		"text": "Pull the bagel in the golden second. Twelve lantern bases wanted twelve, the toll took one, and the sign said à la douzaine. Squirrels count. So does the cross."},
+	{"flag": "island5_complete", "title": "Light the Cross", "island": 5,
+		"text": "Panes for the glassless lanterns, warm bagels for the fireflies, and the chalk-drum duet to make them settle: the cross lit tier by tier, and its shadow found the funicular gate."},
 ]
 
 const CONTROLS := [

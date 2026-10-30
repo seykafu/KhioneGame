@@ -5,6 +5,16 @@ extends Node3D
 var current_island: Node3D
 var _sky_defaults := {}
 
+## A key held while the window loses (or regains) focus can miss its
+## release event, leaving Khione marching on her own. Whenever app focus
+## changes, force-release every gameplay action.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT \
+			or what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		for a: String in ["move_left", "move_right", "move_forward", "move_back",
+				"run", "jump", "interact", "meow", "hiss", "growl"]:
+			Input.action_release(a)
+
 func _ready() -> void:
 	add_to_group("island_manager")
 	current_island = $Ahalo

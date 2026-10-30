@@ -139,6 +139,76 @@ func _run() -> void:
 	player.global_position = Vector3(2, 1.0, 38)
 	await get_tree().create_timer(3.0).timeout
 
+	# --- the opened gate's opening stays open ---
+	# The paw key swung the gate aside earlier; nothing solid may sit in
+	# the frame she and Oreo walk through.
+	var space := player.get_world_3d().direct_space_state
+	var gate_probe := PhysicsShapeQueryParameters3D.new()
+	var gate_sph := SphereShape3D.new()
+	gate_sph.radius = 0.3
+	gate_probe.shape = gate_sph
+	var gate_excludes: Array[RID] = []
+	if player is CollisionObject3D:
+		gate_excludes.append((player as CollisionObject3D).get_rid())
+	if oreo is CollisionObject3D:
+		gate_excludes.append((oreo as CollisionObject3D).get_rid())
+	gate_probe.exclude = gate_excludes
+	# Heights clear of the lawn itself (terrain sits at 0.35 here) but
+	# square in the frame a walking cat and a bounding dog pass through.
+	for gy: float in [0.8, 1.5]:
+		gate_probe.transform = Transform3D(Basis(), Vector3(0.0, gy, -23.0))
+		assert(space.intersect_shape(gate_probe).is_empty(),
+				"the opened meadow gate must leave its frame clear (y=%s)" % gy)
+	print("opened gate clearance: OK")
+
+	# --- cinematic corridor: the paddle-out is prop-free ---
+	# _set_sail/_paddle_out tween PLAYER + OREO (and the camera) along
+	# this route over the Bow, so any solid body inside the corridor would
+	# be visibly clipped through. Exempt: terrain (the only concave
+	# collider, identified by its ConcavePolygonShape3D) and the canoe
+	# itself, whose hull collider rides the route with them. The same
+	# route serves the first sail and every revisit ferry to Winnipeg.
+	var offenders: Array[String] = []
+	var corr := PhysicsShapeQueryParameters3D.new()
+	var csph := SphereShape3D.new()
+	csph.radius = 0.3
+	corr.shape = csph
+	corr.exclude = gate_excludes
+	var canoe_node: Node3D = isl.get_node_or_null("Canoe")
+	assert(canoe_node != null, "the beached canoe should exist")
+	var is_exempt := func(collider: Object) -> bool:
+		for c in (collider as Node).get_children():
+			if c is CollisionShape3D and c.shape is ConcavePolygonShape3D:
+				return true  # terrain heightfield
+		var walker: Node = collider as Node
+		while walker != null:
+			if walker == canoe_node:
+				return true  # the canoe sails the corridor itself
+			walker = walker.get_parent()
+		return false
+	var sweep := func(pos: Vector3, label: String) -> void:
+		corr.transform = Transform3D(Basis(), pos)
+		for hit in space.intersect_shape(corr):
+			var col: Object = hit.collider
+			if not is_exempt.call(col):
+				offenders.append("%s: %s at %s" % [label, (col as Node).name, pos])
+	# The paddle route from offleash_howl._paddle_out: the shove-off point
+	# (2.8, WATER_LINE + 0.12, 42.0), then three waypoints east.
+	var route: Array[Vector3] = [
+		Vector3(2.8, -0.28, 42.0), Vector3(3.5, -0.28, 52.0),
+		Vector3(6.0, -0.28, 64.0), Vector3(11.0, -0.28, 78.0),
+	]
+	for i in route.size() - 1:
+		for k in 13:
+			var t: float = k / 12.0
+			var p: Vector3 = route[i].lerp(route[i + 1], t)
+			sweep.call(p + Vector3(0, 0.2, 0), "canoe deck")
+			sweep.call(p + Vector3(0, 0.75, 0), "rider height")
+	for o in offenders:
+		print("CORRIDOR OFFENDER — ", o)
+	assert(offenders.is_empty(), "the paddle-out corridor must be free of props")
+	print("cinematic corridor: OK")
+
 	# The shove-off: they board, the fragment slips loose, and then the two
 	# of them actually sail east and land on the Winnipeg dock.
 	howl.canoe_interact()

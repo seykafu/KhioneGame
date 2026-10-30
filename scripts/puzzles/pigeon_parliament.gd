@@ -257,7 +257,9 @@ func _add_box(size: Vector3, pos: Vector3, color: Color, with_collision := true)
 	mi.position = pos
 	add_child(mi)
 	if with_collision:
-		mi.create_trimesh_collision()
+		# Convex, never trimesh: hollow trimesh shells trap anything that
+		# clips inside them.
+		mi.create_convex_collision()
 	return mi
 
 func _mat(color: Color) -> StandardMaterial3D:

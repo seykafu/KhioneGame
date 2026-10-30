@@ -93,7 +93,7 @@ func _build_seesaw() -> void:
 	wedge.material_override = _mat(ROCK)
 	wedge.position = Vector3(0, 0.28, 2.8)
 	add_child(wedge)
-	wedge.create_trimesh_collision()
+	wedge.create_convex_collision()  # solid prism, not a hollow shell
 
 	_pivot = Node3D.new()
 	_pivot.position = Vector3(0, 0.58, 2.8)
@@ -106,6 +106,7 @@ func _build_seesaw() -> void:
 	plank.mesh = box
 	plank.material_override = _mat(DRIFTWOOD)
 	_pivot.add_child(plank)
+	plank.create_convex_collision()  # a knee-high beam Khione can hop onto
 
 	var pad := MeshInstance3D.new()
 	var pad_box := BoxMesh.new()
@@ -114,6 +115,7 @@ func _build_seesaw() -> void:
 	pad.material_override = _mat(VINE)
 	pad.position = Vector3(1.45, 0.1, 0)
 	_pivot.add_child(pad)
+	pad.create_convex_collision()
 
 	var basket := BasketPlate.new()
 	basket.owner_puzzle = self
@@ -136,9 +138,24 @@ func _build_den() -> void:
 		rock.position = def[1]
 		rock.scale = Vector3.ONE * (def[2] as float)
 		add_child(rock)
-		var mi := _first_mesh_instance(rock)
-		if mi:
-			mi.create_trimesh_collision()
+	# The den's enclosure is hand-built from solid convex boxes (the
+	# buried-car treatment): each rock's mass is covered, but the doorway and
+	# the cavity between them stay open. Convex hulls of these rocks bulge
+	# into the doorway and seal the den shut, and hollow trimesh shells can
+	# trap Khione inside a wall.
+	var hull := StaticBody3D.new()
+	for hdef: Array in [
+		[Vector3(-1.2, 0.8, -0.6), Vector3(1.4, 1.6, 2.0)],  # left rock mass
+		[Vector3(1.2, 0.8, -0.6), Vector3(1.4, 1.6, 2.0)],   # right rock mass
+		[Vector3(0.0, 2.0, -0.6), Vector3(2.4, 1.2, 2.2)],   # roof rock mass
+	]:
+		var hcs := CollisionShape3D.new()
+		var hbox := BoxShape3D.new()
+		hbox.size = hdef[1]
+		hcs.shape = hbox
+		hcs.position = hdef[0]
+		hull.add_child(hcs)
+	add_child(hull)
 
 	var back := MeshInstance3D.new()
 	var back_box := BoxMesh.new()
@@ -147,7 +164,7 @@ func _build_den() -> void:
 	back.material_override = _mat(DARK)
 	back.position = Vector3(0, 0.85, -1.9)
 	add_child(back)
-	back.create_trimesh_collision()
+	back.create_convex_collision()  # thin wall: convex so it can't be tunneled
 
 	var floor_mesh := MeshInstance3D.new()
 	var floor_box := BoxMesh.new()
