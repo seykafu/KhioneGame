@@ -45,8 +45,11 @@ const SFX_HAPTICS = {
   coconut_thunk: ['impact', 'medium', 0.8], gate_open: ['impact', 'medium', 0.9], stone_slide: ['impact', 'rigid', 0.6],
   bonk: ['impact', 'medium', 0.8], smash: ['impact', 'heavy', 0.8], crab_snip: ['impact', 'rigid', 0.5],
   splash: ['impact', 'soft', 0.6], drain: ['impact', 'soft', 0.7], dig: ['impact', 'light', 0.5], snow_dig: ['impact', 'light', 0.5],
-  cannon: ['impact', 'heavy', 1], big_wave: ['impact', 'heavy', 0.8], sled: ['impact', 'medium', 0.7],
+  sled: ['impact', 'medium', 0.7],
   bell_ding: ['impact', 'rigid', 0.5], wood_creak: ['impact', 'soft', 0.5],
+  goal_horn: ['impact', 'heavy', 1], lever_clunk: ['impact', 'rigid', 0.8], oven_pop: ['impact', 'light', 0.7],
+  drum_low: ['impact', 'heavy', 0.9], drum_mid: ['impact', 'medium', 0.8], drum_high: ['impact', 'light', 0.8],
+  horse_snort: ['impact', 'medium', 0.6],
 };
 
 /** Called by audio.sfx(): buzz for nearby, meaningful sounds only. */

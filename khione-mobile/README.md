@@ -14,7 +14,7 @@ games private — sign in to Higgsfield in the same browser to open it).
 | --- | --- |
 | `app/public/` | **The game.** Static ES modules, no build step. |
 | `app/public/js/engine/` | Shared engine: render, input, player, Oreo, world/island base, UI, audio, save, cloud save. |
-| `app/public/js/islands/` | One module per island: `ahalo`, `eaton`, `calgary`, `winnipeg`, `pirate`, `englishbay`, `agrea`. |
+| `app/public/js/islands/` | One module per island: `ahalo`, `eaton`, `calgary`, `winnipeg`, `montreal`, `englishbay`, `agrea`. |
 | `app/public/assets/` | Higgsfield-generated models (meshopt GLB), textures, music and SFX, plus the Godot project's bespoke audio. |
 | `app/src/logic.js` | Server side: a single-player cloud-save room (Higgsfield game template). |
 | `native/` | Capacitor 6 wrapper → Xcode project for a native iOS build. |

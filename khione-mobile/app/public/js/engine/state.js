@@ -11,7 +11,7 @@ export const ISLANDS = [
   { id: 'eaton', n: 2, name: 'The Eaton Centre', tag: 'Escalators still run. Nobody is home.' },
   { id: 'calgary', n: 3, name: "Prince's Island", tag: 'Golden hour that never quite ends.' },
   { id: 'winnipeg', n: 4, name: 'The Winnipeg Crescent', tag: 'First snow, seen through a tropical cat’s eyes.' },
-  { id: 'pirate', n: 5, name: 'The Pirate Ship', tag: 'An indoor sea, a galleon, one loud parrot.' },
+  { id: 'montreal', n: 5, name: 'Montréal', tag: 'A mountain in red maple, and a cross gone dark.' },
   { id: 'englishbay', n: 6, name: 'English Bay', tag: 'Cherry petals on a wind that never stops.' },
   { id: 'agrea', n: 7, name: 'Agrea', tag: 'The whole journey, in one small place.' },
 ];
@@ -196,6 +196,12 @@ class GameState {
       fragments: d.fragments ?? [], artifacts: d.artifacts ?? [], oreo: !!d.oreo, visited: d.visited ?? ['ahalo'],
       playTime: d.playTime ?? 0, started: !!d.started,
     });
+    // Island 5 was the Pirate Ship before it became Montréal.
+    const was = (id) => (id === 'pirate' ? 'montreal' : id);
+    this.island = was(this.island);
+    this.visited = [...new Set(this.visited.map(was))];
+    for (const a of this.artifacts) a.island = was(a.island);
+    this.stacks = this.stacks.filter((s) => !['mini_putter', 'captains_whistle', 'spigot_wheel'].includes(s.id));
     return true;
   }
   wipe() { localStorage.removeItem(SAVE_KEY); this.reset(); }

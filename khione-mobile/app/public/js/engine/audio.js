@@ -20,8 +20,8 @@ const SFX_FILES = {
   bonk: 'poc_bonk.mp3', chime: 'poc_chime.mp3', coin: 'poc_coin.mp3', dig: 'poc_dig.mp3', fanfare: 'poc_fanfare.mp3',
   push: 'poc_push.mp3', smash: 'poc_smash.mp3', snap: 'poc_snap.mp3',
   // Generated on Higgsfield for this build
-  growl: 'growl.mp3', geese: 'geese.mp3', pigeons: 'pigeons.mp3', snow_dig: 'snow_dig.mp3', big_wave: 'big_wave.mp3',
-  cannon: 'cannon.mp3', sled: 'sled.mp3', raccoon: 'raccoon.mp3', parrot: 'parrot.mp3',
+  growl: 'growl.mp3', geese: 'geese.mp3', pigeons: 'pigeons.mp3', snow_dig: 'snow_dig.mp3',
+  sled: 'sled.mp3', raccoon: 'raccoon.mp3',
 };
 
 class Audio {

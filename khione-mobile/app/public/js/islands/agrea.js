@@ -32,8 +32,8 @@ const SHRINES = [
     memory: 'A park by a turquoise river. A leash, a ball, a bench in the sun. He remembers the yard.' },
   { n: 4, id: 'winnipeg', name: 'Winnipeg Shrine', pos: V3(9, 0.3, -20), color: '#bdf2ff',
     memory: 'First snow. A dog who could not believe his luck, and a cat who could not believe the cold.' },
-  { n: 5, id: 'galleon', name: 'Galleon Shrine', pos: V3(19, 0.3, -7), color: '#5fd8e8',
-    memory: 'An indoor sea, a wooden ship, a kid shrieking with joy on the big wave.' },
+  { n: 5, id: 'montreal', name: 'Montréal Shrine', pos: V3(19, 0.3, -7), color: '#b48cff',
+    memory: 'A mountain in red maple. A bagel, still warm, split down the middle and shared with a dog.' },
   { n: 6, id: 'totem', name: 'Totem Shrine', pos: V3(17, 0.3, 9), color: '#ff9ad5',
     memory: 'Cherry petals on a seawall wind. A house with a red door, and somebody waiting inside.' },
 ];
@@ -75,8 +75,8 @@ export default class Agrea extends Island {
     this.moundColor = '#f4f7fb';
   }
 
-  models() { return ['house_westend', 'goose', 'pole_raven', 'pole_bear', 'pole_orca', 'tiki', 'galleon', 'tree_cherry', 'palm', 'snowman', 'tree_pine', 'tree_leafy', 'canoe', 'chest']; }
-  sounds() { return ['bell_ding', 'chime', 'bark', 'whimper', 'stone_slide', 'gate_open', 'success', 'fanfare', 'big_wave', 'splash', 'wood_creak', 'geese', 'snow_dig', 'whisker_shimmer', 'ocean_loop', 'park_birds']; }
+  models() { return ['house_westend', 'goose', 'pole_raven', 'pole_bear', 'pole_orca', 'tiki', 'tree_cherry', 'palm', 'snowman', 'tree_pine', 'tree_leafy', 'canoe', 'chest']; }
+  sounds() { return ['bell_ding', 'chime', 'bark', 'whimper', 'stone_slide', 'gate_open', 'success', 'fanfare', 'drum_low', 'splash', 'wood_creak', 'geese', 'snow_dig', 'whisker_shimmer', 'ocean_loop', 'park_birds']; }
   atmosphere() {
     return { sky: '#ffe3c4', fog: '#ffe3c4', fogNear: 40, fogFar: 110, sun: '#ffd9a8', sunIntensity: 2.3, hemi: 1.3, skyLight: '#fff1dc', groundLight: '#8a7a6a', exposure: 1.08 };
   }
@@ -145,7 +145,7 @@ export default class Agrea extends Island {
     this.buildEatonShrine(SHRINES[1]);
     this.buildCalgaryShrine(SHRINES[2]);
     this.buildWinnipegShrine(SHRINES[3]);
-    this.buildGalleonShrine(SHRINES[4]);
+    this.buildMontrealShrine(SHRINES[4]);
     this.buildTotemShrine(SHRINES[5]);
     for (const s of SHRINES) this.buildBeacon(s);
     this.buildBells();
@@ -260,12 +260,21 @@ export default class Agrea extends Island {
     for (const p of pines) this.solidCyl(p.x, p.z, 0.5, -1, 3);
     const snowman = model('snowman', { height: 1.5 }); snowman.position.set(w.x - 3.2, this.height(w.x - 3.2, w.z + 2.6), w.z + 2.6); snowman.rotation.y = 0.6; this.add(snowman);
     this.solidCyl(w.x - 3.2, w.z + 2.6, 0.5, -1, 1.5);
-    // Galleon: the Santa Maria, beached in a tiny lagoon.
+    // Montréal: red maples on a little knoll, a bench, a bagel left on it.
     const g = SHRINES[4].pos;
-    const lagoon = new THREE.Mesh(new THREE.CircleGeometry(3.4, 32), new THREE.MeshLambertMaterial({ color: '#2fb5cc', transparent: true, opacity: 0.9 }));
-    lagoon.rotation.x = -Math.PI / 2; lagoon.position.set(g.x + 4.5, 0.32, g.z - 4); this.add(lagoon);
-    const ship = model('galleon', { height: 4.2 }); ship.position.set(g.x + 4.5, 0.15, g.z - 4); ship.rotation.y = 0.8; ship.rotation.z = 0.08; this.add(ship);
-    this.solidCyl(g.x + 4.5, g.z - 4, 2.2, -1, 3);
+    const knoll = new THREE.Group();
+    for (const [dx, dz, col, s] of [[4.2, -3.6, '#d9472a', 1], [-3.6, -3.2, '#eb8024', 0.85], [3.4, 3.4, '#e6b333', 0.8]]) {
+      const x = g.x + dx, z = g.z + dz;
+      const trunk = P.cyl(0.14 * s, 0.22 * s, 1.9 * s, '#5a4334'); trunk.position.set(x, 0.2, z); knoll.add(trunk);
+      for (let k = 0; k < 3; k++) { const c = P.sphere((1.5 - k * 0.25) * s, col, { seg: 10 }); c.scale.y = 0.82; c.position.set(x + (k - 1) * 0.3 * s, 0.3 + (2.2 + k * 0.7) * s, z); knoll.add(c); }
+      const pile = P.cyl(0.9 * s, 1.1 * s, 0.1, col); pile.position.set(x + 0.4, 0.26, z + 0.3); knoll.add(pile);
+      this.solidCyl(x, z, 0.3, -1, 3);
+    }
+    const seat = P.box(1.6, 0.08, 0.5, '#80614a', { round: 0.02 }); seat.position.set(g.x - 2.6, 0.72, g.z + 2.6); knoll.add(seat);
+    for (const sx of [-0.65, 0.65]) { const leg = P.box(0.1, 0.42, 0.42, '#38383d'); leg.position.set(g.x - 2.6 + sx, 0.3, g.z + 2.6); knoll.add(leg); }
+    const bagel = P.torus(0.12, 0.05, '#d99a4d'); bagel.rotation.x = Math.PI / 2; bagel.position.set(g.x - 2.3, 0.84, g.z + 2.6); knoll.add(bagel);
+    this.solidBox(g.x - 2.6, g.z + 2.6, 1.6, 0.5, -1, 0.8);
+    this.add(P.bake(knoll)); this.add(knoll);
     // Totems: cherry trees + the tall "sky-tree" the raven faces.
     const t = SHRINES[5].pos;
     const cherries = [[-4.5, -3.5], [4.5, 3.8], [-1, 5.2]].map(([dx, dz], i) => ({ x: t.x + dx, y: 0.3, z: t.z + dz, rotY: i, scale: 1 + i * 0.08 }));
@@ -619,78 +628,80 @@ export default class Agrea extends Island {
     this.trigger({ pos: c, radius: 6, once: true, onEnter: () => { if (!this.lit(4)) G.ui.toast('One drift that never melts… (meow at it)', '❄️'); } });
   }
 
-  // ── Shrine 5 · Galleon: a ship in a bottle and one wave lever ──
-  buildGalleonShrine(s) {
+  // ── Shrine 5 · Montréal: one lantern, three fireflies, one drum ──
+  buildMontrealShrine(s) {
     const c = s.pos;
-    const basin = new THREE.Group();
-    const rim = P.box(5.2, 0.45, 1.8, '#cfc3ae', { round: 0.08 }); basin.add(rim);
-    const water = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 1.4), new THREE.MeshLambertMaterial({ color: '#2fb5cc', transparent: true, opacity: 0.9 }));
-    water.rotation.x = -Math.PI / 2; water.position.y = 0.4; basin.add(water);
-    basin.position.set(c.x, 0.3, c.z); this.add(basin);
-    this.solidBox(c.x, c.z, 5.2, 1.8, -1, 0.75);
-    // Wooden cradle at the +x end, raised.
-    const cradle = new THREE.Group();
-    for (const dz of [-0.3, 0.3]) { const arm = P.box(0.12, 0.4, 0.12, '#8a5a2b'); arm.position.set(0, 0, dz); cradle.add(arm); }
-    const bar = P.box(0.7, 0.08, 0.7, '#a0662e'); bar.position.y = 0.4; cradle.add(bar);
-    cradle.position.set(c.x + 3.3, 0.3, c.z); this.add(cradle);
-    this.solidBox(c.x + 3.3, c.z, 0.7, 0.7, -1, 0.8);
-    // The ship in a bottle.
-    const bottle = new THREE.Group();
-    const glass = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.9, 6, 14), new THREE.MeshLambertMaterial({ color: '#cff6ff', transparent: true, opacity: 0.35, depthWrite: false }));
-    glass.rotation.z = Math.PI / 2; bottle.add(glass);
-    const cork = P.cyl(0.11, 0.12, 0.18, '#a07850', { base: false }); cork.rotation.z = Math.PI / 2; cork.position.x = -0.82; bottle.add(cork);
-    const ship = model('galleon', { height: 0.42 }); ship.position.y = -0.2; ship.rotation.y = Math.PI / 2; bottle.add(ship);
-    this.add(bottle);
-    this.shipBottle = bottle;
-    this.galleon = { c, water, phase: 0, done: this.lit(5) };
-    if (this.lit(5)) bottle.position.set(c.x + 3.3, 1.05, c.z);
-    this.every((dt) => {
-      if (this.galleon.done || this.galleon.swelling) return;
-      this.galleon.phase += dt;
-      const x = Math.sin(this.galleon.phase * (Math.PI * 2 / 3.6)) * 1.7;
-      bottle.position.set(c.x + x, 0.98 + Math.sin(G.time * 2.4) * 0.03, c.z);
-      bottle.rotation.z = Math.sin(G.time * 1.7) * 0.06;
-      if (x > 1.15 && Math.random() < 0.05) G.fx.sparkle(V3(c.x + 2.2, 1.0, c.z), '#bff3fb', 2);
+    const post = P.box(0.22, 2.0, 0.22, '#38383d'); post.position.set(c.x, 0.3, c.z); this.add(post);
+    const arm = P.box(1.1, 0.18, 0.18, '#38383d'); arm.position.set(c.x, 1.75, c.z); this.add(arm);
+    this.solidCyl(c.x, c.z, 0.25, -1, 2.3);
+    const lanternMat = new THREE.MeshLambertMaterial({ color: '#b6c0c8', transparent: true, opacity: 0.5, emissive: '#ffd890', emissiveIntensity: 0 });
+    const lantern = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.3), lanternMat);
+    lantern.position.set(c.x, 1.45, c.z + 0.28); this.add(lantern);
+    for (const y of [1.2, 1.7]) { const plate = P.box(0.42, 0.05, 0.34, '#2e2c2a', { base: false }); plate.position.set(c.x, y, c.z + 0.28); this.add(plate); }
+    // The drum, chalk on its rim: three even beats, a rest after each for the echo.
+    const d = V3(c.x + 1.6, 0.3, c.z + 1.4);
+    const drum = new THREE.Group(); drum.position.copy(d); this.add(drum);
+    drum.add(P.cyl(0.42, 0.36, 0.6, '#80614a'));
+    const head = P.cyl(0.42, 0.42, 0.04, '#e3d6bd'); head.position.y = 0.6; drum.add(head);
+    for (let i = 0; i < 3; i++) { const mk = P.cyl(0.07, 0.07, 0.012, '#fbfbf6'); mk.position.set(-0.2 + i * 0.2, 0.64, 0); drum.add(mk); }
+    this.solidCyl(d.x, d.z, 0.42, -1, 0.95);
+    const flies = [0, 1, 2].map((i) => {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), new THREE.MeshBasicMaterial({ color: '#dcff8a' }));
+      this.add(m);
+      return { m, ph: i * 2.1, home: false };
     });
-    // The wave lever.
-    const lv = new THREE.Group();
-    const lbase = P.box(0.5, 0.3, 0.5, '#6b5a4a'); lv.add(lbase);
-    const arm = P.cyl(0.05, 0.05, 1.0, '#c9a46a'); arm.position.y = 0.25; arm.rotation.z = -0.5; lv.add(arm);
-    const knob = P.sphere(0.12, '#ff6b4a'); knob.position.set(0.45, 1.1, 0); lv.add(knob);
-    lv.position.set(c.x - 1.0, 0.3, c.z + 1.9); this.add(lv);
-    this.solidCyl(c.x - 1.0, c.z + 1.9, 0.3, -1, 0.7);
-    this.galleonLever = { arm, knob };
-    this.sense(lv, { warm: () => !this.lit(5), height: 0.6 });
+    this.montreal = { c, d, drum, lantern, lanternMat, flies, beats: 0, last: -10 };
+    if (this.lit(5)) this.lightMontreal(true);
+    this.every((dt) => {
+      const mt = this.montreal;
+      for (const f of mt.flies) {
+        if (f.home) continue;
+        f.ph += dt * 1.3;
+        f.m.position.set(c.x + Math.cos(f.ph) * 1.1, 1.5 + Math.sin(f.ph * 2.2) * 0.3, c.z + 0.28 + Math.sin(f.ph) * 0.8);
+        f.m.scale.setScalar(0.6 + Math.max(0, Math.sin(f.ph * 4)) * 0.9);
+      }
+    });
+    this.sense(drum, { warm: () => !this.lit(5), height: 0.6 });
     this.interact({
-      obj: lv, radius: 2.0, icon: '\u{1F30A}',
-      enabled: () => !this.lit(5) && !this.galleon.swelling,
-      label: 'Pull the wave lever',
-      use: () => this.pullWave(),
+      obj: drum, radius: 1.8, icon: '\u{1F941}',
+      enabled: () => !this.lit(5),
+      label: 'Strike the drum',
+      use: () => this.montrealBeat(),
     });
   }
-  async pullWave() {
-    const gl = this.galleon, c = gl.c, b = this.shipBottle;
-    gl.swelling = true;
-    G.audio.sfx('wood_creak', { vol: 0.5 });
-    G.tween(this.galleonLever.arm.rotation, { z: 0.5 }, 0.2).then(() => G.tween(this.galleonLever.arm.rotation, { z: -0.5 }, 0.6));
-    G.audio.sfx('big_wave', { vol: 0.6 });
-    const x0 = b.position.x - c.x;
-    // Generous window: anywhere on the near half of its drift toward the stand.
-    const good = x0 > 0.75;
-    await G.animate(0.5, (t) => { gl.water.position.y = 0.4 + Math.sin(t * Math.PI) * 0.18; b.position.y = 0.98 + Math.sin(t * Math.PI) * 0.25; });
-    if (good) {
-      await G.tween(b.position, { x: c.x + 3.3, y: 1.05 }, 0.6, ease.outBack);
-      gl.done = true;
-      G.audio.sfx('splash', { vol: 0.5 });
-      G.ui.say('One swell, perfectly timed. The little Santa Maria settles onto its stand.');
-      gl.swelling = false;
-      this.solveShrine(5);
-    } else {
-      G.fx.splash(V3(c.x, 0.7, c.z));
-      G.ui.toast('The swell rolls by. Watch the bottle drift toward its stand…', '\u{1F30A}');
-      await G.wait(0.4);
-      gl.swelling = false;
+  montrealBeat() {
+    const mt = this.montreal;
+    G.audio.sfx('drum_low', { vol: 0.9 });
+    G.animate(0.2, (t) => { mt.drum.scale.y = 1 - Math.sin(t * Math.PI) * 0.08; });
+    if (G.oreo.active) setTimeout(() => { if (G.island === this) G.oreo.bark(); }, 450);
+    const gap = G.time - mt.last;
+    mt.last = G.time;
+    if (mt.beats > 0 && (gap < 0.7 || gap > 1.8)) {
+      // Off the beat: the fireflies scatter out of the lantern again.
+      for (const f of mt.flies) f.home = false;
+      mt.beats = 0;
+      mt.lanternMat.emissiveIntensity = 0;
+      G.ui.toast('The fireflies scatter. A steady beat, with room for the echo…', '✨');
     }
+    const f = mt.flies[mt.beats];
+    f.home = true;
+    G.tween(f.m.position, { x: mt.c.x, y: 1.45, z: mt.c.z + 0.28 }, 0.4, ease.in);
+    mt.beats++;
+    mt.lanternMat.emissiveIntensity = mt.beats * 0.5;
+    if (mt.beats >= 3) {
+      setTimeout(() => {
+        this.lightMontreal(false);
+        G.ui.say('Three beats, three echoes, three fireflies. The little lantern lights, like the cross did, tier by tier.');
+        this.solveShrine(5);
+      }, 500);
+    }
+  }
+  lightMontreal(instant) {
+    const mt = this.montreal;
+    for (const f of mt.flies) { f.home = true; f.m.visible = false; }
+    mt.lanternMat.color.set('#fff0c4'); mt.lanternMat.opacity = 0.92;
+    mt.lanternMat.emissiveIntensity = 1.6;
+    if (!instant) G.fx.sparkle(V3(mt.c.x, 1.6, mt.c.z + 0.3), '#ffe9a0', 14);
   }
 
   // ── Shrine 6 · Totems: four animals, the fourth a cat. It faces the house. ──
@@ -1076,7 +1087,7 @@ export default class Agrea extends Island {
       c.cut(V3(0, 1, -2), { dist: 44, pitch: 42, yaw: 20 });
       await c.wait(0.3);
       c.look(V3(0, 1, -2), { dist: 36, pitch: 40, yaw: 50, speed: 0.4 });
-      await this.say2('Agrea. Geese, a doghouse, totems, a galleon, a red bridge, all ringed around one quiet street.', { dur: 4.5 });
+      await this.say2('Agrea. Geese, a doghouse, totems, a lantern cross, a red bridge, all ringed around one quiet street.', { dur: 4.5 });
       await this.say2('The whole journey, small enough to hold. Because that is exactly what it is.', { dur: 4 });
       c.look(HOUSE.clone().setY(2), { dist: 16, pitch: 30, speed: 0.8 });
       await this.say2('And in the middle, one particular house with a red door.', { dur: 3.4 });
@@ -1105,7 +1116,7 @@ export default class Agrea extends Island {
         2: 'Eaton Shrine: one goose, one lamp, one mirror. Turn the mirror until the goose’s shadow lands on the little door.',
         3: 'Calgary Shrine: the line was wound tree, bench, stone. Oreo holds the knot; walk it back the other way.',
         4: 'Winnipeg Shrine: one drift that never melts. She marks, he digs.',
-        5: 'Galleon Shrine: pull the wave lever just as the bottle drifts toward its stand.',
+        5: 'Montréal Shrine: one lantern, three fireflies, one drum. Three steady beats, a rest after each for Oreo’s echo.',
         6: 'Totem Shrine: three animals face their homes. Where does the cat face?',
       };
       return tips[left[0].n];
@@ -1135,7 +1146,7 @@ export default class Agrea extends Island {
       { id: 's2', name: 'Eaton Shrine', done: lit(2), hint: 'One goose, one lamp, one mirror.' },
       { id: 's3', name: 'Calgary Shrine', done: lit(3), hint: 'A knot around the shrine. Roles swapped.' },
       { id: 's4', name: 'Winnipeg Shrine', done: lit(4), hint: 'One drift that never melts.' },
-      { id: 's5', name: 'Galleon Shrine', done: lit(5), hint: 'A ship in a bottle, and one wave lever.' },
+      { id: 's5', name: 'Montréal Shrine', done: lit(5), hint: 'One lantern, three fireflies, one drum.' },
       { id: 's6', name: 'Totem Shrine', done: lit(6), hint: 'Four animals. The fourth is a cat.' },
       { id: 'bells', name: 'The Five Bells', done: s.flag('agrea_bells'), hint: 'You have always known the phrase.' },
       { id: 'table', name: 'The Letter Table', done: s.flag('agrea_table'), hint: 'Seven islands of torn paper, in reading order.' },

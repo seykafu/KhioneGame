@@ -19,11 +19,12 @@ const texCache = new Map();
 export const MODELS = {
   khione: { file: 'khione.glb', skinned: true },
   oreo: { file: 'oreo.glb', skinned: true },
+  horse: { skinned: true },
   bottle: {}, raft: {}, goose: {}, robot: {}, icecart: {}, canoe: {}, toboggan: {},
-  snowman: {}, galleon: {}, parrot: {}, raccoon: {}, pigeon: {}, gopher: {},
+  snowman: {}, raccoon: {}, pigeon: {}, gopher: {},
   pole_raven: {}, pole_bear: {}, pole_orca: {}, palm: {}, tree_leafy: {}, tree_pine: {},
   tree_cherry: {}, house_snow: {}, house_westend: {}, crab: {}, mailbox: {}, car: {},
-  gull: {}, pelican: {}, chest: {}, coconut: {}, shovel: {}, tiki: {},
+  gull: {}, chest: {}, coconut: {}, shovel: {}, tiki: {},
 };
 
 function fileFor(name) {

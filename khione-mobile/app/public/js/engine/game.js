@@ -18,7 +18,7 @@ const ISLAND_MODULES = {
   eaton: () => import('../islands/eaton.js'),
   calgary: () => import('../islands/calgary.js'),
   winnipeg: () => import('../islands/winnipeg.js'),
-  pirate: () => import('../islands/pirate.js'),
+  montreal: () => import('../islands/montreal.js'),
   englishbay: () => import('../islands/englishbay.js'),
   agrea: () => import('../islands/agrea.js'),
 };
