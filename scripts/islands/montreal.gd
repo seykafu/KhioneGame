@@ -107,7 +107,7 @@ func _ready() -> void:
 		puzzle.name = def[0]
 		puzzle.set_script(load(def[1]))
 		add_child(puzzle)
-	if GameState.get_flag("island5_complete"):
+	if GameState.get_flag("bagels_placed") or GameState.get_flag("island5_complete"):
 		set_dusk(true)
 
 func _process(delta: float) -> void:

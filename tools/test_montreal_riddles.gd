@@ -130,6 +130,17 @@ func _run() -> void:
 	assert(GameState.get_flag("bagels_placed"), "twelve bagels warm the twelve bases")
 	assert(isl.is_dusk(), "the bagels bring the dusk")
 	await get_tree().create_timer(3.5).timeout  # the swarm arrives
+	# Regression: save-and-quit mid-finale. The swarm lives only in memory,
+	# so a reload with bagels_placed (and no cross_lit) must bring it back.
+	main.travel_to("res://scenes/islands/montreal.tscn", Vector3(0, 1.2, 42.0), "montreal", "Montréal")
+	for i in 10:
+		await get_tree().process_frame
+	isl = main.current_island
+	finale = isl.get_node("LightTheCross")
+	assert(isl.is_dusk(), "a reload after the bagels keeps the dusk")
+	assert(bool(finale.get("_swarming")), "a reload after the bagels brings the swarm back")
+	assert((isl.cross as Node3D).get_node("Lantern2/Glass").visible, "the fitted panes survive a reload")
+	print("reload mid-finale: OK")
 	for kind: String in ["low", "high", "low", "mid"]:
 		finale.drum_hit(kind)
 		await get_tree().create_timer(1.0).timeout

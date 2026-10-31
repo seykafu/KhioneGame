@@ -96,8 +96,16 @@ func _ready() -> void:
 	fp.position = Vector3(0, 0.8, 0)
 	_zone(fp, 2.0)
 	(island.funicular_car as Node3D).add_child(fp)
-	if GameState.get_flag("island5_complete"):
+	# Restore the finale from the saved flags: the swarm and the lantern
+	# meshes live only in memory, so a reload mid-finale must rebuild them.
+	if GameState.get_flag("panes_fitted"):
+		_fit_panes()
+	if GameState.get_flag("bagels_placed"):
+		_place_bagels()
+	if GameState.get_flag("cross_lit") or GameState.get_flag("island5_complete"):
 		_light_all_instant()
+	elif GameState.get_flag("bagels_placed"):
+		_summon_swarm(false)
 
 # --- Phases 1 & 2: panes and bagels ---
 
@@ -109,9 +117,7 @@ func cross_interact() -> void:
 				Inventory.remove_item("arena_pane")
 			GameState.set_flag("panes_fitted")
 			Sfx.play("pickup_chime", 1.1, 0.0, -10.0)
-			for i: int in BROKEN:
-				var glass := (island.cross as Node3D).get_node("Lantern%d/Glass" % i)
-				glass.visible = true
+			_fit_panes()
 			_flash("Three panes of arena glass, exactly lantern-sized. Every lantern on the cross can hold light now. If light could be found.", 5.0)
 			return
 		_flash("A lattice of dark lanterns, twelve bases up the post and along the arms. Three have no glass at all. Nothing up here holds a light yet.", 5.0)
@@ -123,19 +129,7 @@ func cross_interact() -> void:
 				Inventory.remove_item("bagel")
 			GameState.set_flag("bagels_placed")
 			Sfx.play("oven_pop", 0.9, 0.0, -10.0)
-			for i in 12:
-				var lantern := (island.cross as Node3D).get_node("Lantern%d" % i)
-				var bagel := MeshInstance3D.new()
-				var bm := TorusMesh.new()
-				bm.inner_radius = 0.06
-				bm.outer_radius = 0.14
-				bagel.mesh = bm
-				var mat := StandardMaterial3D.new()
-				mat.albedo_color = Color(0.85, 0.6, 0.3)
-				bagel.material_override = mat
-				bagel.position = Vector3(0, -0.2, 0)
-				bagel.rotation.x = PI / 2.0
-				lantern.add_child(bagel)
+			_place_bagels()
 			island.set_dusk()
 			_flash("Twelve warm bagels in twelve bases. The sky leans to dusk, the city lights come on below… and up the slope, one blink. Then hundreds.", 6.0)
 			get_tree().create_timer(3.0).timeout.connect(_summon_swarm)
@@ -150,9 +144,35 @@ func cross_interact() -> void:
 		return
 	_flash("The cross burns warm over the city. Its shadow points down the west slope: the funicular gate stands open.", 4.0)
 
-func _summon_swarm() -> void:
+func _fit_panes() -> void:
 	var island := get_parent()
-	Sfx.play("firefly_hum", 1.0, 0.0, -10.0)
+	for i: int in BROKEN:
+		var glass := (island.cross as Node3D).get_node("Lantern%d/Glass" % i)
+		glass.visible = true
+
+func _place_bagels() -> void:
+	var island := get_parent()
+	for i in 12:
+		var lantern := (island.cross as Node3D).get_node("Lantern%d" % i)
+		var bagel := MeshInstance3D.new()
+		var bm := TorusMesh.new()
+		bm.inner_radius = 0.06
+		bm.outer_radius = 0.14
+		bagel.mesh = bm
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.85, 0.6, 0.3)
+		bagel.material_override = mat
+		bagel.position = Vector3(0, -0.2, 0)
+		bagel.rotation.x = PI / 2.0
+		lantern.add_child(bagel)
+
+## hum is false when a reload restores a swarm that already arrived.
+func _summon_swarm(hum := true) -> void:
+	if _swarming:
+		return
+	var island := get_parent()
+	if hum:
+		Sfx.play("firefly_hum", 1.0, 0.0, -10.0)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 909
 	for i in 48:
