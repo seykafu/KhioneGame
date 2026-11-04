@@ -160,7 +160,7 @@ export class Oreo {
       const ex = tx - this.pos.x, ez = tz - this.pos.z, d = Math.hypot(ex, ez);
       if (d > stop) { dx = ex / d; dz = ez / d; }
     }
-    const swimming = w.isWater(this.pos.x, this.pos.z) && this.pos.y < w.waterLevel - 0.15;
+    const swimming = w.isWater(this.pos.x, this.pos.z, this.pos.y) && this.pos.y < w.waterLevel - 0.15;
     const sp = swimming ? Math.min(speed, 3.2) : speed;
     this.vel.x = damp(this.vel.x, dx * sp, 8, dt);
     this.vel.z = damp(this.vel.z, dz * sp, 8, dt);

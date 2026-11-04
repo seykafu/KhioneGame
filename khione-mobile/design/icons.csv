@@ -97,6 +97,7 @@ assets/icons/wind.png,🌬 🌬,a puffy cloud blowing a gust of wind
 assets/icons/snow.png,❄ ❄,a crystal blue snowflake
 assets/icons/clothespin.png,🧷,a wooden clothespin
 assets/icons/sled.png,🛷,a wooden toboggan sled
+assets/icons/boulder.png,:boulder:,a round grey park boulder with patches of green moss and a small brass plaque on its front
 
 "# All icons: Higgsfield gpt_image_2_5, 1:1, 1k, medium quality, transparent background, paw.png (high quality) as the style reference."
 "# Prompt: ""Game UI icon of <subject>. Match the reference image's art style exactly (use it only for style, do not draw a paw print): chunky hand-painted look, bold thick dark teal outline (#173b44) around the whole silhouette, soft cel shading with one warm highlight, saturated warm colours, rounded toy-like proportions. Single object, centred, filling about 80% of the frame. No text, no letters, no frame, transparent background."""

@@ -177,11 +177,19 @@ export class Island {
     return Math.abs(lx) <= s.hx + pad && Math.abs(lz) <= s.hz + pad;
   }
 
-  /** Is (x,z) open water deep enough to swim? */
-  isWater(x, z) { return this.hasWater && this.height(x, z) < this.waterLevel - 0.45 && !this._onSolidTop(x, z); }
-  _onSolidTop(x, z) {
-    for (const s of this.surfaces) if (s.enabled !== false && s.at(x, z) != null && s.at(x, z) > this.waterLevel - 0.3) return true;
-    for (const s of this.solids) if (s.enabled !== false && !s.noStand && s.y1 > this.waterLevel - 0.2 && this._inside(s, x, z)) return true;
+  /**
+   * Is (x,z) open water deep enough to swim? With `fromY` (feet height), decks
+   * and bridges overhead don't count, so she can swim under them.
+   */
+  isWater(x, z, fromY = Infinity) { return this.hasWater && this.height(x, z) < this.waterLevel - 0.45 && !this._onSolidTop(x, z, fromY); }
+  _onSolidTop(x, z, fromY = Infinity) {
+    const top = fromY + STEP;
+    for (const s of this.surfaces) {
+      if (s.enabled === false) continue;
+      const h = s.at(x, z);
+      if (h != null && h > this.waterLevel - 0.3 && h <= top) return true;
+    }
+    for (const s of this.solids) if (s.enabled !== false && !s.noStand && s.y1 > this.waterLevel - 0.2 && s.y1 <= top && this._inside(s, x, z)) return true;
     return false;
   }
 

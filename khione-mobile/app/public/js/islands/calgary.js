@@ -7,6 +7,7 @@ import { G, rng, clamp, fbm, ease, V3 } from '../engine/core.js';
 import { Island } from '../engine/world.js';
 import { model, instanced } from '../engine/assets.js';
 import { P } from '../engine/prefabs.js';
+import { makeWaterMaterial } from '../engine/render.js';
 
 const WATER = -0.4;
 const COAST_BASE = 46;
@@ -15,8 +16,11 @@ const LAG = { x: -11, z: -1, rx: 7.5, rz: 5.5 };
 const PARK_GREEN = '#2a6b4c', WOOD = '#80614a', RED = '#c72a24';
 const BRIDGE = { x: -11, z0: LAG.z - LAG.rz - 1.5, z1: LAG.z + LAG.rz + 1.5 };
 // Paper Regatta
-const PLANK = V3(-6.2, 0.42, 3.6), LEVER = V3(-10, 0.35, 5.2), WEIR = V3(-11, 0.1, 1.4), CLAPPER = V3(-16, 0.28, -1.6);
-const ROUTE = [V3(-7.4, -0.06, 2.6), V3(-9, -0.06, 1.0), V3(-11, -0.06, -0.2), V3(-13.4, -0.06, -1.0), V3(-15.2, -0.06, -1.4)];
+const PLANK = V3(-6.2, 0.42, 3.6), LEVER = V3(-10, 0.35, 5.2), WEIR = V3(-11, WATER, 1.4), CLAPPER = V3(-15.75, 0.3, -1.9);
+const FLOAT = WATER + 0.02;
+const ROUTE = [V3(-7.7, FLOAT, 2.3), V3(-9, FLOAT, 1.0), V3(-11, FLOAT, -0.2), V3(-13.4, FLOAT, -1.0), V3(-15.2, FLOAT, -1.4)];
+// Weir board heights (relative to the water): down in the channel, or lifted clear.
+const BOARD_DOWN = 0.0, BOARD_UP = 0.62;
 // Ice Cream Round
 const CART = V3(3, 0.35, 14), RING_TARGET = 4, RING_WINDOW = 6;
 // Bridge & kite
@@ -24,7 +28,8 @@ const KITE = V3(-11, 3.1, -1), JUG = V3(-12.2, 0.05, 3.9);
 // Gophers
 const TABLE = V3(13, 0.35, 6.5), PULSE = 2.2;
 // Off-leash meadow
-const TREE = V3(0, 0.35, -27), BENCH = V3(-2.6, 0.35, -28.6), STONE = V3(1.8, 0.35, -27.6), OREO_HOME = V3(0.9, 0.35, -26.2);
+// The cottonwood's trunk is ~1.5m in radius (roots to 2m), so everything sits clear of it.
+const TREE = V3(0, 0.35, -27), TRUNK_R = 1.5, BENCH = V3(-3.2, 0.35, -28.8), STONE = V3(3.2, 0.35, -27.9), OREO_HOME = V3(2.2, 0.35, -24.6);
 const GATE = V3(0, 0.35, -23);
 const UNWIND = ['stone', 'bench', 'tree'];
 const CANOE = V3(3.2, 0.32, 38.5);
@@ -63,7 +68,9 @@ export default class Calgary extends Island {
     const d = Math.hypot(x, z), coast = this.coast(Math.atan2(z, x));
     if (d >= coast) return -6 * clamp((d - coast) / 12, 0, 1);
     let h = 0.35 * (1 - ss(coast - 4, coast - 1.5, d));
-    h -= 0.68 * (1 - ss(0.55, 1.0, this.lagD(x, z)));
+    // The lagoon: a real pond, swimming-deep in the middle (bed ~1.5m under the
+    // surface), with sandy banks she can wade out of.
+    h -= 2.3 * (1 - ss(0.42, 1.0, this.lagD(x, z)));
     let fringe = ss(26, 30, d) * (1 - ss(coast - 7, coast - 4, d));
     if (z < -19 || (Math.abs(x) < 5 && z > 8)) fringe = 0;
     h += fringe * 0.38 * (0.5 + 0.5 * Math.sin(x * 0.17 + 1.3) * Math.sin(z * 0.15 + 2.1));
@@ -72,6 +79,7 @@ export default class Calgary extends Island {
   }
   isPath(x, z) {
     const d = Math.hypot(x, z);
+    if (this.lagD(x, z) < 0.98) return false; // the boardwalk carries the ring path over the lagoon
     if (Math.abs(d - PATH_R) < 1.1) return true;
     if (Math.abs(x) < 1.3 && z > PATH_R && z < 40) return true;
     if (Math.abs(x) < 1.1 && z < -PATH_R && z > -22.5) return true;
@@ -106,6 +114,7 @@ export default class Calgary extends Island {
     this.makeWater({ level: WATER, size: 320, res: 120, colors: { deep: '#3aaeb0', light: '#8ddcd2', foam: '#f4fff8' } });
     this.buildLagoon();
     this.buildBridge();
+    this.buildBoardwalk();
     this.buildDock();
     this.buildPark();
     this.buildHorizon();
@@ -132,13 +141,38 @@ export default class Calgary extends Island {
   }
 
   buildLagoon() {
-    const pond = new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshLambertMaterial({ color: '#69b8b0', transparent: true, opacity: 0.86 }));
-    pond.rotation.x = -Math.PI / 2;
-    pond.scale.set(LAG.rx * 0.93, LAG.rz * 0.93, 1);
-    pond.position.set(LAG.x, -0.12, LAG.z);
+    // The lagoon shares the island's water level, so she swims in it, but gets
+    // its own finer, greener surface: the sea plane's 2.7m grid is too coarse
+    // to draw a foam line around a pond. Punch the sea plane out underneath.
+    const sea = this.water.geometry.attributes.position;
+    for (let i = 0; i < sea.count; i++) if (this.lagD(sea.getX(i), sea.getZ(i)) < 1.45) sea.setY(i, -6);
+    sea.needsUpdate = true;
+    const RINGS = 22, SEGS = 72, pos = [], shore = [], idx = [];
+    for (let r = 0; r <= RINGS; r++) {
+      const k = (r / RINGS) * 1.12;
+      for (let sgi = 0; sgi < SEGS; sgi++) {
+        const a = (sgi / SEGS) * Math.PI * 2;
+        const x = LAG.x + Math.cos(a) * LAG.rx * k, z = LAG.z + Math.sin(a) * LAG.rz * k;
+        pos.push(x, WATER, z);
+        const d = WATER - this.height(x, z);
+        shore.push(d < 0 ? 1 : Math.max(0, 1 - d / 0.5));
+        if (r) {
+          const a0 = (r - 1) * SEGS + sgi, a1 = (r - 1) * SEGS + ((sgi + 1) % SEGS);
+          const b0 = r * SEGS + sgi, b1 = r * SEGS + ((sgi + 1) % SEGS);
+          idx.push(a0, a1, b0, a1, b1, b0);
+        }
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('shore', new THREE.Float32BufferAttribute(shore, 1));
+    geo.setIndex(idx);
+    const pondMat = makeWaterMaterial({ deep: '#1b6672', light: '#3f9c98', foam: '#e8f8ee', scale: 0.16, opacity: 0.94 });
+    const pond = new THREE.Mesh(geo, pondMat);
     pond.renderOrder = 1;
     this.add(pond);
     this.pond = pond;
+    this.every(() => { pondMat.uniforms.uTime.value = G.time; });
     // Reeds around the rim, and lily pads.
     const R = rng(391);
     const deco = new THREE.Group();
@@ -150,10 +184,21 @@ export default class Calgary extends Island {
       reed.position.set(x, this.height(x, z), z); reed.castShadow = false;
       deco.add(reed);
     }
+    // Cattails standing in the shallows at the waterline.
+    for (let i = 0; i < 46; i++) {
+      const a = R.range(0, 6.28), k = R.range(0.74, 0.86);
+      const x = LAG.x + Math.cos(a) * LAG.rx * k, z = LAG.z + Math.sin(a) * LAG.rz * k;
+      if (Math.abs(x - BRIDGE.x) < 2.2 || Math.hypot(x - ROUTE[0].x, z - ROUTE[0].z) < 1.4 || Math.abs(Math.hypot(x, z) - PATH_R) < 1.3) continue;
+      const y = this.height(x, z), tall = R.range(0.9, 1.5);
+      const reed = P.cyl(0.02, 0.03, tall + (WATER - y), '#5f7f34', { seg: 4 });
+      reed.position.set(x, y, z); reed.rotation.z = R.range(-0.08, 0.08); reed.castShadow = false;
+      deco.add(reed);
+      if (i % 3 === 0) { const head = P.cyl(0.045, 0.045, 0.2, '#6b4426', { seg: 5 }); head.position.set(x, WATER + tall - 0.05, z); head.castShadow = false; deco.add(head); }
+    }
     for (let i = 0; i < 9; i++) {
-      const a = R.range(0, 6.28), k = R.range(0.4, 0.8);
+      const a = R.range(0, 6.28), k = R.range(0.3, 0.68);
       const pad = P.cyl(0.22, 0.22, 0.02, '#4f8a3c', { seg: 10 });
-      pad.position.set(LAG.x + Math.cos(a) * LAG.rx * k, -0.11, LAG.z + Math.sin(a) * LAG.rz * k);
+      pad.position.set(LAG.x + Math.cos(a) * LAG.rx * k, WATER + 0.015, LAG.z + Math.sin(a) * LAG.rz * k);
       pad.castShadow = false; deco.add(pad);
     }
     this.add(P.bake(deco)); this.add(deco);
@@ -171,7 +216,7 @@ export default class Calgary extends Island {
     this.every(() => {
       ducks.forEach((d, i) => {
         const t = G.time * 0.22 - i * 0.18;
-        d.position.set(LAG.x + Math.cos(t) * LAG.rx * 0.5, -0.08, LAG.z + Math.sin(t) * LAG.rz * 0.5);
+        d.position.set(LAG.x + Math.cos(t) * LAG.rx * 0.5, WATER + 0.03, LAG.z + Math.sin(t) * LAG.rz * 0.5);
         d.rotation.y = -t;
       });
     });
@@ -225,6 +270,46 @@ export default class Calgary extends Island {
     this.bridgeChalk();
   }
 
+  /** Where the park's ring path meets the lagoon, it crosses on a low wooden boardwalk. */
+  buildBoardwalk() {
+    const A0 = 2.72, A1 = 3.6, W = 1.9, Y = 0.3;  // angles around the ring (west side)
+    const g = new THREE.Group();
+    const N = 22;
+    for (let i = 0; i < N; i++) {
+      const a = A0 + (A1 - A0) * ((i + 0.5) / N);
+      const len = PATH_R * (A1 - A0) / N + 0.05;
+      const plank = P.box(W, 0.1, len - 0.06, i % 2 ? '#8a6c50' : '#94765a');
+      plank.position.set(Math.cos(a) * PATH_R, Y - 0.1, Math.sin(a) * PATH_R); plank.rotation.y = -a;
+      g.add(plank);
+    }
+    for (let i = 0; i <= 8; i++) {
+      const a = A0 + (A1 - A0) * (i / 8);
+      for (const s of [-1, 1]) {
+        const r = PATH_R + s * (W / 2 - 0.05), x = Math.cos(a) * r, z = Math.sin(a) * r;
+        const post = P.cyl(0.07, 0.08, Y + 0.55 - Math.min(0, this.height(x, z)) + 0.2, '#6b5644', { seg: 6 });
+        post.position.set(x, Math.min(this.height(x, z), Y) - 0.2, z); g.add(post);
+      }
+    }
+    for (const s of [-1, 1]) {
+      const r = PATH_R + s * (W / 2 - 0.05), pts = [];
+      for (let i = 0; i <= 16; i++) { const a = A0 + (A1 - A0) * (i / 16); pts.push(V3(Math.cos(a) * r, Y + 0.5, Math.sin(a) * r)); }
+      g.add(P.rope(pts, 0.035, '#7a5e46'));
+      // Low rail colliders so nobody strolls off the side by accident (she can still hop over).
+      for (let i = 0; i < 8; i++) {
+        const a = A0 + (A1 - A0) * ((i + 0.5) / 8), rr = PATH_R + s * (W / 2 + 0.02);
+        this.solidBox(Math.cos(a) * rr, Math.sin(a) * rr, 0.1, PATH_R * (A1 - A0) / 8 + 0.1, -3, Y + 0.55, a, { noStand: true });
+      }
+    }
+    this.add(P.bake(g)); this.add(g);
+    this.surface((x, z) => {
+      const d = Math.hypot(x, z);
+      if (Math.abs(d - PATH_R) > W / 2) return null;
+      let a = Math.atan2(z, x); if (a < 0) a += Math.PI * 2;
+      if (a < A0 || a > A1) return null;
+      return Math.max(Y, this.height(x, z));
+    });
+  }
+
   bridgeChalk() {
     // The kids' chalk arrows daring you up and over.
     for (const z of [BRIDGE.z1 - 0.6, BRIDGE.z0 + 0.6]) {
@@ -250,7 +335,9 @@ export default class Calgary extends Island {
     const deco = new THREE.Group();
     // Lamp posts around the ring.
     for (const a of [2.5, 3.3, 4.1, 4.9, 5.7, 0.2]) {
-      const x = Math.cos(a) * 14, z = Math.sin(a) * 14, y = this.height(x, z);
+      // The one that would stand in the lagoon goes on the boardwalk instead.
+      const wet = this.lagD(Math.cos(a) * 14, Math.sin(a) * 14) < 1.1, r = wet ? PATH_R - 0.72 : 14;
+      const x = Math.cos(a) * r, z = Math.sin(a) * r, y = wet ? 0.3 : this.height(x, z);
       const post = P.cyl(0.05, 0.08, 2.8, PARK_GREEN); post.position.set(x, y, z); deco.add(post);
       const head = P.cyl(0.2, 0.28, 0.22, '#fff0c0', { emissive: '#ffd890', emissiveIntensity: 0.8 }); head.position.set(x, y + 2.8, z); deco.add(head);
       this.solidCyl(x, z, 0.12, -1, y + 2.8);
@@ -444,12 +531,17 @@ export default class Calgary extends Island {
     const route = V3(-1, 0, -0.55).normalize();
     const across = V3(-route.z, 0, route.x);
     const wg = new THREE.Group(); wg.position.copy(WEIR); wg.rotation.y = Math.atan2(across.x, across.z) + Math.PI / 2;
-    for (const s of [-1, 1]) { const post = P.box(0.12, 0.8, 0.12, '#6e5a46'); post.position.set(s * 0.9, -0.1, 0); wg.add(post); }
-    const board = P.box(1.7, 0.45, 0.08, '#8c7458', { base: false }); board.position.y = 0.02; wg.add(board);
+    // Posts are driven into the lagoon bed; the board rides between them.
+    for (const s of [-1, 1]) { const post = P.box(0.14, 2.6, 0.14, '#6e5a46'); post.position.set(s * 0.9, -1.9, 0); wg.add(post); }
+    const board = P.box(1.7, 0.45, 0.08, '#8c7458', { base: false }); board.position.y = BOARD_DOWN; wg.add(board);
     this.add(wg);
     this.weirBoard = board;
     this.sluiceOpen = G.state.flag('regatta_done');
-    if (this.sluiceOpen) board.position.y = 0.45;
+    if (this.sluiceOpen) board.position.y = BOARD_UP;
+    wg.updateMatrixWorld(true);
+    for (const s of [-1, 1]) { const q = wg.localToWorld(V3(s * 0.9, 0, 0)); this.solidCyl(q.x, q.z, 0.12, -3, WATER + 0.7); }
+    this.weirSolid = this.solidBox(WEIR.x, WEIR.z, 1.7, 0.14, -3, WATER + 0.22, -wg.rotation.y, { noStand: true });
+    this.weirSolid.enabled = !this.sluiceOpen;
     const lever = new THREE.Group(); lever.position.copy(LEVER);
     const base = P.box(0.3, 0.5, 0.3, '#6e5a46'); lever.add(base);
     const arm = P.box(0.07, 0.7, 0.07, '#b84c3c', { base: false }); arm.geometry.translate(0, 0.35, 0); arm.position.set(0, 0.5, 0); arm.rotation.z = this.sluiceOpen ? 0.5 : -0.5; lever.add(arm);
@@ -461,7 +553,7 @@ export default class Calgary extends Island {
     this.sense(lever, { warm: () => !G.state.flag('regatta_done') && !this.sluiceOpen, height: 0.6 });
 
     // Becalmed paper boats.
-    for (const p of [V3(-8.5, -0.1, -3.2), V3(-13.5, -0.1, 2.0), V3(-11.8, -0.1, -4.0)]) {
+    for (const p of [V3(-8.5, FLOAT, -3.2), V3(-13.5, FLOAT, 2.0), V3(-11.8, FLOAT, -4.0)]) {
       const b = this.paperBoat(); b.position.copy(p); b.rotation.y = Math.random() * 6; this.add(b);
       const ph = Math.random() * 6;
       this.every(() => { b.position.y = p.y + Math.sin(G.time * 1.3 + ph) * 0.02; b.rotation.z = this.phase === 'gust' ? Math.sin(G.time * 6 + ph) * 0.15 : 0; });
@@ -471,7 +563,8 @@ export default class Calgary extends Island {
   toggleSluice() {
     this.sluiceOpen = !this.sluiceOpen;
     G.audio.sfx('wood_creak', { vol: 0.6, rate: 1.1 });
-    G.tween(this.weirBoard.position, { y: this.sluiceOpen ? 0.45 : 0.02 }, 0.7, ease.inOut);
+    G.tween(this.weirBoard.position, { y: this.sluiceOpen ? BOARD_UP : BOARD_DOWN }, 0.7, ease.inOut);
+    this.weirSolid.enabled = !this.sluiceOpen;
     G.tween(this.leverArm.rotation, { z: this.sluiceOpen ? 0.5 : -0.5 }, 0.5);
     G.ui.toast(`The weir board ${this.sluiceOpen ? 'lifts clear of the water' : 'drops back into the narrows'}.`, '\u{1F6B0}');
   }
@@ -492,7 +585,7 @@ export default class Calgary extends Island {
     }
     this.sailing = true;
     if (!this.sluiceOpen) {
-      const jam = WEIR.clone().add(V3(0.5, -0.16, 0.4));
+      const jam = WEIR.clone().add(V3(0.5, 0, 0.4));
       G.tween(boat.position, { x: ROUTE[1].x, z: ROUTE[1].z }, 2.0)
         .then(() => G.tween(boat.position, { x: jam.x, z: jam.z }, 1.6, ease.out))
         .then(() => G.tween(boat.rotation, { y: 1.4 }, 1.0))
@@ -517,7 +610,8 @@ export default class Calgary extends Island {
     })();
   }
   spawnClapper() {
-    this.pickup({ id: 'brass_clapper', pos: V3(CLAPPER.x, this.height(CLAPPER.x, CLAPPER.z), CLAPPER.z) });
+    // Washed up on the boardwalk planks, right where the boat slipped away.
+    this.pickup({ id: 'brass_clapper', pos: V3(CLAPPER.x, this.groundAt(CLAPPER.x, CLAPPER.z, 1), CLAPPER.z) });
   }
 
   // ── Riddle 2: the Ice Cream Round ─────────────────────
@@ -615,7 +709,7 @@ export default class Calgary extends Island {
     const str = P.rope([from, from.clone().lerp(to, 0.5).add(V3(0, -0.1, 0)), to], 0.012, '#f0ecdc');
     this.add(str);
     this.kiteString = str;
-    const jugStub = P.cyl(0.11, 0.13, 0.28, '#f2eee2'); jugStub.position.copy(JUG); this.add(jugStub);
+    const jugStub = P.cyl(0.11, 0.13, 0.28, '#f2eee2'); jugStub.position.copy(JUG).setY(this.height(JUG.x, JUG.z)); this.add(jugStub);
     this.jugStub = jugStub;
     this.every(() => {
       if (!this.kite) return true;
@@ -656,7 +750,7 @@ export default class Calgary extends Island {
     const jug = new THREE.Group();
     const body = P.cyl(0.11, 0.13, 0.28, '#f2eee2'); jug.add(body);
     const neck = P.cyl(0.05, 0.08, 0.1, '#f2eee2'); neck.position.y = 0.28; jug.add(neck);
-    this.pickup({ id: 'cream_jug', pos: V3(JUG.x, Math.max(this.height(JUG.x, JUG.z), -0.12), JUG.z), obj: jug, bob: false });
+    this.pickup({ id: 'cream_jug', pos: V3(JUG.x, Math.max(this.height(JUG.x, JUG.z), WATER), JUG.z), obj: jug, bob: false });
   }
 
   // ── Riddle 4: the Gopher Semaphore ────────────────────
@@ -806,15 +900,24 @@ export default class Calgary extends Island {
     this.sense(gate, { warm: () => G.state.has('paw_key'), height: 1 });
 
     // The great cottonwood, the memorial stone, a water bowl, half-swallowed balls.
-    const tree = model('tree_leafy', { height: 9.5, rotY: 0.6 }); tree.position.copy(TREE); this.add(tree);
-    this.solidCyl(TREE.x, TREE.z, 0.6, -1, 8);
-    const stone = P.box(0.8, 0.55, 0.3, '#9a9a9e', { round: 0.08 }); stone.position.copy(STONE); stone.rotation.y = -0.3; stone.rotation.x = -0.08; this.add(stone);
-    this.solidBox(STONE.x, STONE.z, 0.85, 0.4, -1, STONE.y + 0.55, 0.3);
+    const tree = model('tree_leafy', { height: 8, rotY: 0.6 }); tree.position.copy(TREE); this.add(tree);
+    this.solidCyl(TREE.x, TREE.z, TRUNK_R, -1, 8);
+    this.fadeCanopy(tree);
+    // A mossy old boulder with a small brass plaque, the kind parks put under
+    // a favourite tree. (Not a gravestone: it reads as one from above.)
+    const stone = new THREE.Group(); stone.position.copy(STONE); stone.rotation.y = -0.3;
+    const rock = P.rock(0.5, '#8d9184', 11, 0.72); rock.scale.set(1.15, 1, 0.9); stone.add(rock);
+    for (const [x, z, r] of [[-0.18, -0.08, 0.2], [0.16, 0.1, 0.16], [0.02, -0.2, 0.13]]) {
+      const moss = P.sphere(r, '#6f9a3c', { seg: 8 }); moss.scale.y = 0.35; moss.position.set(x, 0.42, z); stone.add(moss);
+    }
+    const plaque = P.box(0.26, 0.17, 0.025, '#c9a24a', { base: false }); plaque.position.set(0, 0.2, 0.43); plaque.rotation.x = -0.35; stone.add(plaque);
+    this.add(stone);
+    this.solidCyl(STONE.x, STONE.z, 0.5, -1, STONE.y + 0.5);
     const bowl = P.cyl(0.22, 0.26, 0.12, '#4c80c0'); bowl.position.set(-1.2, this.height(-1.2, -23.8), -23.8); this.add(bowl);
     for (const b of [V3(-2.6, 0, -26.2), V3(3.4, 0, -29)]) { const s = P.sphere(0.09, '#c8d84a'); s.position.set(b.x, this.height(b.x, b.z) + 0.04, b.z); this.add(s); }
     this.bench(this.root, BENCH, 0.55);
     this.interact({
-      obj: stone, radius: 1.6, icon: '\u{1FAA6}', label: 'A memorial stone',
+      obj: stone, radius: 1.6, icon: ':boulder:', label: 'The old stone with a plaque',
       use: () => {
         G.ui.say(G.state.flag('oreo_joined') ? 'Old and sun-warmed, its engraving always just out of frame. He leans against it like it is the warmest thing in the park.' : 'Old and sun-warmed. The engraving is worn too soft to read.');
         G.state.addArtifact('memorial', 'calgary', 'The Memorial Stone', 'Under the great cottonwood, a stone old and sun-warmed, its engraving always just out of frame. He sleeps against it like it is the warmest thing in the park.');
@@ -846,7 +949,7 @@ export default class Calgary extends Island {
     this.buildRopes();
     this.pads = {};
     this.unwound = 0;
-    for (const [name, p] of [['stone', STONE.clone().add(V3(0, 0, 0.9))], ['bench', BENCH.clone().add(V3(0.9, 0, 0.6))], ['tree', TREE.clone().add(V3(-0.9, 0, 0.7))]]) {
+    for (const [name, p] of [['stone', STONE.clone().add(V3(0, 0, 0.9))], ['bench', BENCH.clone().add(V3(0.9, 0, 0.6))], ['tree', TREE.clone().add(V3(-1.5, 0, 1.5))]]) {
       const pad = new THREE.Mesh(new THREE.CircleGeometry(0.42, 24), new THREE.MeshBasicMaterial({ color: '#ffd24a', transparent: true, opacity: 0.65, depthWrite: false }));
       pad.rotation.x = -Math.PI / 2; pad.position.set(p.x, this.height(p.x, p.z) + 0.03, p.z); pad.renderOrder = 2;
       pad.visible = G.state.flag('meadow_open') && !G.state.flag('oreo_untangled');
@@ -870,15 +973,57 @@ export default class Calgary extends Island {
     this.pickable(G.oreo.root, this.oreoIt);
     this.sense(() => G.oreo.pos, { warm: () => true, height: 0.9, radius: 14 });
   }
+  /**
+   * The great cottonwood's canopy covers the whole meadow. While Khione is in
+   * or near it, the leaves go see-through (the trunk stays solid) so the
+   * camera can see her, the dog and the run-line underneath.
+   */
+  fadeCanopy(tree) {
+    const u = { uFade: { value: 0 }, uBase: { value: TREE.y + 1.9 } };
+    const apply = () => {
+      tree.traverse((o) => {
+        if (!o.isMesh || o.userData.canopy) return;
+        o.userData.canopy = true;
+        o.material = o.material.clone();
+        o.material.transparent = true;
+        o.material.onBeforeCompile = (sh) => {
+          Object.assign(sh.uniforms, u);
+          sh.vertexShader = sh.vertexShader
+            .replace('#include <common>', '#include <common>\nvarying float vCanopyY;')
+            .replace('#include <project_vertex>', '#include <project_vertex>\nvCanopyY = (modelMatrix * vec4(transformed, 1.0)).y;');
+          sh.fragmentShader = sh.fragmentShader
+            .replace('#include <common>', '#include <common>\nuniform float uFade; uniform float uBase; varying float vCanopyY;')
+            .replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.a *= 1.0 - 0.74 * uFade * smoothstep(uBase, uBase + 1.2, vCanopyY);');
+        };
+        o.material.customProgramCacheKey = () => 'canopy-fade';
+        o.material.needsUpdate = true;
+      });
+      return !!tree.userData.inner;
+    };
+    apply();
+    this.every((dt) => {
+      if (!tree.userData.canopy && apply()) tree.userData.canopy = true;
+      const p = G.player.pos, o = G.oreo;
+      const near = (q) => Math.abs(q.x - TREE.x) < 8.5 && q.z > TREE.z - 7.5 && q.z < TREE.z + 7.5;
+      const want = near(p) || (o.root.visible && G.cine?.active && near(o.pos)) ? 1 : 0;
+      u.uFade.value += (want - u.uFade.value) * Math.min(1, dt * 5);
+    });
+  }
   ropeLeg(name) {
+    // A point on the trunk's bark, facing `toward`.
+    const bark = (toward, y) => { const d = toward.clone().sub(TREE).setY(0).normalize(); return TREE.clone().addScaledVector(d, TRUNK_R - 0.05).add(V3(0, y, 0)); };
     const legs = {
-      bench: [TREE.clone().add(V3(-0.3, 0.5, -0.3)), BENCH.clone().add(V3(0.2, 0.45, 0.1))],
-      stone: [BENCH.clone().add(V3(0.3, 0.4, -0.25)), STONE.clone().add(V3(-0.2, 0.35, -0.3))],
-      tree: [STONE.clone().add(V3(0.1, 0.35, 0.25)), TREE.clone().add(V3(0.4, 0.45, 0.2))],
-      collar: [TREE.clone().add(V3(0.4, 0.5, 0.3)), OREO_HOME.clone().add(V3(0, 0.55, 0.2))],
+      bench: [bark(BENCH, 0.5), BENCH.clone().add(V3(0.2, 0.45, 0.1))],
+      stone: [BENCH.clone().add(V3(0.3, 0.4, -0.25)), STONE.clone().add(V3(-0.3, 0.3, -0.2))],
+      tree: [STONE.clone().add(V3(-0.2, 0.3, 0.3)), bark(STONE, 0.45)],
+      collar: [bark(OREO_HOME, 0.5), OREO_HOME.clone().add(V3(0, 0.55, 0.2))],
     };
     const [a, b] = legs[name];
-    return P.rope([a, a.clone().lerp(b, 0.5).add(V3(0, -0.12, 0)), b], 0.03, '#d8b84a');
+    const mid = a.clone().lerp(b, 0.5).add(V3(0, -0.12, 0));
+    // A leg that would cut through the trunk wraps around behind it instead.
+    const off = mid.clone().sub(TREE).setY(0);
+    if (off.length() < TRUNK_R + 0.2) { off.setLength(TRUNK_R + 0.2); mid.x = TREE.x + off.x; mid.z = TREE.z + off.z; }
+    return P.rope([a, mid, b], 0.03, '#d8b84a');
   }
   buildRopes() {
     for (const k of ['bench', 'stone', 'tree', 'collar']) { if (this.ropes[k]) continue; const r = this.ropeLeg(k); this.add(r); this.ropes[k] = r; }

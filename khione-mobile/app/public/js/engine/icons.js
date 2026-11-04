@@ -18,7 +18,7 @@ const ICONS = {
   elevator: ['🛗'], parachute: ['🪂'], raccoon: ['🦝'], blossom: ['🌸'], scale: ['⚖'], apple: ['🍎'], gear: ['⚙'],
   sunrise: ['🌅'], gust: ['💨'], raven: ['🐦‍⬛'], pine: ['🌲'], bear: ['🐻'], tree: ['🌳'], orca: ['🐋'], flag: ['🚩'],
   ice: ['🧊'], hockey: ['🏒'], cross: ['✝'], cablecar: ['🚡'], horse: ['🐴'], fire: ['🔥'], squirrel: ['🐿'],
-  stairs: ['🪜'], wind: ['🌬'], snow: ['❄'], clothespin: ['🧷'], sled: ['🛷'],
+  stairs: ['🪜'], wind: ['🌬'], snow: ['❄'], clothespin: ['🧷'], sled: ['🛷'], boulder: [],
 };
 
 const byEmoji = new Map();

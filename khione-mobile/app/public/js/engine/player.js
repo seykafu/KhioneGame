@@ -204,7 +204,7 @@ export class Player {
       else { dx = ex / d; dz = ez / d; mag = d > 5 ? 1 : 0.75; }
     }
 
-    const swimming = w.isWater(this.pos.x, this.pos.z) && this.pos.y < w.waterLevel - 0.15;
+    const swimming = w.isWater(this.pos.x, this.pos.z, this.pos.y) && this.pos.y < w.waterLevel - 0.15;
     if (swimming && !this.swimming) { G.audio.sfx('splash', { pos: this.pos, vol: 0.7 }); G.fx.splash(this.pos); }
     this.swimming = swimming;
     const running = mag > 0.92 || (this.walk && mag >= 1);
