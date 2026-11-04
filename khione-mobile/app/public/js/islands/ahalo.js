@@ -392,7 +392,7 @@ export default class Ahalo extends Island {
     if (solved) { water.visible = false; this.spawnPoolCache(); }
 
     this.trigger({ pos: ECHO, radius: 10, once: true, enabled: !solved, onEnter: () => {
-      if (!G.state.flag('echo_stones_solved')) G.ui.toast('The stones are humming… (tap \u{1F431} Meow)', '\u{1F3B5}');
+      if (!G.state.flag('echo_stones_solved')) G.ui.toast('The stones are humming. Tap \u{1F431} Meow!', '\u{1F3B5}');
     } });
     // Hums swell as you approach (silent once solved).
     this.every(() => {
@@ -465,7 +465,7 @@ export default class Ahalo extends Island {
       const x0 = s.g.position.x;
       G.animate(0.2, (t) => { s.g.position.x = x0 + Math.sin(t * Math.PI * 4) * 0.06; }).then(() => { s.g.position.x = x0; });
     }
-    G.ui.toast('The stones fall silent…', '\u{1F3B5}');
+    G.ui.toast('The stones fall silent.', '\u{1F3B5}');
     // A crab pops out of the sand to see what the fuss is about.
     const crab = model('crab', { height: 0.35 });
     const at = ECHO.clone().add(V3((Math.random() - 0.5) * 4, 0, 2 + Math.random() * 2));
@@ -486,7 +486,7 @@ export default class Ahalo extends Island {
       c.look(POOL.clone().setY(0.5), { dist: 7, pitch: 50 });
       await c.wait(0.8);
       G.audio.sfx('drain', { vol: 0.9 });
-      c.say('Nearby, the tide pool drains with a groan…');
+      c.say('Nearby, the tide pool drains with a groan.');
       await G.tween(this.poolWater.position, { y: this.poolWater.position.y - 0.5 }, 2.0);
       this.poolWater.visible = false;
       this.spawnPoolCache();
@@ -560,7 +560,7 @@ export default class Ahalo extends Island {
       pos: bp, obj: plank, radius: 2.2, icon: '\u{1F965}',
       label: () => (G.state.flag('seesaw_gate_open') ? null : G.state.has('coconut') ? 'Place a coconut' : 'An old plank on a rock'),
       use: () => {
-        if (!G.state.has('coconut')) { G.ui.toast('Khione’s paws are empty… the palms drop coconuts.', '\u{1F965}'); return; }
+        if (!G.state.has('coconut')) { G.ui.toast('Khione’s paws are empty, and the palms drop coconuts.', '\u{1F965}'); return; }
         const n = placed() + 1;
         G.state.take('coconut');
         G.state.set(`seesaw_${n}`);
@@ -569,7 +569,7 @@ export default class Ahalo extends Island {
         G.audio.sfx('wood_creak', { vol: 0.5 });
         G.tween(pivot.rotation, { z: TILTS[Math.min(n, 3)] }, 0.7, ease.out);
         if (n >= 3) this.openGate();
-        else G.ui.toast(n === 1 ? 'The plank dips… a little.' : 'Creak. Almost…', '\u{1FAB5}');
+        else G.ui.toast(n === 1 ? 'The plank dips, just a little.' : 'Creak. Almost there.', '\u{1FAB5}');
       },
     });
     this.sense(plank, { warm: () => !G.state.flag('seesaw_gate_open'), height: 0.3 });
@@ -585,7 +585,7 @@ export default class Ahalo extends Island {
       pos: mp, radius: 1.4, icon: '\u{1F440}', label: 'Look at the scratch marks',
       use: () => {
         G.state.set('seen_scratches');
-        G.ui.say('Low scratch marks line the den walls… something dug here, long ago.');
+        G.ui.say('Low scratch marks line the den walls. Something dug here, long ago.');
         G.state.addArtifact('scratches', 'ahalo', 'Scratches in the Den', 'Low on the den walls, something dug here long ago. Not a cat. Something with bigger paws.');
       },
     });
@@ -602,7 +602,7 @@ export default class Ahalo extends Island {
     this.gateSolid.enabled = false;
     G.tween(this.gate.position, { y: 1.5 }, 1.6, ease.inOut);
     G.ui.celebrate('The vine gate rises!', 'The Driftwood Seesaw');
-    G.ui.say('The vine gate groans upward… the den lies open.');
+    G.ui.say('The vine gate groans upward. The den lies open.');
   }
 
   // ── Beat 3: the sundial ────────────────────────────────
@@ -624,10 +624,10 @@ export default class Ahalo extends Island {
     this.sense(g, { warm: () => !G.state.flag('sundial_shell_placed') || !G.state.flag('raft_released'), height: 0.7 });
     this.interact({
       obj: g, radius: 1.9, icon: '☀️',
-      label: () => (G.state.flag('sundial_shell_placed') ? 'Sight along the shadow' : G.state.has('sun_shell') ? 'Place the Sun Shell' : 'An empty socket…'),
+      label: () => (G.state.flag('sundial_shell_placed') ? 'Sight along the shadow' : G.state.has('sun_shell') ? 'Place the Sun Shell' : 'An empty socket'),
       use: () => {
-        if (G.state.flag('sundial_shell_placed')) { this.lightTrail(); G.ui.say('The shadow reaches toward a far rock, out across the water…'); return; }
-        if (!G.state.has('sun_shell')) { G.ui.say('An empty socket on the dial… shaped like a shell.'); return; }
+        if (G.state.flag('sundial_shell_placed')) { this.lightTrail(); G.ui.say('The shadow reaches toward a far rock, out across the water.'); return; }
+        if (!G.state.has('sun_shell')) { G.ui.say('An empty socket on the dial, shaped like a shell.'); return; }
         G.state.take('sun_shell');
         G.state.set('sundial_shell_placed');
         G.audio.sfx('stone_slide', { vol: 0.5, rate: 1.3 });
@@ -655,7 +655,7 @@ export default class Ahalo extends Island {
       G.cine.run(async (c) => {
         this.lightTrail();
         c.look(SUNDIAL, { dist: 9 });
-        await c.say('The shell’s shadow stretches far across the water…', { dur: 2.4 });
+        await c.say('The shell’s shadow stretches far across the water.', { dur: 2.4 });
         c.look(TARGET_ROCK.clone().setY(1), { dist: 16, speed: 1.2 });
         await c.wait(2.6);
       });
@@ -732,7 +732,7 @@ export default class Ahalo extends Island {
     info.birds = [];
     if (info.target) { if (!G.state.flag('raft_released')) this.releaseRaft(); }
     else {
-      G.ui.toast('The gulls resettle somewhere else… unimpressed.', '\u{1F426}');
+      G.ui.toast('The gulls resettle somewhere else, unimpressed.', '\u{1F426}');
       setTimeout(() => { if (G.island === this) this.addGulls(info); }, 25000);
     }
   }
@@ -746,7 +746,7 @@ export default class Ahalo extends Island {
     frame.visible = true;
     frame.position.copy(TARGET_ROCK).add(V3(-3, 0.18 + WATER + 0.8, 3));
     await G.cine.run(async (c) => {
-      c.say('Something shakes loose from the reef below…');
+      c.say('Something shakes loose from the reef below.');
       const path = [V3(52, WATER + 0.2, 10), V3(20, WATER + 0.25, 40), BEACH.clone()];
       for (const [i, p] of path.entries()) {
         const follow = this.every(() => { c.look(frame.position.clone().setY(0.5), { dist: 13, speed: 2 }); });
@@ -1002,12 +1002,12 @@ export default class Ahalo extends Island {
       await c.say('She knew no one, and no one knew her. She hunted fish, ate berries, and drank from the river that crossed the island.', { dur: 5 });
       await c.say('She cured her boredom by chasing snails along the beach, and by leaping from branch to branch like a monkey.', { dur: 4.5 });
       c.look(BOTTLE.clone().setY(0.4), { dist: 9, pitch: 35, speed: 0.9 });
-      await c.say('But one morning, the tide brought something that had never come before…', { dur: 4 });
+      await c.say('But one morning, the tide brought something that had never come before.', { dur: 4 });
       G.fx.sparkle(BOTTLE.clone().setY(0.6), '#ffffff', 12);
       await c.say('A bottle, with a letter inside.', { dur: 3 });
     });
     G.state.set('intro_done');
-    G.ui.toast('Reach the bottle on the south beach…', '\u{1F43E}');
+    G.ui.toast('Reach the bottle on the south beach.', '\u{1F43E}');
   }
 
   objective() {
@@ -1018,7 +1018,7 @@ export default class Ahalo extends Island {
     if (!s.flag('seesaw_gate_open')) return 'Open the vine gate on the west hillside';
     if (!s.flag('sundial_shell_placed')) return 'The summit dial wants its golden heart';
     if (!s.flag('raft_released')) return 'Climb where the shadow points, and speak';
-    if (!s.flag('raft_frame_beached')) return 'Loose timbers drift toward the south beach…';
+    if (!s.flag('raft_frame_beached')) return 'Loose timbers drift toward the south beach.';
     if (!this.raftComplete()) return `Rig the raft: ${this.missingParts()}`;
     return 'The raft is ready. Set sail!';
   }
@@ -1029,7 +1029,7 @@ export default class Ahalo extends Island {
     if (!s.flag('seesaw_gate_open')) return 'Something sleeps behind the vine gate on the west hillside. Old wood tips under heavy things, and the palms drop them.';
     if (!s.flag('sundial_shell_placed')) return 'Atop the old summit, a dial waits for its golden heart.';
     if (!s.flag('raft_released')) return 'The shell’s shadow points far across the water. Climb where it leads, and speak.';
-    if (!s.flag('raft_frame_beached')) return 'Loose timbers drift toward the south beach…';
+    if (!s.flag('raft_frame_beached')) return 'Loose timbers drift toward the south beach.';
     if (!this.raftComplete()) return `Bind the raft. It still wants ${this.missingParts()}. The den keeps an oar, the tallest palm a dry frond, and the crab trades for a price.`;
     return 'The raft is ready. The sea is waiting.';
   }

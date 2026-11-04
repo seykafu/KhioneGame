@@ -281,7 +281,7 @@ export class Player {
     if (this.grounded && !swimming && !w.isWater(this.pos.x, this.pos.z)) this.lastSafe.copy(this.pos);
     if (this.pos.y < w.waterLevel - 8 || this.pos.y < -30) {
       this.teleport(this.lastSafe.x, this.lastSafe.z);
-      G.ui.toast('Whoops — back on solid ground.', '\u{1F43E}');
+      G.ui.toast('Whoops! Back on solid ground.', '\u{1F43E}');
     }
 
     // Facing.

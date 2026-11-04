@@ -482,7 +482,7 @@ export default class Calgary extends Island {
             { vx: 1.5 + Math.random() * 2, vy: 0.6 + Math.random() * 0.8, vz: 0.4 + Math.random() * 0.5, gravity: -0.05, drag: 0.2, size: 0.14, life: 3.5, color: '#fffdf2', sway: 1.2 });
         }
         G.audio.sfx('breeze_gust', { vol: 0.75 });
-        if (!taught) { taught = true; G.ui.toast('The fluff lifts… a breeze is coming!', '\u{1F343}'); }
+        if (!taught) { taught = true; G.ui.toast('The fluff lifts. A breeze is coming!', '\u{1F343}'); }
       }
       if (ph === 'gust') { if (w) { w.rate = 85; w.wind = [3.6, 1.0]; } }
       for (const fn of this.breezeListeners) fn(ph);
@@ -591,7 +591,7 @@ export default class Calgary extends Island {
         .then(() => G.tween(boat.rotation, { y: 1.4 }, 1.0))
         .then(() => {
           this.sailing = false; boat.removeFromParent();
-          G.ui.say('The boat rides the breeze… straight into the weir board, and sulks in the reeds.');
+          G.ui.say('The boat rides the breeze straight into the weir board, and sulks in the reeds.');
         });
       return;
     }
@@ -606,7 +606,7 @@ export default class Calgary extends Island {
       G.audio.sfx('pickup_chime', { vol: 0.6, rate: 1.1 });
       this.spawnClapper();
       G.ui.celebrate('Under the bridge!', 'The Paper Regatta');
-      G.ui.say('Under the red bridge and gone! The west reeds stir… something small and brass washes loose.');
+      G.ui.say('Under the red bridge and gone! The west reeds stir, and something small and brass washes loose.');
     })();
   }
   spawnClapper() {
@@ -657,7 +657,7 @@ export default class Calgary extends Island {
         G.state.take('brass_clapper');
         G.state.set('bell_fixed');
         this.ring(0.9);
-        G.ui.say('The clapper seats with a click. The bell has its voice back… and the cart wears four painted notes.');
+        G.ui.say('The clapper seats with a click. The bell has its voice back, and the cart wears four painted notes.');
         return;
       }
       G.ui.say('A little brass bell, silent. Its clapper is missing, and the lagoon keeps its secrets.');
@@ -680,7 +680,7 @@ export default class Calgary extends Island {
       G.ui.say('The hatch pops: a bag of biscuits, and a spare key with a paw drawn on the tag.');
     } else {
       G.audio.sfx('whisker_shimmer', { vol: 0.5, rate: 0.7 });
-      G.ui.say('The bell fades to quiet. Four notes are painted on the flank… ring the round just so.');
+      G.ui.say('The bell fades to quiet. Four notes are painted on the flank. Ring the round just so.');
     }
   }
   spawnCartGoods() {
@@ -744,7 +744,7 @@ export default class Calgary extends Island {
       this.spawnJug();
     });
     G.ui.celebrate('The kite flies free!', 'The Bridge and the Kite');
-    G.ui.say('The kite lifts free and sails for the mountains. Its string splashes down by the south shallows… tied to something.');
+    G.ui.say('The kite lifts free and sails for the mountains. Its string splashes down by the south shallows, tied to something.');
   }
   spawnJug() {
     const jug = new THREE.Group();
@@ -823,7 +823,7 @@ export default class Calgary extends Island {
     const g = c.getContext('2d');
     g.fillStyle = '#fbf3df'; g.fillRect(0, 0, 560, 440);
     g.fillStyle = '#c84c3c'; g.font = 'bold 30px "Comic Sans MS", "Chalkboard SE", sans-serif'; g.textAlign = 'center';
-    g.fillText('gofer town — secret nock order!!', 280, 44);
+    g.fillText('gofer town secret nock order!!', 280, 44);
     g.strokeStyle = '#6aa84c'; g.lineWidth = 3;
     for (let i = 0; i < 40; i++) { const x = (i * 97) % 520 + 20, y = (i * 53) % 330 + 80; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 4, y - 10); g.stroke(); }
     // Picnic table, for orientation.
@@ -1038,7 +1038,7 @@ export default class Calgary extends Island {
   gateUse() {
     if (!G.state.has('paw_key')) {
       G.audio.sfx('stone_slide', { vol: 0.3, rate: 0.7 });
-      G.ui.say('The latch is dog-proof and stranger-proof both. It wants a key… one that knows about paws.');
+      G.ui.say('The latch is dog-proof and stranger-proof both. It wants a key, one that knows about paws.');
       return;
     }
     G.state.take('paw_key');
@@ -1047,7 +1047,7 @@ export default class Calgary extends Island {
     this.gateSolid.enabled = false;
     G.tween(this.gate.rotation, { y: 1.4 }, 1.1, ease.inOut);
     for (const p of Object.values(this.pads ?? {})) p.visible = true;
-    G.ui.say('The paw key turns. The gate swings wide… and the howler falls silent, watching her come.');
+    G.ui.say('The paw key turns. The gate swings wide and the howler falls silent, watching her come.');
   }
   onPad(name) {
     if (G.state.flag('oreo_untangled') || !G.state.flag('meadow_open')) return;
@@ -1057,7 +1057,7 @@ export default class Calgary extends Island {
       this.dropRope(['tree', 'stone', 'bench'][this.unwound - 1]);
       this.pads[name].visible = false;
       if (this.unwound >= 3) this.untangle();
-      else G.ui.toast('A loop lets go. The line hangs looser…', '\u{1FAA2}');
+      else G.ui.toast('A loop lets go. The line hangs looser.', '\u{1FAA2}');
     } else {
       if (!this.pads[name].visible) return; // already let go of this loop
       this.unwound = 0;
@@ -1074,12 +1074,12 @@ export default class Calgary extends Island {
     G.oreo.oneShot('attack', 1.2);
     G.audio.sfx('bark', { pos: G.oreo.pos, vol: 0.9 });
     G.ui.celebrate('Free!', 'The run-line lets go');
-    G.ui.say('The last loop slides free. He shakes from nose to tail… and sits, watching her. Free is not the same as friends.');
+    G.ui.say('The last loop slides free. He shakes from nose to tail and sits, watching her. Free is not the same as friends.');
   }
   oreoUse() {
     if (!G.state.flag('oreo_untangled')) {
       G.audio.sfx('whimper', { pos: G.oreo.pos, vol: 0.8 });
-      G.ui.say('He goes very still, tangled to the tree. The line loops tree, bench, stone… wound in that order.');
+      G.ui.say('He goes very still, tangled to the tree. The line loops tree, bench, stone, wound in that order.');
       return;
     }
     if (!this.fed) {
@@ -1091,13 +1091,13 @@ export default class Calgary extends Island {
         const bag = P.box(0.24, 0.06, 0.16, '#b88c4c'); bag.position.copy(OREO_HOME).add(V3(0.5, 0, 0.5)); bag.position.y = this.height(bag.position.x, bag.position.z); this.add(bag);
         G.audio.sfx('pickup_chime', { vol: 0.5, rate: 0.9 });
         G.oreo.faceTo(G.player.pos);
-        G.ui.say('Cream, and biscuits, laid in the grass. He eats like it is a ceremony. Then he looks up… expecting one more thing.');
+        G.ui.say('Cream, and biscuits, laid in the grass. He eats like it is a ceremony. Then he looks up, expecting one more thing.');
         return;
       }
       const missing = [];
       if (!G.state.has('cream_jug')) missing.push('cream');
       if (!G.state.has('dog_biscuits')) missing.push('biscuits');
-      G.ui.say(`He will not follow a stranger. A friend shares food… she still needs ${missing.join(' and ')}.`);
+      G.ui.say(`He will not follow a stranger. A friend shares food, and she still needs ${missing.join(' and ')}.`);
       return;
     }
     if (!G.state.has('tennis_ball')) { G.ui.say('He nudges her paw, then stares at the grass, then at her, then at the grass. He wants something thrown.'); return; }
@@ -1135,7 +1135,7 @@ export default class Calgary extends Island {
     G.oreo.join();
     G.ui.celebrate('Oreo joins!', 'The Howl in the Off-Leash Meadow');
     G.ui.toast('Meow and he barks back. Tap \u{1F415} to tell him to stay or come.', '\u{1F415}');
-    setTimeout(() => { if (G.island === this && !G.cine.active) G.ui.toast('The canoe on the gravel bar is heavy… but she is not alone anymore.', '\u{1F6F6}'); }, 6000);
+    setTimeout(() => { if (G.island === this && !G.cine.active) G.ui.toast('The canoe on the gravel bar is heavy, but she is not alone anymore.', '\u{1F6F6}'); }, 6000);
   }
 
   // ── Exit: the canoe on the gravel bar ─────────────────
@@ -1178,7 +1178,7 @@ export default class Calgary extends Island {
         G.oreo.pos.set(p.x, p.y + 0.25, p.z + 0.8); G.oreo.yaw = 0; G.oreo.root.rotation.y = 0;
       });
       G.audio.sfx('bark', { vol: 0.7, rate: 1.1 });
-      if (first) await say('As he settles into the bow, a scrap slips from under his collar…', 3);
+      if (first) await say('As he settles into the bow, a scrap slips from under his collar.', 3);
       else await say('East again. The water remembers them.', 2.5);
       c.look(canoe.position.clone(), { dist: 9, pitch: 26, speed: 1.5 });
       const strokes = setInterval(() => G.audio.sfx('swim_stroke', { vol: 0.5, rate: 0.85 }), 1350);
@@ -1223,13 +1223,13 @@ export default class Calgary extends Island {
   hint() {
     const s = G.state;
     if (s.flag('island3_complete')) return 'Prince’s Island hums with summer. The canoe by the gravel bar knows the way east, whenever they are ready.';
-    if (!s.flag('regatta_done')) return 'Paper boats lie becalmed on the lagoon. The cottonwood fluff knows when the breeze comes… and the little weir decides what passes the narrows.';
+    if (!s.flag('regatta_done')) return 'Paper boats lie becalmed on the lagoon. The cottonwood fluff knows when the breeze comes, and the little weir decides what passes the narrows.';
     if (!s.flag('ice_cream_done')) return 'A brass clapper wants a bell. The old ice-cream cart wears four painted notes: the vendor’s round, rung just so.';
-    if (!s.flag('kite_freed')) return 'A kite thrashes at the top of the red bridge. Grab it when the fluff rests… and mind where its string leads.';
+    if (!s.flag('kite_freed')) return 'A kite thrashes at the top of the red bridge. Grab it when the fluff rests, and mind where its string leads.';
     if (!s.flag('gopher_semaphore_done')) return 'The gophers keep something buried. A crayon map under a picnic table knows their doors by number, and meows carry underground.';
     if (!s.flag('meadow_open')) return 'The howl comes from the fenced meadow at the north point. The vendor’s spare key wears a paw.';
     if (!s.flag('oreo_untangled')) return 'The run-line loops tree, bench, and stone, wound in that order. Walk it backwards, and it lets go.';
-    if (!s.flag('oreo_joined')) return 'Free is not the same as friends. Cream, biscuits… and one good throw.';
+    if (!s.flag('oreo_joined')) return 'Free is not the same as friends. Cream, biscuits, and one good throw.';
     return 'The canoe on the gravel bar is heavy, and she is small. Her new friend knows the way to the water.';
   }
   objectiveTarget() {
@@ -1247,7 +1247,7 @@ export default class Calgary extends Island {
       { id: 'regatta', name: 'The Paper Regatta', done: s.flag('regatta_done'), hint: 'Paper boats lie becalmed on the lagoon. The fluff gives one beat of warning, and the little weir decides what passes under the red bridge.' },
       { id: 'icecream', name: 'The Ice Cream Round', done: s.flag('ice_cream_done'), hint: 'The cart’s bell wants its clapper back, and then the vendor’s round: four painted notes, rung just so, in one short breath.' },
       { id: 'kite', name: 'The Bridge and the Kite', done: s.flag('kite_freed'), hint: 'A kite thrashes at the arch of the red bridge, still only in the lull. Its string runs down into the shallows, tied to something.' },
-      { id: 'gophers', name: 'The Gopher Semaphore', done: s.flag('gopher_semaphore_done'), hint: 'A crayon map under a picnic table numbers six burrows. Meows carry underground… pulse the doors in the map’s order.' },
+      { id: 'gophers', name: 'The Gopher Semaphore', done: s.flag('gopher_semaphore_done'), hint: 'A crayon map under a picnic table numbers six burrows. Meows carry underground. Pulse the doors in the map’s order.' },
       { id: 'howl', name: 'The Howl in the Off-Leash Meadow', done: s.flag('oreo_joined'), hint: 'The paw key opens the gate. The run-line loops tree, bench, stone: walk it backwards. Then cream, biscuits, and one good throw.' },
     ];
   }

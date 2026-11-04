@@ -624,7 +624,7 @@ export default class Montreal extends Island {
       if (e.kind === 'hiss' && !this.zamboniMoved) {
         if (Math.hypot(l.x - zp.x, l.z - zp.z) < 6) this.parkZamboni(false);
       } else if (e.kind === 'growl' && !this.awake) {
-        if (!this.zamboniMoved) G.ui.toast('The Zamboni’s engine drowns her out. Machines don’t fear a growl… they flee a hiss.', '\u{1F9CA}');
+        if (!this.zamboniMoved) G.ui.toast('The Zamboni’s engine drowns her out. Machines don’t fear a growl. They flee a hiss.', '\u{1F9CA}');
         else if (Math.hypot(l.x, l.z) < 2.6) this.wakeCube();
         else G.ui.toast('The cube hangs dark over the centre dot. Growl from RIGHT under it.', '\u{1F3D2}');
       }
@@ -658,8 +658,8 @@ export default class Montreal extends Island {
     G.rig.shake = 0.4;
     this.screenMat.color.set('#ffffff');
     this.cube.children[0].material = P.mat('#2a2522', { emissive: '#ff9a40', emissiveIntensity: 0.25 });
-    G.ui.celebrate('The cube wakes!', 'Horn, house lights…');
-    G.ui.say('Horn, house lights… and the cube calls the three stars of the game.', { dur: 3.6 });
+    G.ui.celebrate('The cube wakes!', 'Horn! House lights!');
+    G.ui.say('Horn, house lights, and the cube calls the three stars of the game.', { dur: 3.6 });
     this.callStars();
   }
   /** The callout, the way a rink does it: three stars, two, one. Repeats until the banners answer. */
@@ -703,7 +703,7 @@ export default class Montreal extends Island {
     }
     this.hoisted = [];
     this.buzzing = false;
-    G.ui.say('BUZZER. Every banner drops and the whole building groans. Not that star, not in that order. The cube calls them again…', { dur: 4.5 });
+    G.ui.say('BUZZER. Every banner drops and the whole building groans. Not that star, not in that order. The cube calls them again.', { dur: 4.5 });
     this.callStars();
   }
   winStars() {
@@ -711,7 +711,7 @@ export default class Montreal extends Island {
     this.callRound++;
     G.audio.sfx('goal_horn', { vol: 1, rate: 1.05 });
     G.audio.sfx('crowd_cheer', { vol: 0.9 });
-    this.setScreen('OLÉ!', '9 · 4 · 10');
+    this.setScreen('OLÉ!', '9   4   10');
     G.fx.confetti(ARENA.clone().setY(4.5), 70);
     this.openBox(false);
     G.ui.celebrate('The Three Stars!', 'Olé, olé, olé');
@@ -970,7 +970,7 @@ export default class Montreal extends Island {
         G.fx.sparkle(V3(f.x, f.y0 + 1, f.z - 1), ok ? '#bff3c8' : '#ffb39a', 10);
         await c.wait(0.35);
       }
-      await c.say(`From the belvedere the whole staircase reads at a glance: one zigzag, all the way up… with ${wrong === 1 ? 'one flight' : `${['no', 'one', 'two', 'three', 'four'][wrong]} flights`} pointing off into nothing.`, { dur: 5 });
+      await c.say(`From the belvedere the whole staircase reads at a glance: one zigzag, all the way up, with ${wrong === 1 ? 'one flight' : `${['no', 'one', 'two', 'three', 'four'][wrong]} flights`} pointing off into nothing.`, { dur: 5 });
       await c.say('Every lever swings its own flight, and the next one up.', { dur: 3 });
     });
   }
@@ -1025,7 +1025,7 @@ export default class Montreal extends Island {
       g2.fillStyle = '#f4f4ec'; g2.strokeStyle = '#f4f4ec'; g2.lineWidth = 4;
       const sizes = [16, 7, 16, 11];
       sizes.forEach((r, i) => { const x = 22 + i * 58; g2.beginPath(); g2.arc(x, 56, r, 0, 7); g2.fill(); g2.beginPath(); g2.moveTo(x + 22, 56); g2.lineTo(x + 38, 56); g2.stroke(); });
-      g2.font = 'italic 18px serif'; g2.textAlign = 'center'; g2.fillText('— rests: the echo —', 128, 104);
+      g2.font = 'italic 18px serif'; g2.textAlign = 'center'; g2.fillText('(rests are for the echo)', 128, 104);
     });
     slate.userData.face.material = new THREE.MeshLambertMaterial({ map: chalk });
     slate.position.set(DRUM.x + 1.1, DRUM.y, DRUM.z + 0.3); slate.rotation.y = -0.35; this.add(slate);
@@ -1074,9 +1074,9 @@ export default class Montreal extends Island {
     await G.cine.run(async (c) => {
       c.look(CROSS.clone().add(V3(0, 5, 0)), { dist: 22, pitch: 16, yaw: 20, speed: 1 });
       this.setDusk(false);
-      await c.say('Twelve warm bagels in twelve bases. The sky leans to dusk, the city lights come on below…', { dur: 4.5 });
+      await c.say('Twelve warm bagels in twelve bases. The sky leans to dusk, the city lights come on below.', { dur: 4.5 });
       this.summonSwarm(false);
-      await c.say('…and up the slope, one blink. Then hundreds.', { dur: 3.5 });
+      await c.say('Up the slope, one blink. Then hundreds.', { dur: 3.5 });
     });
     G.ui.toast('The fireflies circle, but will not settle.', '✨');
   }
@@ -1126,12 +1126,12 @@ export default class Montreal extends Island {
     if (kind === PATTERN[this.progress]) {
       this.progress++;
       for (const f of this.flies) f.r = Math.max(1.2, f.r * 0.82);
-      G.ui.showBanner(`\u{1F941}  ${'✦ '.repeat(this.progress)}${'· '.repeat(PATTERN.length - this.progress)}`, 1.2);
+      G.ui.showBanner(this.progress ? `\u{1F941} Beat ${this.progress} of ${PATTERN.length}` : '\u{1F941} Lost the beat. Start again!', 1.2);
       if (this.progress >= PATTERN.length) this.settle();
     } else {
       this.progress = kind === PATTERN[0] ? 1 : 0;
       for (const f of this.flies) f.r = Math.min(5.5, f.r * 1.25);
-      G.ui.showBanner(`\u{1F941}  ${'✦ '.repeat(this.progress)}${'· '.repeat(PATTERN.length - this.progress)}`, 1.2);
+      G.ui.showBanner(this.progress ? `\u{1F941} Beat ${this.progress} of ${PATTERN.length}` : '\u{1F941} Lost the beat. Start again!', 1.2);
     }
   }
   async settle() {
@@ -1160,7 +1160,7 @@ export default class Montreal extends Island {
       this.openGate(false);
       await c.say('Tier by tier the swarm pours in and the CROSS LIGHTS, a slow vertical sunrise over the whole city.', { dur: 4.5 });
       c.look(FUNI[0].clone().setY(16), { dist: 14, pitch: 30, yaw: 40, speed: 1.2 });
-      await c.say('Its shadow falls down the west slope… onto the old funicular’s gate.', { dur: 3.5 });
+      await c.say('Its shadow falls down the west slope onto the old funicular’s gate.', { dur: 3.5 });
     });
     G.ui.celebrate('The cross is lit!', 'Light the Cross');
   }
@@ -1280,7 +1280,7 @@ export default class Montreal extends Island {
       await G.animate(12, seat, ease.inOut);
       G.audio.sfx('funicular_bell', { vol: 0.9, rate: 0.95 });
       await c.wait(0.6);
-      await c.say('At the bottom, tucked under the funicular’s bench, folded small, in a hand that pressed too hard on the pencil…', { dur: 4.5 });
+      await c.say('At the bottom, tucked under the funicular’s bench, folded small, in a hand that pressed too hard on the pencil.', { dur: 4.5 });
       const end = FUNI[FUNI.length - 1];
       G.player.teleport(end.x + 2.2, end.z + 0.4, Math.PI / 2);
       if (o.active) { o.teleport(end.x + 3.2, end.z + 1.2); o.follow(); }
@@ -1429,7 +1429,7 @@ export default class Montreal extends Island {
       },
       use: () => {
         if (!G.state.knows('growl') && this.demonstrated) { this.learnGrowl(); return; }
-        if (G.state.knows('growl')) { G.ui.say('It stands across the road, enormous and unbothered. Big things listen… to something big.'); return; }
+        if (G.state.knows('growl')) { G.ui.say('It stands across the road, enormous and unbothered. Big things listen to something big.'); return; }
         G.ui.say('A big calèche horse, blinkered, asleep on its feet across the only road up the mountain. Say something to it?');
       },
     });
@@ -1478,7 +1478,7 @@ export default class Montreal extends Island {
       await G.tween(this.horse.position, { z: HORSE.z - 0.45 }, 0.7, ease.inOut, () => this.syncHorse());
       this.playHorse('Idle');
       await c.say('Oreo BARKS. The horse snorts and backs one whole step. That voice has weight.', { dur: 3.4 });
-      await c.say('Khione squares up. Maybe she can bark too…', { dur: 2.6 });
+      await c.say('Khione squares up. Maybe she can bark too.', { dur: 2.6 });
       o.follow();
     });
     G.ui.toast('Tap the horse: square up and bark.', '\u{1F434}');
@@ -1487,7 +1487,7 @@ export default class Montreal extends Island {
     await G.cine.run(async (c) => {
       c.look(this.horse.position.clone().setY(1.2).lerp(G.player.pos, 0.4), { dist: 8, pitch: 28, yaw: 30 });
       G.player.faceTo(this.horse.position);
-      await c.say('She plants her paws, fills her small chest, and tries to bark the way he does…', { dur: 2.8 });
+      await c.say('She plants her paws, fills her small chest, and tries to bark the way he does.', { dur: 2.8 });
       G.audio.sfx('growl', { vol: 1 });
       G.fx.ripple(G.player.pos.clone(), '#9a7bff', 5);
       G.rig.shake = 0.7;
@@ -1670,7 +1670,7 @@ export default class Montreal extends Island {
     if (G.state.flag('toll_paid')) return;
     if (!G.state.has('bagel')) {
       G.audio.sfx('squirrel_chitter', { vol: 0.8, rate: 1.1 });
-      G.ui.say('The baron holds out one paw. The paw means: one bagel. There is a bagel oven at the mountain’s foot… and a longer way up, for the patient.', { dur: 5 });
+      G.ui.say('The baron holds out one paw. The paw means: one bagel. There is a bagel oven at the mountain’s foot, and a longer way up for the patient.', { dur: 5 });
       return;
     }
     G.state.take('bagel');
@@ -1693,7 +1693,7 @@ export default class Montreal extends Island {
         return;
       }
       G.ui.say(G.state.flag('mmfa_delivered')
-        ? 'A bare iron stub. The museum’s garden squirrel left something brass on the front steps… exactly handle-shaped.'
+        ? 'A bare iron stub. The museum’s garden squirrel left something brass on the front steps, exactly handle-shaped.'
         : 'A lever with no handle: a bare iron stub. Squirrels steal brass on this mountain, though the one loitering at the museum looks like it keeps accounts.', { dur: 5 });
       return;
     }
@@ -1824,7 +1824,7 @@ export default class Montreal extends Island {
   hint() {
     const s = G.state;
     if (!s.knows('growl')) return 'A calèche horse sleeps across the mountain road and nothing she says moves it. Her friend’s big voice does. Maybe hers can learn its shape.';
-    if (!s.flag('three_stars_done')) return 'The Bell Centre is empty and its ice still glows. Something parked on the centre dot fears a hiss… and the great dark cube above it is the biggest thing downtown. Hoist the stars it calls, in order.';
+    if (!s.flag('three_stars_done')) return 'The Bell Centre is empty and its ice still glows. Something parked on the centre dot fears a hiss, and the great dark cube above it is the biggest thing downtown. Hoist the stars it calls, in order.';
     if (!s.flag('mmfa_delivered')) return 'A framed number 10, and a plaque that names the museum at the mountain’s east foot. The grand door there says TIREZ, and cats push. Bring Oreo.';
     if (!s.flag('stairs_fixed')) {
       if (!s.flag('lever2_handled')) return 'The staircases pivot, and every lever swings two flights, but lever two is a bare stub. The brass handle the museum squirrel returned waits on the front steps.';
@@ -1832,7 +1832,7 @@ export default class Montreal extends Island {
     }
     if (!s.flag('panes_fitted')) return 'Three lanterns on the summit cross have no glass. The Bell Centre’s penalty box keeps spares.';
     if (!s.flag('bagels_placed')) return 'Twelve lantern bases want twelve warm bagels: the oven at the mountain’s foot bakes them in the golden second. The sign says à la douzaine, and squirrels count.';
-    if (!s.flag('cross_lit')) return 'The fireflies circle but will not settle. They love warmth… and rhythm. Play the drum’s chalk pattern by the cross, a beat about every second; Oreo barks the echoes.';
+    if (!s.flag('cross_lit')) return 'The fireflies circle but will not settle. They love warmth, and rhythm. Play the drum’s chalk pattern by the cross, a beat about every second; Oreo barks the echoes.';
     return 'The cross’s shadow found the funicular gate on the summit’s west lip. Ride it down to the river.';
   }
   objectiveTarget() {

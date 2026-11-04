@@ -469,7 +469,7 @@ export default class Winnipeg extends Island {
       if (warning && !this.warning) {
         this.warning = true;
         G.audio.sfx('winter_wind', { vol: 0.5, rate: 1.3, dur: 2 });
-        G.ui.showBanner('\u{1F32C}️ The wind is rising…', 1.8);
+        G.ui.showBanner('\u{1F32C}️ The wind is rising!', 1.8);
       }
       if (!warning) this.warning = false;
       if (squall !== this.squall) this.setSquall(squall);
@@ -527,7 +527,7 @@ export default class Winnipeg extends Island {
         if (d < s.radius && d < bd) { bd = d; best = s; }
       }
       if (!best) return;
-      if (!G.oreo.active) { G.ui.toast('Somebody here was born to dig…', '\u{1F415}'); return; }
+      if (!G.oreo.active) { G.ui.toast('Somebody here was born to dig.', '\u{1F415}'); return; }
       this.digBusy = true;
       // Whisker Sense sinks INTO the drift: a ring marks the spot.
       G.audio.sfx('whisker_shimmer', { pos: best.pos, vol: 0.7 });
@@ -816,7 +816,7 @@ export default class Winnipeg extends Island {
     if (this.riding) return;
     this.riding = true; this.amp = 0;
     G.player.walk = null;
-    this.tell('She settles on the swing. Tap ⬆️ in rhythm to pump… then let go.');
+    this.tell('She settles on the swing. Tap ⬆️ in rhythm to pump, then let go.');
   }
   pump() {
     const now = G.time, gap = now - this.lastPump;
@@ -926,7 +926,7 @@ export default class Winnipeg extends Island {
     const ice = this.iceBlock; this.iceBlock = null;
     await G.tween(ice.scale, { x: 1.1, y: 0.04, z: 1.1 }, 1.6, ease.inOut);
     ice.removeFromParent();
-    this.tell('The salt gnaws the gate open… and under the ice, a long low lump of snow with two wooden tips poking out.');
+    this.tell('The salt gnaws the gate open. Under the ice lies a long low lump of snow with two wooden tips poking out.');
   }
   showToboggan() {
     if (this.toboggan) return;
@@ -993,7 +993,7 @@ export default class Winnipeg extends Island {
       if (this.finalDrift) { G.fx.burst(this.finalDrift.position.clone().add(V3(0, 0.6, 0)), { color: '#ffffff', count: 70, speed: 5, up: 6, size: 0.22, life: 1.1 }); this.finalDrift.removeFromParent(); this.finalDrift = null; this.driftSolid.enabled = false; }
       c.look(CELLAR.clone().add(V3(0, 0.8, 0)), { dist: 6, pitch: 30, speed: 2 });
       await c.wait(1.0);
-      await c.say('In the storm cellar, among the boxed-up summer things: a kite reel with no kite…', { dur: 3.5 });
+      await c.say('In the storm cellar, among the boxed-up summer things: a kite reel with no kite.', { dur: 3.5 });
       G.state.give('kite_reel');
       await c.say('Taped to a box, a child’s crayon drawing of a black-and-white dog. Ears up. Tongue out. Drawn by somebody who loved one once.', { dur: 5 });
       G.state.addArtifact('crayon_dog', 'winnipeg', 'The Crayon Drawing', 'Taped to a box in the storm cellar: a child’s crayon drawing of a black-and-white dog, ears up, tongue out. Drawn by somebody who loved one once.');
@@ -1026,10 +1026,10 @@ export default class Winnipeg extends Island {
       G.oreo.root.visible = true;
       G.oreo.bark();
       G.oreo.speedCap = 7.5;
-      await c.say('When she meows at a lump in the snow, her Whisker Sense sinks INTO the drift — and he digs where she points.', { dur: 4.5 });
+      await c.say('When she meows at a lump in the snow, her Whisker Sense sinks INTO the drift, and he digs where she points.', { dur: 4.5 });
       G.oreo.follow();
     });
-    G.ui.toast('Meow next to a lump in the snow — Oreo digs it out.', '\u{1F415}');
+    G.ui.toast('Meow next to a lump in the snow and Oreo digs it out.', '\u{1F415}');
   }
 
   // ── Goals ──────────────────────────────────────────────
@@ -1049,8 +1049,8 @@ export default class Winnipeg extends Island {
   }
   hint() {
     const s = G.state;
-    if (!s.flag('drift_line_done')) return 'The squall stole the laundry off the line. Meow at the lumps in the drifts… somebody here was born to dig. Then hang each piece back by its paired clothespin.';
-    if (!s.flag('rink_done')) return 'An old puck waits on the backyard rink, and the target circle is nowhere near the boards. Snow will not pack on ice. A dog on a stay, though… (meow on the ice where he should sit)';
+    if (!s.flag('drift_line_done')) return 'The squall stole the laundry off the line. Meow at the lumps in the drifts. Somebody here was born to dig. Then hang each piece back by its paired clothespin.';
+    if (!s.flag('rink_done')) return 'An old puck waits on the backyard rink, and the target circle is nowhere near the boards. Snow will not pack on ice. A dog on a stay, though, will hold still. Meow on the ice where he should sit.';
     if (!s.flag('mailbox_done')) return 'Six red flags, and a squall that hates neat rows. The curb numbers read from up high: odd up, even down, all in one stillness.';
     if (!s.flag('swing_done')) return 'The swing remembers how to fly. Pump with the rhythm (⬆️), let go with courage, and see what the rooftops keep.';
     if (!s.flag('sled_ready')) return 'Salt for the frozen gate at the top of the ridge. Wax and bolts for whatever sleeps under it.';

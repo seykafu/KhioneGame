@@ -447,7 +447,7 @@ export default class Eaton extends Island {
       use: () => {
         G.state.set('pet_window_seen');
         G.ui.say('One collar on a stand. The tag is blank, but the charm is a tiny paw. The door will not open.');
-        G.state.addArtifact('collar', 'eaton', 'A Collar in the Pet Shop', 'One collar on a stand, tag blank, its charm a tiny paw — the same paw as the locket. The one door no key opens.');
+        G.state.addArtifact('collar', 'eaton', 'A Collar in the Pet Shop', 'One collar on a stand, tag blank, its charm a tiny paw: the same paw as the locket. The one door no key opens.');
       },
     });
   }
@@ -706,13 +706,13 @@ export default class Eaton extends Island {
   }
 
   openDirectory() {
-    G.ui.panel('Eaton Centre · Directory', `
+    G.ui.panel('Eaton Centre Directory', `
       <div class="letter" style="font-family:var(--font);font-size:16px;line-height:1.7;transform:none">
-        Pet Shop …… by appointment only<br>
-        Home Goods …… closed for inventory<br>
-        Flower Kiosk …… watered daily at 3 o’clock<br>
-        Food Court …… gone for lunch<br>
-        Glass Elevator …… out of service
+        Pet Shop: by appointment only<br>
+        Home Goods: closed for inventory<br>
+        Flower Kiosk: watered daily at 3 o’clock<br>
+        Food Court: gone for lunch<br>
+        Glass Elevator: out of service
       </div><p style="text-align:center"><small>The clock above the fountain hasn’t moved in years.</small></p>`,
     { buttons: [{ label: 'Close', onClick: (close) => close() }] });
   }
@@ -828,7 +828,7 @@ export default class Eaton extends Island {
         g.beginPath(); g.moveTo(xs[3] - 28, y - 28); g.lineTo(xs[3] + 28, y + 28); g.moveTo(xs[3] + 28, y - 28); g.lineTo(xs[3] - 28, y + 28); g.stroke();
         g.fillRect(90, 330, 330, 14);
         g.font = 'bold 26px "Baloo 2", sans-serif';
-        g.fillText('live tonight · one pose only', w / 2, 400);
+        g.fillText('live tonight, one pose only', w / 2, 400);
         g.restore();
       },
     });
@@ -868,7 +868,7 @@ export default class Eaton extends Island {
     if (cfg === TARGET.join() || cfg === ALT_TARGET.join()) this.solveMannequins();
     else if (cfg === NAIVE.join()) {
       G.audio.sfx('fail', { vol: 0.4, rate: 1.4 });
-      G.ui.say('They strike the pose… hold it… and slump. Something reads backwards.');
+      G.ui.say('They strike the pose, hold it, and slump. Something reads backwards.');
     }
   }
 
@@ -1116,7 +1116,7 @@ export default class Eaton extends Island {
       c.look(V3(7, FLOOR, -3), { dist: 16, pitch: 62 });
       G.audio.sfx('geese', { vol: 0.5 });
       this.spawnShadowFlock(true);
-      await c.say('Sixty shadows land on the tiles… and point, all of them, at the dark glass elevator.', { dur: 4 });
+      await c.say('Sixty shadows land on the tiles and point, all of them, at the dark glass elevator.', { dur: 4 });
       for (let i = 0; i < 4; i++) setTimeout(() => G.fx.ring(V3(ELEVATOR.x, FLOOR + 0.05, ELEVATOR.z), '#ffd24a', 2.2, 1.0), i * 700);
       c.look(V3(ELEVATOR.x, 1.5, ELEVATOR.z), { dist: 10 });
       await c.wait(2.2);
@@ -1274,7 +1274,7 @@ export default class Eaton extends Island {
       const dest = V3(p.x + 1.1, FLOOR, p.z - 1.3);
       r.rotation.y = Math.atan2(dest.x - r.position.x, dest.z - r.position.z) + this.robotYaw();
       G.tween(r.position, { x: dest.x, z: dest.z }, 1.2, ease.out);
-      await c.say('A cleaning robot rounds on Khione, brushes whirring…', { dur: 2.4 });
+      await c.say('A cleaning robot rounds on Khione, brushes whirring!', { dur: 2.4 });
       G.player.faceTo(dest);
       G.tween(G.player.pos, { z: p.z + 0.8 }, 0.5, ease.out);
       await c.wait(0.4);
@@ -1332,7 +1332,7 @@ export default class Eaton extends Island {
       c.cut(V3(0, 4, 8), { dist: 42, pitch: 30, yaw: 20 });
       await c.wait(0.3);
       c.look(V3(0, 3, 10), { dist: 34, pitch: 26, yaw: 10, speed: 0.6 });
-      await c.say('A glass mall hums on the water… and something small and angry patrols its floors.', { dur: 4.2 });
+      await c.say('A glass mall hums on the water, and something small and angry patrols its floors.', { dur: 4.2 });
       c.look(G.player.pos.clone().setY(1), { dist: 9, pitch: 35, speed: 1 });
       await c.wait(1.2);
     });
@@ -1354,14 +1354,14 @@ export default class Eaton extends Island {
   }
   hint() {
     const s = G.state;
-    if (!s.knows('hiss')) return 'A glass mall hums on the water… and something small and angry patrols its floors.';
+    if (!s.knows('hiss')) return 'A glass mall hums on the water, and something small and angry patrols its floors.';
     if (!s.flag('mall_time_3')) return 'Every stair runs the wrong way. A clock hangs stuck above the fountain, and the directory by the doors remembers the mall’s habits.';
     if (!s.flag('fountain_wish_made')) return 'The fountain keeps old wishes. A mosaic under the water remembers three coins. Pay it in kind, in order.';
     if (!s.flag('mannequin_shop_open')) return 'The fountain’s brass key is warm in her satchel. A dark shop past the east escalator has been locked for years.';
-    if (!s.flag('mannequins_posed')) return 'Four dancers wait for their pose. The poster reads one way from the atrium… and another way from inside the glass.';
-    if (!s.flag('pigeon_parliament_solved')) return 'Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds… always away from her, one tile at a time. The four grated tiles hum underneath.';
+    if (!s.flag('mannequins_posed')) return 'Four dancers wait for their pose. The poster reads one way from the atrium and another way from inside the glass.';
+    if (!s.flag('pigeon_parliament_solved')) return 'Pigeons have claimed the west tiles, and meows amuse them. They flee sharper sounds, always away from her, one tile at a time. The four grated tiles hum underneath.';
     if (!s.flag('skylight_open')) return 'The drummer’s crank wants a socket. The balcony above the atrium keeps one, near the skylight’s edge.';
-    if (!s.flag('mall_sunset')) return 'Open sky above the frozen flock… now the light must lean. Evening reaches every mall at 6 o’clock.';
+    if (!s.flag('mall_sunset')) return 'Open sky above the frozen flock. Now the light must lean. Evening reaches every mall at 6 o’clock.';
     return 'Sixty shadows point at the dark elevator, and it hungers for its glass fuse. Then: the roof, and the great banner.';
   }
   objectiveTarget() {

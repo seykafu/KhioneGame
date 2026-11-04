@@ -39,7 +39,7 @@ class UI {
     // Controls
     this.controls = h('div', 'controls hidden');
     this.joy = h('div', 'joy', '<div class="ring"></div><div class="knob"></div>');
-    this.hint = h('div', 'hint', '<div class="hand">\u{1F446}</div><div class="hintTxt">Drag to walk · tap things to use them</div>');
+    this.hint = h('div', 'hint', '<div class="hand">\u{1F446}</div><div class="hintTxt">Drag to walk, tap things to use them</div>');
     const cl = h('div', 'cluster');
     this.jumpBtn = h('button', 'cbtn jump', '⬆️<span>Jump</span>'); this.jumpBtn.setAttribute('aria-label', 'Jump');
     this.actBtn = h('button', 'cbtn act off', '\u{1F43E}'); this.actBtn.setAttribute('aria-label', 'Interact');
@@ -117,7 +117,7 @@ class UI {
 
   // ── HUD state ──────────────────────────────────────────
   showHUD(on = true) { this.hud.classList.toggle('hidden', !on); this.controls.classList.toggle('hidden', !on); }
-  setIsland(meta) { this.islandPill.textContent = `${meta.n} · ${meta.name}`; this.refreshCounts(); this.refreshVox(); }
+  setIsland(meta) { this.islandPill.innerHTML = `<b class="pn">${meta.n}</b><span class="pnm">${esc(meta.name)}</span>`; this.refreshCounts(); this.refreshVox(); }
   refreshCounts() {
     const s = G.state;
     this.letterBtn.querySelector('.num').textContent = `${s.fragments.length}/7`;
@@ -274,7 +274,7 @@ class UI {
     this.jumpBtn.querySelector('span').textContent = on ? 'Jump!' : 'Jump';
     if (on && this.ledgeJumps < 2 && G.time - (this._jumpToldAt ?? -99) > 25) {
       this._jumpToldAt = G.time;
-      this.say('Too high to walk up… tap ⬆️ Jump to hop onto it!', { dur: 3.5 });
+      this.say('Too high to walk up. Tap ⬆️ Jump to hop onto it!', { dur: 3.5 });
     }
   }
 
@@ -370,7 +370,7 @@ class UI {
       });
       grid.append(slot);
     }
-    wrap.append(grid, desc, h('p', '', `<small>${s.maxSlots} pockets · one more for every island finished.</small>`));
+    wrap.append(grid, desc, h('p', '', `<small>${s.maxSlots} pockets, plus one more for every island you finish.</small>`));
     this.openSheet('Satchel', wrap);
   }
 
@@ -400,7 +400,7 @@ class UI {
     const s = G.state;
     const parts = LETTER.map((p) => {
       const known = p.by === 0 || s.hasFragment(p.by) || final;
-      if (!known) return `<span class="gap">${'· '.repeat(Math.max(3, Math.round(p.t.length / 2.5)))}</span>${p.br ? '<br>' : ' '}`;
+      if (!known) return `<span class="gap" style="width:${Math.max(2.4, p.t.length * 0.42).toFixed(1)}em"></span>${p.br ? '<br>' : ' '}`;
       if (p.sig) return `<span class="sig${final ? '' : ' smudge'}">${esc(p.t)}</span>`;
       return `<span class="${p.by ? 'frag' : ''}">${esc(p.t)}</span>${p.br ? '<br>' : ' '}`;
     }).join('');
@@ -419,12 +419,12 @@ class UI {
       const riddles = (cur ? G.island.riddles() : (G.riddleCache?.[isl.id] ?? []));
       const list = visited && riddles.length ? `<ul>${riddles.map((r) => `<li class="${r.done ? 'ok' : ''}">${esc(r.done ? r.name : (r.hint ?? r.name))}</li>`).join('')}</ul>` : '';
       const go = unlocked && !cur ? `<button class="btn small secondary go" data-go="${isl.id}">Sail ⛵</button>` : '';
-      return `<div class="isl${done ? ' done' : ''}${visited ? '' : ' locked'}"><div class="n">${isl.n}</div><div><h3>${visited ? esc(isl.name) : '???'}${cur ? ' · here' : ''}</h3>${list}</div>${go}</div>`;
+      return `<div class="isl${done ? ' done' : ''}${visited ? '' : ' locked'}"><div class="n">${isl.n}</div><div><h3>${visited ? esc(isl.name) : '???'}${cur ? ' <small class="here">you’re here</small>' : ''}</h3>${list}</div>${go}</div>`;
     }).join('');
   }
   artifactsHTML() {
     const a = G.state.artifacts;
-    if (!a.length) return '<p>Nothing yet. Some things on these islands don’t add up…</p>';
+    if (!a.length) return '<p>Nothing yet. Some things on these islands don’t add up yet.</p>';
     return a.map((x) => `<div class="art"><b>${esc(x.title)}</b>${esc(x.text)}<br><small>${esc(islandById(x.island)?.name ?? '')}</small></div>`).join('');
   }
 
@@ -505,12 +505,12 @@ class UI {
       || matchMedia('(display-mode: fullscreen)').matches || !!window.Capacitor;
     const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
     el.innerHTML = `
-      <div><div class="logo">Khione</div><div class="sub">a small white cat · a message in a bottle · seven islands</div></div>
+      <div><div class="logo">Khione</div><div class="sub">a small white cat, a message in a bottle, and seven islands</div></div>
       <div class="menu">
         ${hasSave ? '<button class="btn primary" data-a="cont">Continue</button>' : ''}
         <button class="btn ${hasSave ? 'secondary' : 'primary'}" data-a="new">${hasSave ? 'New Journey' : 'Begin'}</button>
         ${!hasSave ? '<button class="btn small secondary" data-a="restore">I have a cloud code</button>' : ''}
-        ${ios && !standalone ? '<div class="a2hs">Tip: tap Share → “Add to Home Screen” to play full-screen like an app.</div>' : ''}
+        ${ios && !standalone ? '<div class="a2hs">Tip: tap Share, then “Add to Home Screen”, to play full-screen like an app.</div>' : ''}
       </div>`;
     el.querySelector('[data-a=restore]')?.addEventListener('click', () => {
       G.audio.unlock();

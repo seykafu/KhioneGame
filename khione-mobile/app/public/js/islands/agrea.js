@@ -342,14 +342,14 @@ export default class Agrea extends Island {
       c.look(b.pos.clone().setY(2), { dist: 9, pitch: 35, speed: 2.5 });
       await c.wait(0.5);
       this.setBeacon(n, true);
-      G.ui.celebrate('A beacon lights!', `${s.name} · ${this.litCount()}/6`);
+      G.ui.celebrate('A beacon lights!', `${s.name}, ${this.litCount()} of 6 lit`);
       G.player.emote('happy', 1.6);
       G.player.showItem('\u{1F48E}');
       await c.wait(1.2);
       await this.say2(s.memory, { dur: 4.2 });
     });
     if (this.litCount() === 6) await this.raiseTable();
-    else G.ui.toast(`Memory shard returned · ${this.litCount()}/6`, '\u{1F48E}');
+    else G.ui.toast(`Memory shard returned (${this.litCount()} of 6)`, '\u{1F48E}');
   }
 
   // ── Shrine 1 · Ahalo: five water-worn stones, the melody is the order ──
@@ -596,12 +596,12 @@ export default class Agrea extends Island {
           G.ui.say('One tug from Oreo, and the knot lets go. Roles swapped, same yard.');
           this.solveShrine(3);
         })();
-      } else G.ui.toast(['', 'A loop slips free…', 'One more loop…'][k.prog], '\u{1FAA2}');
+      } else G.ui.toast(['', 'A loop slips free.', 'One more loop to go.'][k.prog], '\u{1FAA2}');
     } else if (k.prog < 3) {
       // Wrong way round: the line tightens, his ears drop.
       for (const sg of this.calgarySegs) if (sg.visible) { sg.material.color.set('#d8402f'); setTimeout(() => sg.material.color.set('#2f6fd8'), 700); }
       if (G.oreo.active) G.audio.sfx('whimper', { pos: G.oreo.pos, vol: 0.6 });
-      G.ui.toast('The line pulls tight. Walk it back the way it was wound…', '\u{1FAA2}');
+      G.ui.toast('The line pulls tight. Walk it back the way it was wound.', '\u{1FAA2}');
       // Restore any loosened loops.
       k.prog = 0;
       for (const sg of this.calgarySegs) { sg.visible = true; sg.scale.set(1, 1, 1); }
@@ -625,7 +625,7 @@ export default class Agrea extends Island {
         this.solveShrine(4);
       },
     });
-    this.trigger({ pos: c, radius: 6, once: true, onEnter: () => { if (!this.lit(4)) G.ui.toast('One drift that never melts… (meow at it)', '❄️'); } });
+    this.trigger({ pos: c, radius: 6, once: true, onEnter: () => { if (!this.lit(4)) G.ui.toast('One drift that never melts. Meow at it.', '❄️'); } });
   }
 
   // ── Shrine 5 · Montréal: one lantern, three fireflies, one drum ──
@@ -681,7 +681,7 @@ export default class Agrea extends Island {
       for (const f of mt.flies) f.home = false;
       mt.beats = 0;
       mt.lanternMat.emissiveIntensity = 0;
-      G.ui.toast('The fireflies scatter. A steady beat, with room for the echo…', '✨');
+      G.ui.toast('The fireflies scatter. A steady beat, with room for the echo.', '✨');
     }
     const f = mt.flies[mt.beats];
     f.home = true;
@@ -741,7 +741,7 @@ export default class Agrea extends Island {
     this.catYaw = this.lit(6) ? toHouse : toHouse - this.catStep * 3;
     cat.rotation.y = this.catYaw;
     // Weathered plaque: three animals facing their homes, and a fourth.
-    const plaque = P.sign(['Raven: sky · Bear: forest', 'Orca: sea · Cat: ?'], { w: 1.6, h: 0.7, post: 0.6, font: 'bold 44px "Baloo 2", sans-serif' });
+    const plaque = P.sign(['Raven: sky, Bear: forest', 'Orca: sea, Cat: ?'], { w: 1.6, h: 0.7, post: 0.6, font: 'bold 44px "Baloo 2", sans-serif' });
     plaque.position.set(c.x, 0.3, c.z + 0.2); plaque.rotation.y = Math.atan2(-c.x, 20 - c.z) * 0.3;
     this.add(plaque);
     this.interact({ obj: plaque, radius: 1.8, icon: '\u{1F440}', label: 'Read the plaque', use: () => G.ui.say('Raven faces the sky-tree. Bear, the forest. Orca, open water. The fourth carving is a cat, and the plaque has no word for where it looks.') });
@@ -921,7 +921,7 @@ export default class Agrea extends Island {
       pieces.forEach((p, i) => {
         const s = document.createElement('span');
         if (i < placed) { s.className = 'frag'; s.textContent = p.t; }
-        else { s.className = 'gap'; s.textContent = '· · ·'; }
+        else { s.className = 'gap'; s.style.width = `${Math.max(2.4, p.t.length * 0.42).toFixed(1)}em`; }
         body.append(s);
         body.append(p.br ? document.createElement('br') : document.createTextNode(' '));
       });
@@ -994,7 +994,7 @@ export default class Agrea extends Island {
       if (e.kind !== 'meow' || this.finaleRunning || G.state.flag('agrea_finale_done')) return;
       if (Math.hypot(e.pos.x - this.doorPos.x, e.pos.z - this.doorPos.z) > 3.6) return;
       if (G.state.flag('agrea_table') && G.state.flag('agrea_bells')) this.finale();
-      else if (this.litCount() === 6 && G.state.flag('agrea_table')) G.ui.toast('The door listens… but the phrase must ring on the bells first.', '\u{1F514}');
+      else if (this.litCount() === 6 && G.state.flag('agrea_table')) G.ui.toast('The door listens, but the phrase must ring on the bells first.', '\u{1F514}');
     });
   }
   doorGlow() {

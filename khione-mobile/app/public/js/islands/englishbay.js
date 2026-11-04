@@ -311,9 +311,9 @@ export default class EnglishBay extends Island {
       arrow.style.transform = `rotate(${ang}deg)`;
       const txt = this.chip.querySelector('.wt');
       const name = DIRNAME[w.dir];
-      if (w.phase === 'calm') { txt.textContent = this.kitesHome() >= 4 ? `Calm · kites resting` : 'Calm'; this.chip.style.background = '#fff4dc'; this.chip.style.transform = 'none'; arrow.style.opacity = '0.35'; }
-      else if (w.phase === 'warn') { txt.textContent = `Gust coming → ${name}!`; this.chip.style.background = (G.time * 6 | 0) % 2 ? '#ffe39a' : '#fff4dc'; this.chip.style.transform = 'scale(1.08)'; arrow.style.opacity = '1'; }
-      else { txt.textContent = `\u{1F4A8} GUST → ${name} — jump!`; this.chip.style.background = '#9fe3ee'; this.chip.style.transform = 'scale(1.12)'; arrow.style.opacity = '1'; }
+      if (w.phase === 'calm') { txt.textContent = this.kitesHome() >= 4 ? 'Calm, kites resting' : 'Calm'; this.chip.style.background = '#fff4dc'; this.chip.style.transform = 'none'; arrow.style.opacity = '0.35'; }
+      else if (w.phase === 'warn') { txt.textContent = `Gust coming, blowing ${name}!`; this.chip.style.background = (G.time * 6 | 0) % 2 ? '#ffe39a' : '#fff4dc'; this.chip.style.transform = 'scale(1.08)'; arrow.style.opacity = '1'; }
+      else { txt.textContent = `\u{1F4A8} GUST blowing ${name}! Jump!`; this.chip.style.background = '#9fe3ee'; this.chip.style.transform = 'scale(1.12)'; arrow.style.opacity = '1'; }
     }
   }
 
@@ -381,7 +381,7 @@ export default class EnglishBay extends Island {
         obj: m, radius: 3.5, yRange: 6, icon: '\u{1FA81}', priority: -1,
         enabled: () => !!m.parent && G.player.pos.y < k.top - 0.6,
         label: 'A kite, snagged up high',
-        use: () => G.ui.say(`Snagged on ${k.where}, out of reach. A plain jump won’t do it… but when a gust comes, jump WITH it.`),
+        use: () => G.ui.say(`Snagged on ${k.where}, out of reach. A plain jump won’t do it, but when a gust comes, jump WITH it.`),
       });
     }
 
@@ -433,7 +433,7 @@ export default class EnglishBay extends Island {
     if (!G.state.give('kite', { quiet: true })) { G.state.set(`eb_kite_got_${s.k.id}`, false); this.add(s.m); return; }
     G.player.showItem('\u{1FA81}');
     G.audio.sfx('pickup_chime', { vol: 0.8 });
-    G.ui.toast('Runaway Kite — take it to the reel posts on the kite beach.', '\u{1FA81}');
+    G.ui.toast('Runaway kite! Take it to the reel posts on the kite beach.', '\u{1FA81}');
   }
 
   flyKite(i, color) {
@@ -533,7 +533,7 @@ export default class EnglishBay extends Island {
     G.audio.sfx('raccoon', { vol: 0.8 });
     await G.cine.run(async (c) => {
       c.look(V3(23, 1, 12), { dist: 11 });
-      await c.say('The toll is paid. The raccoons snatch the spoon and scurry off, straight to… wherever they keep things.', { dur: 3.2 });
+      await c.say('The toll is paid. The raccoons snatch the spoon and scurry off, straight to wherever they keep things.', { dur: 3.2 });
       const from = this.raccoons.map((r) => r.position.clone());
       this.placeRaccoons('stash');
       const to = this.raccoons.map((r) => r.position.clone());
@@ -554,7 +554,7 @@ export default class EnglishBay extends Island {
     G.state.give('brass_lens');
     G.state.set('raccoon_hoard');
     G.ui.celebrate('The hoard!', 'The Raccoon Toll');
-    G.ui.say('Spoons, bottle caps, a bicycle bell, nine buttons, one earring… and its crown jewel: a heavy brass lens. The raccoons are furious. Harmlessly, magnificently furious.', { dur: 6 });
+    G.ui.say('Spoons, bottle caps, a bicycle bell, nine buttons, one earring, and its crown jewel: a heavy brass lens. The raccoons are furious. Harmlessly, magnificently furious.', { dur: 6 });
   }
 
   // ── The Blossom Current ────────────────────────────────
@@ -651,11 +651,11 @@ export default class EnglishBay extends Island {
     const w = this.wind, v = this.windVec();
     if (w.phase !== 'gust') {
       G.fx.burst(top, { color: ['#ffc2d6', '#ffd9e6'], count: 26, speed: 1.4, up: 0.5, size: 0.2, life: 2.5, gravity: 0.8, shape: 2 });
-      G.ui.toast(slam ? 'Thump! Petals drift down… and just lie there. No wind to carry them.' : 'Petals drift down and settle. They need wind to go anywhere.', '\u{1F338}');
+      G.ui.toast(slam ? 'Thump! Petals drift down and just lie there. No wind to carry them.' : 'Petals drift down and settle. They need wind to go anywhere.', '\u{1F338}');
     } else if (w.dir !== 'W') {
       G.fx.burst(top, { color: ['#ffc2d6', '#ffd9e6'], count: 40, speed: 2, up: 0.8, size: 0.22, life: 2.5, gravity: 0.4, shape: 2 });
       for (let i = 0; i < 40; i++) G.fx.spawn(top.x, top.y - Math.random() * 2, top.z, { vx: v.x * 7 + (Math.random() - 0.5), vz: v.z * 7 + (Math.random() - 0.5), vy: 0.2, gravity: 0.3, drag: 0.2, size: 0.2, life: 3, color: '#ffc2d6', shape: 2 });
-      G.ui.toast(`A cloud of petals whirls off ${DIRNAME[w.dir]}ward. Pretty… but not where the mosaic says.`, '\u{1F338}');
+      G.ui.toast(`A cloud of petals whirls off ${DIRNAME[w.dir]}ward. Pretty, but not where the mosaic says.`, '\u{1F338}');
       // A few land on Khione. She sneezes.
       setTimeout(() => { G.fx.burst(G.player.pos.clone().setY(G.player.pos.y + 1), { color: '#ffc2d6', count: 10, speed: 1, up: 1, size: 0.18, life: 1, shape: 2 }); G.audio.sfx('meow', { rate: 1.5, vol: 0.5 }); }, 500);
     } else {
@@ -678,7 +678,7 @@ export default class EnglishBay extends Island {
           for (let j = 0; j < 3; j++) G.fx.spawn(p.x + (Math.random() - 0.5) * 0.5, p.y + (Math.random() - 0.5) * 0.4, p.z + (Math.random() - 0.5) * 0.5, { vx: 0, vy: -0.1, vz: 0, gravity: 0, drag: 1, size: 0.2, life: 2.5, color: Math.random() < 0.5 ? '#ffc2d6' : '#ff9ac0', shape: 2 });
         }, k * 28 / (G.timeScale || 1));
       }
-      await c.say('The gust lifts the petals in a long pink ribbon… exactly the mosaic’s spiral.', { dur: 3 });
+      await c.say('The gust lifts the petals in a long pink ribbon, exactly the mosaic’s spiral.', { dur: 3 });
       c.look(THICKET.clone().setY(2), { dist: 9 });
       G.fx.burst(grate, { color: ['#ffc2d6', '#ff9ac0'], count: 30, speed: 1.2, up: 0.4, size: 0.2, life: 1.5, shape: 2 });
       await c.wait(0.8);
@@ -712,11 +712,11 @@ export default class EnglishBay extends Island {
       for (let k = 0; k < 4; k++) { const f = P.sphere(0.1 + p.price * 0.03, p.color, { seg: 10 }); f.position.set(-1.6 + i * 0.95 + (k % 2) * 0.22, 1.32, 0.05 + (k >> 1) * 0.22); stall.add(f); }
     });
     // Chalkboard.
-    const board = P.sign(['FRESH & HONEST', 'Plum $1 · Apple $2', 'Pear $3 · Melon $5', '$1 a pound, always'], { w: 1.6, h: 1.2, post: 0.3, bg: '#2f3a36', fg: '#f4f0e6', border: '#8a5a2b', font: 'bold 50px "Baloo 2", sans-serif' });
+    const board = P.sign(['FRESH & HONEST', 'Plum $1   Apple $2', 'Pear $3   Melon $5', '$1 a pound, always'], { w: 1.6, h: 1.2, post: 0.3, bg: '#2f3a36', fg: '#f4f0e6', border: '#8a5a2b', font: 'bold 50px "Baloo 2", sans-serif' });
     board.position.set(-2.8, 0, 0.6); board.rotation.y = 0.3; stall.add(board);
     this.add(stall);
     this.solidBox(STALL.x, STALL.z, 4, 1.2, -1, y + 1, 0);
-    this.interact({ obj: board, radius: 2.2, icon: '\u{1F440}', label: 'Read the chalkboard', use: () => G.ui.panel('The chalkboard', '<p style="font-size:20px;text-align:center;line-height:1.6"><b>FRESH &amp; HONEST</b><br>Plum … $1<br>Apple … $2<br>Pear … $3<br>Melon … $5<br><i>Everything $1 a pound. Always.</i></p>', { buttons: [{ label: 'Close', onClick: (c) => c() }] }) });
+    this.interact({ obj: board, radius: 2.2, icon: '\u{1F440}', label: 'Read the chalkboard', use: () => G.ui.panel('The chalkboard', '<p style="font-size:20px;text-align:center;line-height:1.6"><b>FRESH &amp; HONEST</b><br>Plum $1<br>Apple $2<br>Pear $3<br>Melon $5<br><i>Everything $1 a pound. Always.</i></p>', { buttons: [{ label: 'Close', onClick: (c) => c() }] }) });
 
     // The hanging scale beside the stall.
     const sp = V3(STALL.x + 3.4, y, STALL.z + 0.6);
@@ -821,7 +821,7 @@ export default class EnglishBay extends Island {
       drawIcon(g, '\u{1F511}', 80, ly + 66, 48);
       let k = 0;
       for (const p of PRODUCE) for (let i = 0; i < (this.produce[p.id] ?? 0); i++) { g.fillStyle = p.color; g.beginPath(); g.arc(410 + (k % 4) * 20, ry + 78 - (k >> 2) * 18, 6 + p.price * 1.6, 0, Math.PI * 2); g.fill(); k++; }
-      status.textContent = diff === 0 ? 'Level! Step back and let it settle in the stillness…' : diff < 0 ? 'The key’s pan hangs lower. Needs more.' : 'The produce pan sinks. Too much.';
+      status.textContent = diff === 0 ? 'Level! Step back and let it settle in the stillness.' : diff < 0 ? 'The key’s pan hangs lower. Needs more.' : 'The produce pan sinks. Too much.';
       grid.querySelectorAll('button').forEach((b) => {
         const p = PRODUCE.find((q) => q.id === b.dataset.id);
         if (p) b.textContent = `+ ${p.name} (${p.n - (this.produce[p.id] ?? 0)} left)`;
@@ -916,7 +916,7 @@ export default class EnglishBay extends Island {
       G.state.addArtifact('eb_waiting_dog', 'englishbay', 'The Lowest Carving', 'At the foot of a carved pole in English Bay: a dog, lying down, waiting. Very old. Very patient.');
     });
     // The plaque.
-    const plaque = P.sign(['Raven · Bear · Orca', 'each faces its home'], { w: 1.5, h: 0.9, post: 0.5, bg: '#3b4a3a', fg: '#f4f0e6', border: '#c9a46a', font: 'bold 48px "Baloo 2", sans-serif' });
+    const plaque = P.sign(['Raven, Bear and Orca', 'each faces its home'], { w: 1.5, h: 0.9, post: 0.5, bg: '#3b4a3a', fg: '#f4f0e6', border: '#c9a46a', font: 'bold 48px "Baloo 2", sans-serif' });
     const pp = V3(CLEARING.x + 4.4, 0, CLEARING.z - 1.8);
     plaque.position.set(pp.x, this.height(pp.x, pp.z), pp.z); plaque.rotation.y = Math.PI / 2 + 0.3; this.add(plaque);
     this.solidBox(pp.x, pp.z, 0.4, 1.5, -1, this.height(pp.x, pp.z) + 1.4, 0, { noStand: true });
@@ -934,7 +934,7 @@ export default class EnglishBay extends Island {
     g.fillStyle = '#f4f0e6'; g.font = 'bold 26px "Baloo 2", sans-serif'; g.textAlign = 'center';
     g.fillText('THE THREE WHO FACE THEIR HOMES', 310, 48);
     g.font = '56px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
-    const rows = [['\u{1F426}‍⬛', '→', '\u{1F332}', 'Raven → the tallest tree'], ['\u{1F43B}', '→', '\u{1F333}\u{1F333}', 'Bear → the forest’s open door'], ['\u{1F40B}', '→', '\u{1F30A}', 'Orca → the open sea']];
+    const rows = [['\u{1F426}‍⬛', '→', '\u{1F332}', 'Raven: the tallest tree'], ['\u{1F43B}', '→', '\u{1F333}\u{1F333}', 'Bear: the forest’s open door'], ['\u{1F40B}', '→', '\u{1F30A}', 'Orca: the open sea']];
     rows.forEach(([a, arr, b, t], i) => {
       const y = 112 + i * 72;
       drawIcon(g, a, 70, y - 14, 54);
@@ -1004,7 +1004,7 @@ export default class EnglishBay extends Island {
       G.fx.sparkle(V3(pole.pos.x, this.height(pole.pos.x, pole.pos.z) + 3, pole.pos.z), '#ffe48a', 10);
       G.ui.toast(`The ${pole.key} settles, facing ${pole.home}.`, '✨');
     }
-    if (this.allAligned()) G.ui.toast('All three face their homes. Now… the wind.', '\u{1F343}');
+    if (this.allAligned()) G.ui.toast('All three face their homes. Now for the wind.', '\u{1F343}');
   }
 
   gustStart() {
@@ -1032,7 +1032,7 @@ export default class EnglishBay extends Island {
     await G.cine.run(async (c) => {
       c.look(CLEARING.clone().setY(3.5), { dist: 14, pitch: 35 });
       for (const [i, f] of [880, 587, 392].entries()) { G.audio.tone(f, { dur: 1.8, vol: 0.35 }); G.fx.ring(V3(POLES[i].pos.x, 6, POLES[i].pos.z), '#ffe48a', 2.4, 1.2); await c.wait(0.7); }
-      await c.say('Three notes, together. She knows this tune: the hollow stones’ song, an ocean ago… written by whoever keeps walking one island ahead.', { dur: 4.5 });
+      await c.say('Three notes, together. She knows this tune: the hollow stones’ song, an ocean ago, written by whoever keeps walking one island ahead.', { dur: 4.5 });
       G.render.setAtmosphere(this.sunsetAtmo());
       await c.say('The light leans gold. Sunset comes to the clearing all at once.', { dur: 3 });
       this.afterSong(false);
@@ -1073,7 +1073,7 @@ export default class EnglishBay extends Island {
       enabled: () => !G.state.flag('eb_box_open'),
       label: () => (G.state.has('ranger_key') ? 'Unlock the strongbox' : 'A locked ranger’s strongbox'),
       use: () => {
-        if (!G.state.has('ranger_key')) { G.ui.say('PARK RANGER — LIONS GATE, stencilled on the lid. Locked tight. Somebody keeps the ranger’s key somewhere ordinary.'); return; }
+        if (!G.state.has('ranger_key')) { G.ui.say('“PARK RANGER, LIONS GATE” is stencilled on the lid. Locked tight. Somebody keeps the ranger’s key somewhere ordinary.'); return; }
         G.state.take('ranger_key'); G.state.set('eb_box_open');
         G.audio.sfx('gate_open', { vol: 0.6, rate: 1.4 });
         G.state.give('winch_crank');
