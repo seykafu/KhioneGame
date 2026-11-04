@@ -27,6 +27,7 @@ function itemTexture(id) {
 const STEP = 0.5;   // how high Khione can step without jumping
 const _v = new THREE.Vector3();
 const _ray = new THREE.Raycaster();
+const _box = new THREE.Box3();
 const _ndc = new THREE.Vector2();
 
 export class Island {
@@ -39,6 +40,7 @@ export class Island {
     this.surfaces = [];
     this.interactables = [];
     this.triggers = [];
+    this.viewZones = [];
     this.updaters = [];
     this.unsubs = [];
     this.senses = [];
@@ -235,6 +237,26 @@ export class Island {
     return typeof it.label === 'function' ? it.label() : it.label;
   }
 
+  /**
+   * A place the usual camera can't see into (a shop with a ceiling, a room
+   * under a balcony). While `contains(pos)` is true the camera tilts to
+   * `pitch` degrees and moves in by `zoom`, and everything in `hide` vanishes.
+   */
+  viewZone({ contains, pitch = 64, zoom = 0.75, hide = [] }) {
+    const z = { contains, rig: { pitch: pitch * Math.PI / 180, zoom }, hide };
+    this.viewZones.push(z);
+    return z;
+  }
+  _updateViewZone() {
+    const p = G.player.pos;
+    const z = G.cine?.active ? null : this.viewZones.find((v) => v.contains(p)) ?? null;
+    if (z === this.viewZoneOn) return;
+    for (const o of this.viewZoneOn?.hide ?? []) o.visible = true;
+    for (const o of z?.hide ?? []) o.visible = false;
+    this.viewZoneOn = z;
+    G.rig.zone = z?.rig ?? null;
+  }
+
   /** Circle trigger: onEnter/onExit/onStay(dt). */
   trigger(def) { const t = { radius: 2, inside: false, ...def }; this.triggers.push(t); return t; }
 
@@ -338,6 +360,7 @@ export class Island {
     }
     const p = G.player?.pos;
     if (!p) return;
+    if (this.viewZones.length) this._updateViewZone();
     for (const t of this.triggers) {
       if (t.enabled === false) continue;
       const tp = typeof t.pos === 'function' ? t.pos() : t.pos;
@@ -367,7 +390,31 @@ export class Island {
     if (!it) return false;
     G.player.faceTo(this.posOf(it));
     it.use?.();
+    events.emit('used', it);
     return true;
+  }
+
+  /** Walk over to an interactable (if needed) and use it. */
+  goUse(it) {
+    const ip = this.posOf(it);
+    const p = G.player.pos;
+    const use = () => { if (this.labelOf(it)) { G.player.faceTo(ip); it.use?.(); events.emit('used', it); } };
+    if (Math.hypot(p.x - ip.x, p.z - ip.z) <= it.radius + 0.3) use();
+    else G.player.walkTo(ip, Math.max(0.6, it.radius * 0.7), use);
+  }
+
+  /** World point a tap bubble for `it` floats at: just above the thing itself. */
+  bubbleAt(it) {
+    const ip = this.posOf(it);
+    const now = G.time;
+    if (it.obj && (it._topAt == null || now - it._topAt > 1)) {
+      _box.setFromObject(it.obj);
+      it._top = _box.isEmpty() ? null : _box.max.y;
+      it._topAt = now;
+    }
+    const base = ip.y ?? G.player.pos.y;
+    const top = it._top ?? base + 1.2;
+    return _v.set(ip.x, clamp(top + 0.35, base + 0.9, base + 2.6), ip.z);
   }
 
   /** Tap at screen x,y: interactable → walk there and use; ground → walk there. */
@@ -379,10 +426,7 @@ export class Island {
     for (const h of hits) {
       const it = h.object.userData.pick;
       if (!it || !this.labelOf(it)) continue;
-      const ip = this.posOf(it);
-      const p = G.player.pos;
-      if (Math.hypot(p.x - ip.x, p.z - ip.z) <= it.radius + 0.3) { G.player.faceTo(ip); it.use?.(); }
-      else G.player.walkTo(ip, Math.max(0.6, it.radius * 0.7), () => { if (this.labelOf(it)) { G.player.faceTo(ip); it.use?.(); } });
+      this.goUse(it);
       G.fx?.tapMark(h.point, true);
       return true;
     }
@@ -408,6 +452,7 @@ export class Island {
   }
 
   dispose() {
+    if (this.viewZoneOn) G.rig.zone = null;
     for (const off of this.unsubs) off();
     this.root.traverse((o) => {
       if (o.isMesh || o.isPoints || o.isInstancedMesh) {

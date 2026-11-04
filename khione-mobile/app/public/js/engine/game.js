@@ -256,6 +256,7 @@ class Game {
         if (input.takeAction() && !cine.active) isl.useFocus();
         const f = isl.focus;
         ui.setAction(f && !cine.active ? isl.labelOf(f) : null, f?.icon);
+        ui.jumpCue(G.player.ledgeAhead());
         this.goalT = (this.goalT ?? 0) - raw;
         if (this.goalT <= 0) { this.goalT = 0.3; ui.setGoal(isl.objective()); }
       }
@@ -265,6 +266,7 @@ class Game {
     }
     G.renderer.render(G.scene, G.camera);
     ui.updateMarker();
+    ui.updateBubbles(G.island);
     if (!manual && !document.hidden) this.adapt(raw);
   }
 

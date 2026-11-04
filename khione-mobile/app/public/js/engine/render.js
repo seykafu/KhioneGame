@@ -42,6 +42,9 @@ export function initRender(container) {
     yawTarget: 36 * DEG, zoomTarget: 1,
     // Cutscene override: {pos: Vector3 (look target), dist, pitch, yaw}
     override: null,
+    // Island view zone (a small room, say): {pitch (rad), zoom} reframes the
+    // follow camera while Khione is inside it, on top of the player's zoom.
+    zone: null,
     shake: 0,
   };
 
@@ -61,7 +64,7 @@ export function initRender(container) {
   const tmp = new THREE.Vector3();
   function updateCamera(dt) {
     const p = G.player;
-    let tx, ty, tz, dist = rig.dist * rig.zoom, pitch = rig.pitch, yaw = rig.yaw;
+    let tx, ty, tz, dist = rig.dist * rig.zoom * (rig.zone?.zoom ?? 1), pitch = rig.zone?.pitch ?? rig.pitch, yaw = rig.yaw;
     rig.yaw = angleLerp(rig.yaw, rig.yawTarget, 1 - Math.exp(-8 * dt));
     rig.zoom = damp(rig.zoom, rig.zoomTarget, 8, dt);
     if (rig.override) {

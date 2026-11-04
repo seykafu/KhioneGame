@@ -26,6 +26,7 @@ const RIM_R = 3.5, RIM_Y = 1.11;
 const COIN_TYPES = ['H', 'T', 'H', 'T', 'T', 'H', 'T', 'H'];
 const COIN_TARGET = ['H', 'H', 'T'];
 const MANNEQUIN_Z = [6.5, 7.5, 8.5, 9.5], ROOM_X = 18;
+const DOOR_OPEN = -Math.PI * 0.58;   // swings out into the mall, clear of the doorway
 const NAIVE = [2, 1, 0, 3], TARGET = [3, 2, 1, 0], ALT_TARGET = [2, 3, 0, 1];
 const GRID_ORIGIN = V3(-13, FLOOR, -9), CELL = 2, GRID_N = 4;
 const VENTS = [[0, 0], [0, 3], [3, 0], [3, 3]];
@@ -751,14 +752,23 @@ export default class Eaton extends Island {
     this.sbox(0.3, 3.6, 5.0, 19.6, 0.3, 8, WALL);
     this.sbox(3.9, 3.6, 0.3, 17.75, 0.3, 5.6, WALL);
     this.sbox(3.9, 3.6, 0.3, 17.75, 0.3, 10.4, WALL);
-    this.sbox(3.9, 0.3, 5.2, 17.75, 3.8, 8, WALL, { solid: false, occl: true });
+    const ceiling = this.sbox(3.9, 0.3, 5.2, 17.75, 3.8, 8, WALL, { solid: false, occl: true });
     for (const z of [6.35, 9.65]) this.glass(0.1, 3.2, 1.5, 15.95, 0.3, z);
-    this.sbox(0.35, 0.9, 5.4, 15.8, 3.4, 8, '#80669e', { solid: false });
-    // Door.
+    const fascia = this.sbox(0.35, 0.9, 5.4, 15.8, 3.4, 8, '#80669e', { solid: false, occl: true });
+    // Door, hung on a hinge at its north edge so it visibly swings open.
+    this.doorHinge = new THREE.Group();
+    this.doorHinge.position.set(15.95, 0.3, 7.1); this.add(this.doorHinge);
     this.door = P.box(0.12, 3.0, 1.8, '#47424d');
-    this.door.position.set(15.95, 0.3, 8); this.add(this.door);
+    this.door.position.set(0, 0, 0.9); this.doorHinge.add(this.door);
+    const knob = P.sphere(0.07, '#d9b34d'); knob.position.set(-0.1, 1.3, 1.55); this.doorHinge.add(knob);
     this.doorSolid = this.solidBox(15.95, 8, 0.2, 1.8, 0, 3.3, 0, { noStand: true });
-    if (G.state.flag('mannequin_shop_open')) { this.door.position.y = 3.0; this.doorSolid.enabled = false; }
+    if (G.state.flag('mannequin_shop_open')) { this.doorHinge.rotation.y = DOOR_OPEN; this.doorSolid.enabled = false; }
+    // Inside the shop (and on its doorstep) the camera tips down and the
+    // ceiling lifts away, so Khione and the mannequins stay in view.
+    this.viewZone({
+      contains: (p) => p.x > 13.4 && p.x < 19.6 && p.z > 5.3 && p.z < 10.7 && p.y < FLOOR + 2,
+      pitch: 66, zoom: 0.72, hide: [ceiling, fascia],
+    });
     this.interact({
       pos: V3(15.4, FLOOR, 8), obj: this.door, radius: 1.8, icon: '\u{1F511}',
       label: () => (G.state.flag('mannequin_shop_open') ? null : G.state.has('brass_key') ? 'Unlock the shop door' : 'Try the shop door'),
@@ -841,7 +851,8 @@ export default class Eaton extends Island {
     G.state.set('mannequin_shop_open');
     G.audio.sfx('coconut_thunk', { vol: 0.6, rate: 1.1 }); G.audio.sfx('stone_slide', { vol: 0.5, rate: 1.2 });
     this.doorSolid.enabled = false;
-    G.tween(this.door.position, { y: 3.0 }, 1.2, ease.inOut);
+    G.tween(this.doorHinge.rotation, { y: DOOR_OPEN }, 1.1, ease.outBack);
+    G.fx.sparkle(V3(15.6, 1.6, 8));
     G.ui.say('The brass key turns like it never left. The shop exhales dust.');
   }
 

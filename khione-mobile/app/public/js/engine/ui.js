@@ -5,6 +5,8 @@ import { ISLANDS, LETTER, itemIcon, itemName, ITEMS, islandById } from './state.
 import { watchIcons, preloadIcons } from './icons.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const load = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const store = (k, v) => { try { localStorage.setItem(k, String(v)); } catch {} };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const VOX = {
@@ -39,7 +41,7 @@ class UI {
     this.joy = h('div', 'joy', '<div class="ring"></div><div class="knob"></div>');
     this.hint = h('div', 'hint', '<div class="hand">\u{1F446}</div><div class="hintTxt">Drag to walk · tap things to use them</div>');
     const cl = h('div', 'cluster');
-    this.jumpBtn = h('button', 'cbtn jump', '⬆️'); this.jumpBtn.setAttribute('aria-label', 'Jump');
+    this.jumpBtn = h('button', 'cbtn jump', '⬆️<span>Jump</span>'); this.jumpBtn.setAttribute('aria-label', 'Jump');
     this.actBtn = h('button', 'cbtn act off', '\u{1F43E}'); this.actBtn.setAttribute('aria-label', 'Interact');
     this.voxBtns = {};
     for (const [k, v] of Object.entries(VOX)) {
@@ -51,7 +53,11 @@ class UI {
     cl.append(this.oreoBtn, this.actBtn, this.jumpBtn);
     this.actLabel = h('div', 'actlabel');
     this.marker = h('div', 'marker', '<div class="arrow">⭐</div>');
-    this.controls.append(this.joy, this.hint, cl, this.actLabel, this.marker);
+    // Tap bubbles float over things Khione can use nearby; the one she'd use
+    // now is big, labelled and pulsing.
+    this.bubbles = h('div', 'bubbles');
+    this.bubblePool = [];
+    this.controls.append(this.joy, this.hint, this.bubbles, cl, this.actLabel, this.marker);
 
     // Overlays
     this.toasts = h('div', 'toasts');
@@ -99,6 +105,13 @@ class UI {
     events.on('inventory', () => this.refreshCounts());
     events.on('fragment', () => this.refreshCounts());
     events.on('joystick', () => { this.hint.classList.remove('on'); });
+    events.on('used', () => { this.uses++; store('khione_uses', this.uses); });
+    events.on('jump', () => {
+      if (!this._jumpCue) return;
+      this.ledgeJumps++; store('khione_ledge_jumps', this.ledgeJumps);
+    });
+    this.uses = Number(load('khione_uses') ?? 0);
+    this.ledgeJumps = Number(load('khione_ledge_jumps') ?? 0);
     this.modalOpen = false;
   }
 
@@ -197,6 +210,72 @@ class UI {
     this.fadeEl.classList.toggle('white', white);
     this.fadeEl.classList.toggle('on', on);
     return new Promise((r) => setTimeout(r, 650));
+  }
+
+  // ── Tap bubbles over usable things ────────────────────
+  updateBubbles(isl) {
+    const show = isl && !G.cine?.active && !this.modalOpen && !this.root.classList.contains('cine')
+      && !this.controls.classList.contains('hidden');
+    const list = [];
+    if (show) {
+      const p = G.player.pos;
+      for (const it of isl.interactables) {
+        const ip = isl.posOf(it);
+        const d = Math.hypot(p.x - ip.x, p.z - ip.z);
+        if (d > 7.5 || Math.abs((ip.y ?? p.y) - p.y) > (it.yRange ?? 2.5)) continue;
+        if (!isl.labelOf(it)) continue;
+        list.push({ it, d: it === isl.focus ? -1 : d });
+      }
+      list.sort((a, b) => a.d - b.d);
+      list.length = Math.min(list.length, 5);
+    }
+    const W = window.innerWidth, H = window.innerHeight;
+    let focusShown = false;
+    list.forEach(({ it }, i) => {
+      let b = this.bubblePool[i];
+      if (!b) {
+        b = h('button', 'tapb', '<div class="bi"></div><div class="bl"></div><div class="bh">\u{1F446}</div>');
+        b.addEventListener('pointerdown', (e) => {
+          e.preventDefault(); e.stopPropagation(); G.audio.unlock();
+          const t = b._it;
+          if (!t || !G.island) return;
+          if (t === G.island.focus) G.input.pressAction(); else G.island.goUse(t);
+        });
+        this.bubbles.append(b);
+        this.bubblePool.push(b);
+      }
+      b._it = it;
+      const v = isl.bubbleAt(it).project(G.camera);
+      const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
+      const on = v.z < 1 && x > 24 && x < W - 24 && y > 120 && y < H - 40;
+      b.style.display = on ? '' : 'none';
+      if (!on) return;
+      const focus = it === isl.focus;
+      if (focus) focusShown = true;
+      b.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      b.classList.toggle('focus', focus);
+      b.classList.toggle('teach', focus && this.uses < 6);
+      const icon = it.icon ?? '\u{1F43E}';
+      if (b._icon !== icon) { b._icon = icon; b.querySelector('.bi').textContent = icon; }
+      const label = focus ? isl.labelOf(it) : '';
+      if (b._label !== label) { b._label = label; b.querySelector('.bl').textContent = label; }
+    });
+    for (let i = list.length; i < this.bubblePool.length; i++) { this.bubblePool[i].style.display = 'none'; this.bubblePool[i]._it = null; }
+    // The bubble already says what the button does; the corner label is only
+    // needed when the thing itself is off screen.
+    this.actLabel.classList.toggle('hidden', focusShown);
+  }
+
+  /** Glow the jump button while a ledge she could hop onto is right ahead. */
+  jumpCue(on) {
+    if (on === !!this._jumpCue) return;
+    this._jumpCue = on;
+    this.jumpBtn.classList.toggle('cue', on);
+    this.jumpBtn.querySelector('span').textContent = on ? 'Jump!' : 'Jump';
+    if (on && this.ledgeJumps < 2 && G.time - (this._jumpToldAt ?? -99) > 25) {
+      this._jumpToldAt = G.time;
+      this.say('Too high to walk up… tap ⬆️ Jump to hop onto it!', { dur: 3.5 });
+    }
   }
 
   // ── Hint arrow toward the goal when idle ──────────────

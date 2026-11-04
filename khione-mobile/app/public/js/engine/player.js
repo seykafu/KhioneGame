@@ -147,6 +147,38 @@ export class Player {
     this._itemT = setTimeout(() => { s.visible = false; }, dur * 1000);
   }
 
+  /**
+   * Is she pushing toward a ledge too high to walk onto but low enough to
+   * jump onto? Drives the jump button's glow. Stays true briefly so the cue
+   * doesn't flicker while she shuffles along the edge.
+   */
+  ledgeAhead() {
+    const w = G.island, inp = G.input;
+    if (!w || this.frozen || this.swimming || !this.grounded || G.cine?.active || inp.move.mag < 0.3) return G.time < (this._ledgeUntil ?? 0);
+    const b = G.render.camBasis();
+    let dx = b.rx * inp.move.x - b.fx * inp.move.y, dz = b.rz * inp.move.x - b.fz * inp.move.y;
+    const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l;
+    // Step along her path the way walking would: ramps and stairs rise a
+    // little each step; a ledge is a sudden rise she can't step but can hop.
+    const p = this.pos;
+    let cur = p.y;
+    for (let r = 0.1; r <= 0.95; r += 0.1) {
+      const x = p.x + dx * r, z = p.z + dz * r;
+      const step = w.groundAt(x, z, cur);
+      const hop = w.groundAt(x, z, cur + 1.35);
+      const built = step > w.height(x, z) + 0.01;
+      const steep = step - cur > 0.13 && !(built && step - cur <= 0.3);
+      const ledge = hop - step > 0.3 && hop - p.y <= 1.85;
+      // A steep bank only counts if it levels off within jumping height.
+      const at = (k) => w.groundAt(p.x + dx * (r + k), p.z + dz * (r + k), p.y + 1.35);
+      const bank = steep && at(0.4) - p.y <= 1.85 && at(0.7) - at(0.4) < 0.3;
+      if (ledge || bank) { this._ledgeUntil = G.time + 0.6; return true; }
+      if (steep) break;
+      cur = step;
+    }
+    return G.time < (this._ledgeUntil ?? 0);
+  }
+
   update(dt) {
     const w = G.island;
     if (!w) return;
