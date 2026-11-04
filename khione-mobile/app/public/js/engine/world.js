@@ -6,19 +6,20 @@ import { G, events, clamp } from './core.js';
 import { makeWater, makeTerrainMaterial } from './render.js';
 import { texture } from './assets.js';
 import { islandById, itemIcon, itemName as itemNameOf } from './state.js';
+import { drawIcon } from './icons.js';
 
 const itemTexCache = new Map();
-/** Round parchment badge with the item's emoji — the default look for loose items. */
+/** Round parchment badge with the item's icon — the default look for loose items. */
 function itemTexture(id) {
   if (itemTexCache.has(id)) return itemTexCache.get(id);
   const c = document.createElement('canvas'); c.width = c.height = 128;
   const g = c.getContext('2d');
   g.fillStyle = 'rgba(255,244,220,0.96)'; g.strokeStyle = '#173b44'; g.lineWidth = 7;
   g.beginPath(); g.arc(64, 64, 54, 0, Math.PI * 2); g.fill(); g.stroke();
-  g.font = '66px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-  g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillText(itemIcon(id), 64, 70);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const face = g.getImageData(0, 0, 128, 128);
+  const paint = () => { g.putImageData(face, 0, 0); drawIcon(g, itemIcon(id), 64, 64, 80); t.needsUpdate = true; };
+  if (!drawIcon(g, itemIcon(id), 64, 64, 80, paint)) t.needsUpdate = true;
   itemTexCache.set(id, t);
   return t;
 }

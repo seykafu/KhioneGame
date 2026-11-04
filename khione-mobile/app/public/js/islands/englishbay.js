@@ -13,6 +13,7 @@ import { Island } from '../engine/world.js';
 import { model, instanced } from '../engine/assets.js';
 import { P } from '../engine/prefabs.js';
 import { registerItems } from '../engine/state.js';
+import { drawIcon } from '../engine/icons.js';
 
 registerItems({
   shiny_spoon: { name: 'Shiny Spoon', icon: '\u{1F944}', desc: 'A silver teaspoon, polished by sand and sea. Somebody around here collects shiny things.' },
@@ -817,8 +818,7 @@ export default class EnglishBay extends Island {
       g.beginPath(); g.ellipse(440, ry + 90, 60, 14, 0, 0, Math.PI * 2); g.fill();
       g.strokeStyle = '#888'; g.lineWidth = 2;
       for (const [x, yy] of [[80, ly], [440, ry]]) { g.beginPath(); g.moveTo(x, yy); g.lineTo(x - 40, yy + 88); g.moveTo(x, yy); g.lineTo(x + 40, yy + 88); g.stroke(); }
-      g.font = '40px "Apple Color Emoji","Segoe UI Emoji",sans-serif'; g.textAlign = 'center';
-      g.fillText('\u{1F511}', 80, ly + 80);
+      drawIcon(g, '\u{1F511}', 80, ly + 66, 48);
       let k = 0;
       for (const p of PRODUCE) for (let i = 0; i < (this.produce[p.id] ?? 0); i++) { g.fillStyle = p.color; g.beginPath(); g.arc(410 + (k % 4) * 20, ry + 78 - (k >> 2) * 18, 6 + p.price * 1.6, 0, Math.PI * 2); g.fill(); k++; }
       status.textContent = diff === 0 ? 'Level! Step back and let it settle in the stillness…' : diff < 0 ? 'The key’s pan hangs lower. Needs more.' : 'The produce pan sinks. Too much.';
@@ -937,10 +937,15 @@ export default class EnglishBay extends Island {
     const rows = [['\u{1F426}‍⬛', '→', '\u{1F332}', 'Raven → the tallest tree'], ['\u{1F43B}', '→', '\u{1F333}\u{1F333}', 'Bear → the forest’s open door'], ['\u{1F40B}', '→', '\u{1F30A}', 'Orca → the open sea']];
     rows.forEach(([a, arr, b, t], i) => {
       const y = 112 + i * 72;
+      drawIcon(g, a, 70, y - 14, 54);
+      const twin = b.length > 2 && !b.includes('‍') ? [...b] : [b];
+      twin.forEach((e, k) => drawIcon(g, e, 210 + (k - (twin.length - 1) / 2) * 34, y - 14, twin.length > 1 ? 40 : 54));
       g.font = '44px "Apple Color Emoji","Segoe UI Emoji",sans-serif'; g.textAlign = 'center';
-      g.fillText(a, 70, y); g.fillText(b, 210, y);
       g.fillStyle = '#c9a46a'; g.fillText(arr, 140, y); g.fillStyle = '#f4f0e6';
-      g.font = 'bold 26px "Baloo 2", sans-serif'; g.textAlign = 'left'; g.fillText(t, 280, y - 8);
+      // Shrink a long line to fit inside the plaque frame.
+      let px = 26; g.textAlign = 'left';
+      do g.font = `bold ${px--}px "Baloo 2", sans-serif`; while (px > 16 && g.measureText(t).width > 315);
+      g.fillText(t, 280, y - 8);
     });
     const note = document.createElement('p');
     note.innerHTML = '<small>Carved in red cedar by master carvers of the Northwest Coast, whose living tradition tells the stories of family and place. Please treat them with respect.</small>';

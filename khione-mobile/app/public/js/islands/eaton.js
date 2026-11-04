@@ -18,7 +18,10 @@ const CONCRETE = '#c7c4bd', FRAME = '#5a5e66', GLASS = '#b3d9eb';
 const CLOCK = V3(5.2, FLOOR, 0);
 const KIOSK = V3(-6.5, FLOOR, 2.5);
 const DIRECTORY = V3(3.2, FLOOR, 11);
-const ESCALATORS = [[V3(15, FLOOR, 4.5), V3(19.5, BALC_TOP, 0)], [V3(-15, FLOOR, -4.5), V3(-19.5, BALC_TOP, 0)]];
+// Escalators: foot on the mall floor → top of the incline, which stops just
+// short of the balcony edge (x = ±EDGE_X); a landing deck bridges the rest.
+const EDGE_X = HW - 5;
+const ESCALATORS = [[V3(13.04, FLOOR, 2.54), V3(18.48, BALC_TOP, 0)], [V3(-13.04, FLOOR, 2.54), V3(-18.48, BALC_TOP, 0)]];
 const RIM_R = 3.5, RIM_Y = 1.11;
 const COIN_TYPES = ['H', 'T', 'H', 'T', 'T', 'H', 'T', 'H'];
 const COIN_TARGET = ['H', 'H', 'T'];
@@ -33,7 +36,7 @@ const CAB_TOP = ROOF_TOP - 0.1;
 const BANNER = V3(0, ROOF_TOP, 15.2);
 const PET = V3(-19.9, FLOOR, 0);
 const ROBOT_HOME = V3(-13, FLOOR, -9);
-const PATROL = [V3(13, FLOOR, -5.4), V3(-13, FLOOR, -5.4), V3(-13, FLOOR, 5.4), V3(13, FLOOR, 5.4)];
+const PATROL = [V3(11, FLOOR, -5.4), V3(-11, FLOOR, -5.4), V3(-11, FLOOR, 5.4), V3(11, FLOOR, 5.4)];
 const DOCK = V3(0, 0.18, 38.5);
 // The generated goose faces -x in its file; turn it to fly toward +z.
 const GOOSE_YAW = Math.PI / 2;
@@ -181,6 +184,7 @@ export default class Eaton extends Island {
     rail(38, 0.12, 0, HD - 5);
     rail(0.12, 6.6, -HW + 5, -7.7); rail(0.12, 6.6, -HW + 5, 7.7);
     rail(0.12, 6.6, HW - 5, -7.7); rail(0.12, 6.6, HW - 5, 7.7);
+    // (The escalator landings close the rest of the east and west edges.)
     // Upper storefronts on the north balcony.
     const cols = ['#b3737f', '#7390b3', '#9a9a66', '#80a68c', '#a6805a'];
     for (let i = 0; i < 5; i++) {
@@ -206,41 +210,146 @@ export default class Eaton extends Island {
     this.every((dt) => this.updateEscalators(dt));
   }
 
+  /**
+   * A proper escalator: a steel truss carrying the moving treads up from a
+   * floor comb plate to the top of the incline `b`, glass balustrades with
+   * handrails that wrap round newels at both ends, and a landing deck that
+   * bridges from the incline to the balcony edge so nothing pokes through it.
+   */
   buildEscalator(a, b, width) {
     const span = b.clone().sub(a);
-    const flat = Math.hypot(span.x, span.z);
-    const len = span.length();
+    const flat = Math.hypot(span.x, span.z), rise = span.y;
+    const len = Math.hypot(flat, rise);
     const yaw = Math.atan2(span.x, span.z);
-    const pitch = -Math.atan2(span.y, flat);
-    const g = new THREE.Group();
-    g.position.copy(a).lerp(b, 0.5);
-    g.rotation.order = 'YXZ'; g.rotation.y = yaw; g.rotation.x = pitch;
-    const ramp = P.box(width, 0.25, len, '#7e848c', { base: false });
-    g.add(ramp);
-    // Moving tread stripes.
-    const treadTex = P.textCanvas('', { w: 64, h: 256, bg: null, draw: (c) => { c.fillStyle = '#5f646b'; c.fillRect(0, 0, 64, 256); c.fillStyle = '#9aa0a8'; for (let i = 0; i < 8; i++) c.fillRect(0, i * 32, 64, 6); } });
-    treadTex.wrapT = THREE.RepeatWrapping; treadTex.repeat.set(1, len / 1.2);
-    const tread = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.92, len), new THREE.MeshLambertMaterial({ map: treadTex }));
-    tread.rotation.x = -Math.PI / 2; tread.position.y = 0.13; g.add(tread);
-    for (const s of [-1, 1]) {
-      const sk = P.box(0.15, 1.0, len, FRAME, { base: false });
-      sk.position.set((width / 2) * s, 0.45, 0); g.add(sk);
-    }
-    this.add(g);
     const dir = V3(span.x, 0, span.z).normalize();
     const side = V3(dir.z, 0, -dir.x);
-    const e = { a, b, dir, side, flat, width, tex: treadTex, upDir: span.clone().normalize() };
+    const half = width / 2;
+    const hAt = (s) => a.y + rise * clamp(s / flat, 0, 1);
+    const STEEL = '#aab0b8', RUBBER = '#23282d', TRUSS = 0.75, RAIL = 0.95, RUN = 0.9;
+    const g = new THREE.Group();
+    g.position.copy(a); g.rotation.y = yaw;
+    const parts = [];
+    const put = (mesh) => { g.add(mesh); parts.push(mesh); return mesh; };
+    // Profiles are drawn in (s along the run, h up) and extruded across it.
+    const across = (shape, depth, x, color, opts = {}) => {
+      const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments: 10 });
+      geo.rotateY(-Math.PI / 2); geo.translate(x + depth / 2, 0, 0);
+      const mat = opts.mat ?? new THREE.MeshLambertMaterial({ color });
+      const m = new THREE.Mesh(geo, mat); m.castShadow = !opts.glass; m.receiveShadow = true;
+      if (opts.glass) { m.renderOrder = 3; g.add(m); return m; }  // already see-through; not an occluder
+      return put(m);
+    };
+
+    // Truss: the incline's body, deep at the top, tapering into the floor.
+    const truss = new THREE.Shape();
+    truss.moveTo(0, -0.02); truss.lineTo(flat, rise); truss.lineTo(flat, rise - TRUSS);
+    truss.lineTo((TRUSS / rise) * flat, -0.02); truss.closePath();
+    across(truss, width, 0, STEEL);
+
+    // Moving treads on top, with yellow safety edges.
+    const treadTex = P.textCanvas('', { w: 64, h: 256, bg: null, draw: (c) => { c.fillStyle = '#5f646b'; c.fillRect(0, 0, 64, 256); c.fillStyle = '#9aa0a8'; for (let i = 0; i < 8; i++) c.fillRect(0, i * 32, 64, 6); c.fillStyle = '#e8c24a'; c.fillRect(0, 0, 4, 256); c.fillRect(60, 0, 4, 256); } });
+    treadTex.wrapT = THREE.RepeatWrapping; treadTex.repeat.set(1, len / 1.0);
+    const incline = new THREE.Group(); incline.rotation.x = -Math.atan2(rise, flat); g.add(incline);
+    const tread = new THREE.Mesh(new THREE.PlaneGeometry(width - 0.24, len), new THREE.MeshLambertMaterial({ map: treadTex }));
+    tread.rotation.x = -Math.PI / 2; tread.position.set(0, 0.015, len / 2); tread.receiveShadow = true;
+    incline.add(tread); parts.push(tread);
+
+    // Comb plates where the steps flatten out, top and bottom.
+    for (const [z0, y] of [[-RUN, 0], [flat, rise]]) {
+      const plate = P.box(width - 0.2, 0.03, RUN, '#8d939b', { base: false });
+      plate.position.set(0, y + 0.017, z0 + RUN / 2); put(plate);
+      const edge = P.box(width - 0.2, 0.035, 0.08, '#e8c24a', { base: false });
+      edge.position.set(0, y + 0.02, z0 === flat ? flat + 0.04 : -0.04); put(edge);
+    }
+
+    // Glass balustrades and handrails, each running past both ends of the
+    // incline and curling round a newel.
+    const r = RAIL / 2;
+    for (const sg of [-1, 1]) {
+      const x = sg * (half - 0.07);
+      const pane = new THREE.Shape();
+      pane.moveTo(-RUN + 0.2, 0); pane.lineTo(0, 0); pane.lineTo(flat, rise); pane.lineTo(flat + RUN - 0.2, rise);
+      pane.absarc(flat + RUN - 0.2, rise + r, r, -Math.PI / 2, Math.PI / 2, false);
+      pane.lineTo(flat, rise + RAIL); pane.lineTo(0, RAIL); pane.lineTo(-RUN + 0.2, RAIL);
+      pane.absarc(-RUN + 0.2, r, r, Math.PI / 2, Math.PI * 1.5, false);
+      across(pane, 0.05, x, null, { glass: true, mat: this.escGlass ??= new THREE.MeshLambertMaterial({ color: '#cfe8f2', transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthWrite: false }) });
+      // Handrail: around the lower newel, up the incline, round the upper one.
+      const pts = [];
+      const arc = (cs, ch, a0, a1) => { for (let i = 0; i <= 8; i++) { const t = a0 + (a1 - a0) * (i / 8); pts.push(new THREE.Vector3(x, ch + Math.sin(t) * (r + 0.02), cs + Math.cos(t) * (r + 0.02))); } };
+      arc(-RUN + 0.2, r, Math.PI * 1.35, Math.PI / 2);
+      pts.push(new THREE.Vector3(x, RAIL + 0.02, -0.15), new THREE.Vector3(x, RAIL + 0.02 + rise * (0.15 / flat), 0.15));
+      pts.push(new THREE.Vector3(x, rise + RAIL + 0.02 - rise * (0.15 / flat), flat - 0.15), new THREE.Vector3(x, rise + RAIL + 0.02, flat + 0.15));
+      arc(flat + RUN - 0.2, rise + r, Math.PI / 2, -Math.PI * 0.35);
+      const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
+      const hr = new THREE.Mesh(new THREE.TubeGeometry(curve, 120, 0.05, 8, false), new THREE.MeshLambertMaterial({ color: RUBBER }));
+      hr.castShadow = true; put(hr);
+      // Steel deck board capping the truss side under the glass.
+      const cap = new THREE.Shape();
+      cap.moveTo(0, -0.02); cap.lineTo(flat, rise - 0.02); cap.lineTo(flat, rise + 0.12); cap.lineTo(0, 0.12); cap.closePath();
+      across(cap, 0.2, sg * (half - 0.1), '#c9ced4');
+    }
+    this.add(g);
+    for (const m of parts) this.occluders.push(m);
+
+    // Landing deck: from the top of the incline to the balcony edge, flush
+    // with the balcony floor.
+    const edgeX = Math.sign(b.x) * EDGE_X;
+    const corners = [-1, 1].map((sg) => b.clone().addScaledVector(side, sg * half));
+    const reach = corners.map((c) => c.clone().addScaledVector(dir, Math.max(0, (edgeX - c.x) / dir.x)));
+    const quad = [corners[0], reach[0], reach[1], corners[1]];
+    const deckShape = new THREE.Shape(quad.map((q) => new THREE.Vector2(q.x, q.z)));
+    const deckGeo = new THREE.ExtrudeGeometry(deckShape, { depth: 0.3, bevelEnabled: false });
+    deckGeo.rotateX(Math.PI / 2); deckGeo.translate(0, BALC_TOP, 0);
+    const deck = new THREE.Mesh(deckGeo, new THREE.MeshLambertMaterial({ color: CONCRETE }));
+    deck.receiveShadow = true; this.add(deck); this.occluders.push(deck);
+    const inQuad = (x, z) => {
+      let sgn = 0;
+      for (let i = 0; i < 4; i++) {
+        const p0 = quad[i], p1 = quad[(i + 1) % 4];
+        const c = (p1.x - p0.x) * (z - p0.z) - (p1.z - p0.z) * (x - p0.x);
+        if (Math.abs(c) < 1e-9) continue;
+        if (sgn && Math.sign(c) !== sgn) return false;
+        sgn = Math.sign(c);
+      }
+      return true;
+    };
+    this.surface((x, z) => (inQuad(x, z) ? BALC_TOP : null));
+    // Close the balcony edge either side of the deck.
+    const zs = reach.map((q) => q.z).sort((p, q) => p - q);
+    const gap = 4.4;
+    for (const [z0, z1] of [[-gap, zs[0]], [zs[1], gap]]) {
+      if (z1 - z0 < 0.05) continue;
+      this.sbox(0.12, 0.9, z1 - z0, edgeX, BALC_TOP, (z0 + z1) / 2, FRAME, { occl: true });
+    }
+
+    const e = { a, b, dir, side, flat, width: width - 0.24, tex: treadTex, upDir: span.clone().normalize() };
     this.surface((x, z) => {
       const rx = x - a.x, rz = z - a.z;
       const t = (rx * dir.x + rz * dir.z) / flat;
       const s = rx * side.x + rz * side.z;
-      if (t < -0.02 || t > 1.02 || Math.abs(s) > width / 2) return null;
-      return a.y + (b.y - a.y) * clamp(t, 0, 1) + 0.13;
+      if (t < -0.02 || t > 1.02 || Math.abs(s) > half) return null;
+      return a.y + rise * clamp(t, 0, 1) + 0.03;
     });
-    // Skirts keep her on the treads.
-    for (const s of [-1, 1]) {
-      const c = a.clone().lerp(b, 0.5).addScaledVector(side, (width / 2 + 0.05) * s);
-      this.solidBox(c.x, c.z, 0.2, flat, -1, BALC_TOP + 1.2, -yaw, { noStand: true });
+    // Colliders, in short steps so they follow the slope: balustrades keep her
+    // on the treads, and the truss stops her walking into it from below while
+    // leaving room to pass under its high end.
+    const at = (s, lat) => a.clone().addScaledVector(dir, s).addScaledVector(side, lat);
+    const N = 10;
+    for (let i = 0; i < N; i++) {
+      const s0 = (flat * i) / N, s1 = (flat * (i + 1)) / N, mid = (s0 + s1) / 2;
+      for (const sg of [-1, 1]) {
+        const c = at(mid, sg * (half - 0.07));
+        this.solidBox(c.x, c.z, 0.2, s1 - s0, hAt(s0) - TRUSS, hAt(s1) + RAIL, -yaw, { noStand: true });
+      }
+      const c = at(mid, 0);
+      this.solidBox(c.x, c.z, width, s1 - s0, hAt(s0) - TRUSS, hAt(s0) - 0.05, -yaw, { noStand: true });
+    }
+    for (const [s0, s1] of [[-RUN + 0.2 - r, 0], [flat, flat + RUN - 0.2 + r]]) {
+      for (const sg of [-1, 1]) {
+        const c = at((s0 + s1) / 2, sg * (half - 0.07));
+        const y = s0 < 0 ? a.y : b.y;
+        this.solidBox(c.x, c.z, 0.2, s1 - s0, y - 0.3, y + RAIL, -yaw, { noStand: true });
+      }
     }
     return e;
   }

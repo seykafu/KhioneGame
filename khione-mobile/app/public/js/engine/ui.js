@@ -2,6 +2,7 @@
 // settings, puzzle panels), title, loader, island cards, ending.
 import { G, events } from './core.js';
 import { ISLANDS, LETTER, itemIcon, itemName, ITEMS, islandById } from './state.js';
+import { watchIcons, preloadIcons } from './icons.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -66,6 +67,8 @@ class UI {
     this.ending = h('div', 'ending');
     root.append(this.hud, this.controls, this.toasts, this.banner, this.badge, this.caption, this.lbT, this.lbB, this.skipBtn, this.card, this.scrim, this.sheet, this.ending, this.fadeEl);
     if (G.debug) { this.dev = h('div', 'dev'); root.append(this.dev); }
+    preloadIcons();
+    watchIcons(root);
 
     // Wiring
     const tap = (el, fn) => {
@@ -135,7 +138,11 @@ class UI {
     const on = !!label;
     this.actBtn.classList.toggle('off', !on);
     this.actBtn.classList.toggle('on', on);
-    if (on) { this.actLabel.textContent = label; if (icon && this.actBtn.textContent !== icon) this.actBtn.textContent = icon; }
+    if (on) {
+      this.actLabel.textContent = label;
+      // The painted icon replaces the emoji text, so remember what was asked for.
+      if (icon && this._actIcon !== icon) { this._actIcon = icon; this.actBtn.textContent = icon; }
+    }
     this.actLabel.classList.toggle('on', on);
   }
 

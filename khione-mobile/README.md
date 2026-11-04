@@ -16,9 +16,11 @@ games private — sign in to Higgsfield in the same browser to open it).
 | `app/public/js/engine/` | Shared engine: render, input, player, Oreo, world/island base, UI, audio, save, cloud save. |
 | `app/public/js/islands/` | One module per island: `ahalo`, `eaton`, `calgary`, `winnipeg`, `montreal`, `englishbay`, `agrea`. |
 | `app/public/assets/` | Higgsfield-generated models (meshopt GLB), textures, music and SFX, plus the Godot project's bespoke audio. |
+| `app/public/assets/icons/` | Hand-painted UI and item icons (GPT Image 2.5 via Higgsfield). `js/engine/icons.js` swaps them in wherever game text uses an emoji. |
 | `app/src/logic.js` | Server side: a single-player cloud-save room (Higgsfield game template). |
 | `native/` | Capacitor 6 wrapper → Xcode project for a native iOS build. |
 | `design/assets.csv` | Asset manifest (what was generated, how). |
+| `design/icons.csv` | Icon manifest: which emoji each icon replaces, and the prompt used. |
 | `tools/` | `extract_clips.py` (animation clips), `package_app.sh` (zip for syncing to Higgsfield). |
 
 ## Play locally

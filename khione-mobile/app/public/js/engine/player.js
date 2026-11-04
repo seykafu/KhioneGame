@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { G, events, clamp, damp, angleLerp } from './core.js';
 import { model } from './assets.js';
 import { sharedClips } from './clips.js';
+import { drawIcon } from './icons.js';
 
 const WALK = 4.0, RUN = 7.0, SWIM = 3.0, JUMP = 7.5, GRAV = 20, RADIUS = 0.32;
 const SWIM_DEPTH = 0.42;
@@ -304,8 +305,6 @@ function drawItemSprite(s, icon) {
   g.clearRect(0, 0, 128, 128);
   g.fillStyle = 'rgba(255,244,220,0.95)'; g.strokeStyle = '#173b44'; g.lineWidth = 7;
   g.beginPath(); g.arc(64, 64, 52, 0, Math.PI * 2); g.fill(); g.stroke();
-  g.font = '64px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-  g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillText(icon, 64, 70);
+  drawIcon(g, icon, 64, 64, 78);
   s.material.map.needsUpdate = true;
 }

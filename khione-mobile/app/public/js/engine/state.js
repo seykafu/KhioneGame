@@ -51,7 +51,7 @@ export const ITEMS = {
   coconut: { name: 'Coconut', icon: '\u{1F965}', desc: 'Heavy, hairy, and full of promise. Old wood would tip under a few of these.' },
   rusty_locket: { name: 'Rusty Locket', icon: '\u{1F4FF}', desc: 'Sea-worn bronze from the tide pool. The engraving inside is a pawprint far too big for a cat.' },
   stranded_fish: { name: 'Stranded Fish', icon: '\u{1F41F}', desc: 'Left behind when the pool drained. Somebody out there looks hungry.' },
-  old_oar: { name: 'Old Oar', icon: '\u{1FAB5}', desc: 'Smooth with years of use. Whose paws wore it smooth?' },
+  old_oar: { name: 'Old Oar', icon: ':oar:', desc: 'Smooth with years of use. Whose paws wore it smooth?' },
   palm_frond: { name: 'Dry Frond', icon: '\u{1F33F}', desc: 'A great dry frond. Practically a sail already.' },
   vine_rope: { name: 'Vine Rope', icon: '\u{1FAA2}', desc: 'Fresh-cut vine, crab-approved. Strong enough to bind timbers.' },
   brass_key: { name: 'Brass Key', icon: '\u{1F511}', desc: 'Small, brass, and important somewhere. The fountain kept it safe for years.' },
@@ -70,7 +70,7 @@ export const ITEMS = {
   road_salt: { name: 'Road Salt', icon: '\u{1F9C2}', desc: 'A bag of road salt from the postal truck. Ice, meet your negotiator.' },
   runner_bolts: { name: 'Runner Bolts', icon: '\u{1F529}', desc: 'Four runner bolts, rooftop-shiny. Some kid meant to fix the toboggan in spring.' },
   old_loonie: { name: 'Old Loonie', icon: '\u{1FA99}', desc: 'A loonie old enough to remember being lucky. Roof money is the luckiest money.' },
-  kite_reel: { name: 'Kite Reel', icon: '\u{1FA81}', desc: 'A kite reel with no kite, from a Winnipeg storm cellar. It hums when the wind picks up.' },
+  kite_reel: { name: 'Kite Reel', icon: ':reel:', desc: 'A kite reel with no kite, from a Winnipeg storm cellar. It hums when the wind picks up.' },
 };
 export function registerItems(map) { Object.assign(ITEMS, map); }
 export const itemName = (id) => ITEMS[id]?.name ?? id;
